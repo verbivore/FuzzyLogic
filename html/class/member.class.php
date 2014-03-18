@@ -175,7 +175,7 @@ class member
   $this->set_nickname($_POST['nickname']);
   $this->set_name_last($_POST['name_last']);
   $this->set_name_first($_POST['name_first']);
-  $this->set_stamp($_POST['stamp']);
+//  $this->set_stamp($_POST['stamp']);
   }
 
 //******************************************************************************

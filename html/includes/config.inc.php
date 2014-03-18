@@ -5,7 +5,8 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Set constants and error handler
  *** History ***  
- * 2014-03-08 Original.  DHD
+ * 14-03-18 Moved directory from poker to FuzzyLogic.  DHD
+ * 14-03-08 Original.  DHD
  *****************************************************************************/
 
 # ******************** #
@@ -31,8 +32,8 @@ if ($local) {
     $debug = TRUE;
     
     // Define the constants:
-    define('BASE_URI', '/home/dave/dev/poker/html/');
-    define('BASE_URL', 'http://localhost/dev/poker/');
+    define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');
+    define('BASE_URL', 'http://localhost/dev/FuzzyLogic/');
     define('DB', '/path/to/mysql.inc.php');
     
 } else {

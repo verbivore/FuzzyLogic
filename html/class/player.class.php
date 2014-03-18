@@ -5,7 +5,8 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Class definition for a player
  *** History ***  
- * 2014-03-08 Original.  DHD
+ * 14-03-18 Fixed final echo in insert().  Updated 2210 message.  DHD
+ * 14-03-08 Original.  DHD
  *****************************************************************************/
 
 class player extends member
@@ -30,7 +31,7 @@ class player extends member
   public function set_no_cnt($P) { $this->no_cnt = $P; }
   public function set_flake_cnt($P) { $this->flake_cnt = $P; }
   public function set_score($P) { $this->score = $P; }
-
+/*
 //*****************************************************************************
 // Validation for individual column values.
 //*****************************************************************************
@@ -62,13 +63,13 @@ class player extends member
     $e = array(0,"");
     return($e);
   }
+*/
 
   public function validate_stamp() {
     # string?, 
     $e = array(0,"");
     return($e);
   }
-
 
 //*****************************************************************************
 // Validate members fields
@@ -226,7 +227,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         } else {
 #          if ($debug) { echo "player:seats:get=player not found.<br>"; }
           #error_log($e->getTraceAsString());
-          throw new playerException('No seats records for this player were found', 2210);
+          throw new playerException('No seats records for player ' . $this->member_id . ' were found', 2210);
         }
       } elseif ($row_count < 1) {
 #        if ($debug) { echo "player:get=player not found.<br>"; }
@@ -420,7 +421,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
 //    if ($debug) { echo "player added.<br>"; }
 //    $inserted_member_id = $pokdb->lastInsertId(); 
 //    if ($debug) { echo "player number:$inserted_member_id.<br>"; }
-    if ($debug) { echo "<br>player.insert:vvv:^^^"};
+    if ($debug) { echo "<br>player.insert:^^^";}
   }
 
 //******************************************************************************

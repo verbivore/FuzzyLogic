@@ -5,7 +5,8 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Set up and show the page
  *** History ***  
- * 2014-03-08 Original.  DHD
+ * 14-03-18 Recovered member class include.  DHD
+ * 14-03-08 Original.  DHD
  *****************************************************************************/
 /*
 <?php if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; } ?>
@@ -74,7 +75,8 @@ switch ($page_id) {
 } // End of main switch.
 
 //Make sure the file exists:
-if (!file_exists('./modules/' . $page_file)) {
+
+if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
   $page_file = 'main.inc.php';
   $page_title = 'Poker Default Page';
 }
@@ -83,17 +85,18 @@ if (!file_exists('./modules/' . $page_file)) {
 require('./includes/header.inc.php');
 if ($debug) { echo "include:" . __FILE__ . ";>>>>>>>.<br>"; }
 // Include the module files:
-require_once('./class/player.class.php');
-require_once('./class/playerArray.class.php');
+require_once(BASE_URI . 'class/member.class.php');
+require_once(BASE_URI . 'class/player.class.php');
+require_once(BASE_URI . 'class/playerArray.class.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.
 #echo "tail -f /var/log/apache2/*.log <br>";
 if ($debug) { echo "page_id=$page_id, page_file=$page_file, page_title=$page_title.<br>"; }
-require('./modules/' . $page_file);
+require(BASE_URI . 'modules/' . $page_file);
 
 // Include the footer file to complete the template:
-require('./includes/footer.inc.php');
+require(BASE_URI . 'includes/footer.inc.php');
 if ($debug) { echo __FILE__ . ";^^^^^^^.<br>"; }
 ?>
 

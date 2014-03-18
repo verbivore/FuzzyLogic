@@ -4,7 +4,7 @@
  -  Contact: dave.demaree@yahoo.com
  -  Purpose: Set constants and error handler
  --- History ---  
- - 2014-03-08 Original.  DHD
+ - 14-03-08 Original.  DHD
  ----------------------------------------------------------------------------->
 <html>
  <head>
