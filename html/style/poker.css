@@ -1,0 +1,53 @@
+form fieldset {
+  display: inline-block;
+}
+form fieldlabel {
+  width: 11em;
+  margin-right: 1em;
+  float: left;
+  text-align: right;
+  display: block;
+}
+/*form input {
+  width: 15em;
+}*/
+form dateInput {
+  width: 50em;
+}
+#submit {
+  margin-top: 2em;
+  float: left;
+  text-align: center;
+}
+.errorClass {
+  color: black;
+  background-color: #CC6666;
+} 
+.infoClass {
+  color: black;
+/*  background-color: #f1c42c; /* Ochre */
+  background-color: #2ecc71; /* Green */
+} 
+#score {
+  font-weight: bold;
+}
+/*
+#errorDiv {
+  color: red;
+}
+*/
+/*
+.radioButton {
+  float: none;
+  display: block;
+  margin-right: 0.1em;
+  float: left;
+  width: 2em;
+  vertical-align: top;
+}
+*/
+/*
+.errorFeedback {
+  visibility: hidden;
+}
+*/

@@ -1,0 +1,22 @@
+body {
+  font-family: Times, Gadget, arial,helvetica,sans-serif;
+}
+#topMenu ul li {
+  list-style-type: none;
+  display: inline;
+  font-size: 44px;
+}
+h1 {
+  list-style-type: square;
+  font-style: italic;
+  font-size: 44px;
+}
+
+background-color: #CCCCCC;
+text-align: center;
+padding: 20px;
+height: 1%;
+
+
+
+
