@@ -5,7 +5,8 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Set up and show the page
  *** History ***  
- * 14-03-18 Recovered member class include. Renamed classes to title case.  DHD
+ * 14-03-18 Recovered member class include. Renamed classes to title case.  
+            Added play-delt & from_page_id.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
 /*
@@ -28,6 +29,8 @@ if (isset($_POST['main'])) {
   $page_id = 'play-list';
 } elseif (isset($_POST['p-updt'])) {
   $page_id = 'play-updt';
+} elseif (isset($_POST['p-delt'])) {
+  $page_id = 'play-delt';
 } elseif (isset($_POST['game'])) {
   $page_id = 'game';
 } elseif (isset($_POST['join'])) {
@@ -53,6 +56,10 @@ switch ($page_id) {
     $page_title = 'List | Players | Poker';
     break;
   case 'play-updt':
+    $page_file = 'player/player.inc.php';
+    $page_title = 'Update | Players | Poker';
+    break;
+  case 'play-delt':
     $page_file = 'player/player.inc.php';
     $page_title = 'Update | Players | Poker';
     break;
@@ -83,7 +90,7 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 
 // Include the header file:
 require('./includes/header.inc.php');
-if ($debug) { echo "include:" . __FILE__ . ";>>>>>>>.<br>"; }
+if ($debug) { echo "file:" . __FILE__ . ";>>>>>>>.<br>"; }
 // Include the module files:
 require_once(BASE_URI . 'class/Member.php');
 require_once(BASE_URI . 'class/Player.php');
@@ -97,6 +104,7 @@ require(BASE_URI . 'modules/' . $page_file);
 
 // Include the footer file to complete the template:
 require(BASE_URI . 'includes/footer.inc.php');
-if ($debug) { echo __FILE__ . ";^^^^^^^.<br>"; }
+$_SESSION['from_page_id'] = $page_id;
+if ($debug) { echo "file:" . __FILE__ . ";^^^^^^^.<br>"; }
 ?>
 

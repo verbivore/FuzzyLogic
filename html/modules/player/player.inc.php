@@ -3,25 +3,46 @@
  *  File name: player.inc.php
  *  Created by: David Demaree
  *  Contact: dave.demaree@yahoo.com
- *  Purpose: Set constants and error handler
+ *  Purpose: Do Player actions.
  *** History ***  
- * 14-03-18 Removed playerListDeprecated.  DHD
+ * 14-03-18 Removed playerListDeprecated.  Stubbed playerDelete().  DHD
  * 14-03-09 Original.  DHD
+ * Future:
+ * Add playerDelete
+ * After list, Find & Delete buttons show blank form, Update button goes to playerNew.
  *****************************************************************************/
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 if ($debug) { echo "include file=player.inc.php:$page_id.<br>"; }
+post_dump();
+session_dump();
 require(BASE_URI . "modules/player/player.update.inc.php");
 
 // Determine which page to display:
 switch ($page_id) {
   case 'play-find':
-    playerFind();
+    if ($_SESSION['from_page_id'] == 'play-list') {
+      playerNew();
+    } else {
+      playerFind();
+    }
     break;
   case 'play-list':
     playerList();
     break;
   case 'play-updt':
-    playerUpdate();
+    if ($_SESSION['from_page_id'] == 'play-list') {
+      playerNew();
+    } else {
+      playerUpdate();
+    }
+    break;
+  case 'play-delt':
+    if ($_SESSION['from_page_id'] == 'play-list') {
+      playerNew();
+    } else {
+//      echo "Player Delete not implemented yet.<br>";
+      playerDelete();
+    }
     break;
  
   // Default is a blank player form.
@@ -35,9 +56,9 @@ switch ($page_id) {
 
 <!--  Player tab buttons  -->
     <input type="submit" id="find" name="p-find" value="Find" >
-    <input type="submit" id="updt" name="p-updt" value="Update" >
+    <input type="submit" id="updt" name="p-updt" value="Update" <?php if ($page_id == "play-list") echo "disabled"; ?> >
     <input type="submit" id="list" name="p-list" value="List" >
-    <input type="submit" id="delt" name="delt" value="Delete" >
+    <input type="submit" id="delt" name="p-delt" value="Delete" <?php if ($page_id == "play-list") echo "disabled"; ?> >
     <input type="submit" id="burp" name="burp" value="burp" >
   <br>
 <?php
@@ -62,6 +83,31 @@ require(BASE_URI . "modules/player/player.form.init.php");
   $error_msgs['errorDiv'] = "Add new player:";
 
   if ($debug) { echo "plyr:plyrNew:end={$plyr->get_member_id()}.<br>"; }
+
+# Show the player form
+require(BASE_URI . "modules/player/player.form.php");
+
+}
+
+
+/*******************************************************************************
+* playerDelete()
+* Purpose: Delete a player
+*******************************************************************************/
+function playerDelete() {
+  # declare globals
+  global $debug;
+
+# initialize the player form
+require(BASE_URI . "modules/player/player.form.init.php");
+
+  if ($debug) { echo "plyr:plyrDelete.<br>"; }
+
+  # Get the next available player id number
+#  $plyr->get_next_id();
+  $error_msgs['errorDiv'] = "Delete player not yet implemented.";
+
+  if ($debug) { echo "plyr:plyrDelete:end={$plyr->get_member_id()}.<br>"; }
 
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");

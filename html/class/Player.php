@@ -5,7 +5,10 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Class definition for a player
  *** History ***  
- * 14-03-18 Fixed final echo in insert().  Updated 2210 message. Moved attributes to top.  Changed file name from player.class.php to Player.php.  DHD
+ * 14-03-18 Fixed final echo in insert().  Updated 2210 message. 
+ *          Moved attributes to top.  
+ *          Changed file name from player.class.php to Player.php.
+ *          Fixed set_to_POST.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
 
@@ -183,14 +186,13 @@ class Player extends Member
   public function set_to_POST()
   {
   parent::set_to_POST();
-/*
   $this->set_invite_cnt($_POST['invite_cnt']);
   $this->set_yes_cnt($_POST['yes_cnt']);
   $this->set_maybe_cnt($_POST['maybe_cnt']);
   $this->set_no_cnt($_POST['no_cnt']);
   $this->set_flake_cnt($_POST['flake_cnt']);
   $this->set_score($_POST['score']);
-*/
+
   }
 
 //******************************************************************************

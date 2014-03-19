@@ -1,5 +1,15 @@
-<?php
+<?php # player.inc.php
+/******************************************************************************
+ *  File name: player.update.inc.php
+ *  Created by: David Demaree
+ *  Contact: dave.demaree@yahoo.com
+ *  Purpose: Add or update a Player.
+ *** History ***  
+ * 14-03-09 Original.  DHD
+ * Future:
+ *****************************************************************************/
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+if ($debug) { echo "include file=player.update.inc.php:$page_id.<br>"; }
 function playerUpdate() {
 //******************************************************************************
 // Add or Update                                                           
@@ -30,11 +40,12 @@ require(BASE_URI . "modules/player/player.form.init.php");
     }
     catch (playerException $d) {
       switch ($d->getCode()) {
-      case 2110:
+/*      case 2110:
         $error_msgs['eff_date'] = "player ({$plyr->get_member_id()}) with this effective date already exists. ({$d->getCode()})";
         $error_msgs['errorDiv'] = "See errors below";
         $error_msgs['count'] += 1;
         break;
+*/
       case 2104: # Column validation failed before insert/update
         $err_list = array();
         $err_list[] = array();

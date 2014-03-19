@@ -5,7 +5,8 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Shows the html form for a single player
  *** History ***  
- * 2014-03-08 Original.  DHD
+ * 14-03-18 Changed stats fields to readonly.  DHD
+ * 14-03-08 Original.  DHD
  *****************************************************************************/
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 # set banner message and style
@@ -46,7 +47,37 @@ if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
               value="<?php echo "{$plyr->get_name_last()}"; ?>" >
         <span class="errorFeedback errorSpan" id="name_lastError" > <?php echo $error_msgs['name_last']?> </span>
       <br />
-      <fieldlabel for="invites">Invites: </fieldlabel> <?php echo "{$plyr->get_invite_cnt()}"; ?>
+      <fieldlabel for="invite_cnt">Invites: </fieldlabel>
+        <input type="number" id="invite_cnt" name="invite_cnt" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_invite_cnt()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="invite_cntError" > <?php echo $error_msgs['invite_cnt']?> </span>
+      <br />
+      <fieldlabel for="yes_cnt">Yesses: </fieldlabel>
+        <input type="number" id="yes_cnt" name="yes_cnt" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_yes_cnt()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="yes_cntError" > <?php echo $error_msgs['yes_cnt']?> </span>
+      <br />
+      <fieldlabel for="maybe_cnt">maybes: </fieldlabel>
+        <input type="number" id="maybe_cnt" name="maybe_cnt" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_maybe_cnt()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="maybe_cntError" > <?php echo $error_msgs['maybe_cnt']?> </span>
+      <br />
+      <fieldlabel for="no_cnt">nos: </fieldlabel>
+        <input type="number" id="no_cnt" name="no_cnt" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_no_cnt()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="no_cntError" > <?php echo $error_msgs['no_cnt']?> </span>
+      <br />
+      <fieldlabel for="flake_cnt">flakes: </fieldlabel>
+        <input type="number" id="flake_cnt" name="flake_cnt" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_flake_cnt()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="flake_cntError" > <?php echo $error_msgs['flake_cnt']?> </span>
+      <br />
+      <fieldlabel for="score">score: </fieldlabel>
+        <input type="number" id="score" name="score" size="2" maxsize="4" readonly="true" 
+              value="<?php echo "{$plyr->get_score()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="scoreError" > <?php echo $error_msgs['score']?> </span>
+      <br />
+<!--
       <br />
       <fieldlabel for="yesses">Yesses: </fieldlabel> <?php echo "{$plyr->get_yes_cnt()}"; ?>
       <br />
@@ -59,10 +90,11 @@ if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
       <fieldlabel for="score">Score: </fieldlabel> <?php echo "{$plyr->get_score()}"; ?>
       <br />
       <fieldlabel for="stamp">Stamp: </fieldlabel> <?php echo "{$plyr->get_stamp()}"; ?>
-<!--
       <fieldlabel for="stamp">Stamp: </fieldlabel>
         <input type="date" id="stamp" name="stamp" size="10" maxsize="10" value="<?php echo "{$plyr->get_stamp()}"; ?>" >
         <span class="errorFeedback errorSpan" id="stampError" > <?php echo $error_msgs['stamp']?> </span>
+      <br />
+      <fieldlabel for="invites">Invites: </fieldlabel> <?php echo "{$plyr->get_invite_cnt()}"; ?>
       <br />
       <fieldlabel for="invite_cnt">Invites: </fieldlabel>
         <input type="number" id="invite_cnt" name="invite_cnt" size="2" maxsize="4" 

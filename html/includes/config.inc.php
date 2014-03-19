@@ -5,7 +5,7 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Set constants and error handler
  *** History ***  
- * 14-03-18 Moved directory from poker to FuzzyLogic.  DHD
+ * 14-03-18 Moved directory from poker to FuzzyLogic.  Added post_dump and session_dump.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
 
@@ -75,6 +75,54 @@ $_SESSION['counter'] += 1;
 
 # ***** SETTINGS ***** #
 # ******************** #
+
+
+function session_dump() {
+  # Dump _SESSION array
+  global $debug;
+  if ($debug) {
+#    echo '<pre>'; # formats list one per line
+    print "_SESSION var dump: ";
+    var_dump($_SESSION);
+    print ".<br/>";
+#    echo '</pre>';
+  }
+}
+
+function session_list() {
+  # List contents of the _SESSION array
+  global $debug;
+  if ($debug) {
+    echo '<pre>'; # formats list one per line
+    print "_SESSION var list: ";
+    var_dump($_SESSION);
+    print ".<br/>";
+    echo '</pre>';
+  }
+}
+
+function post_dump() {
+  # Dump _POST array
+  global $debug;
+  if ($debug) {
+    print "_POST var dump: ";
+    var_dump($_POST);
+    print ".<br/>";
+  }
+}
+
+function post_list() {
+  # List contents of the _POST array
+  global $debug;
+  if ($debug) {
+    echo '<pre>'; # formats list one per line
+    print "_POST var list: ";
+    var_dump($_POST);
+    print ".<br/>";
+    echo '</pre>';
+  }
+}
+
 
 
 # **************************** #

@@ -6,6 +6,8 @@
  *  Purpose: Shows the html form for a list of players
  *** History ***  
  * 2014-03-08 Original.  DHD
+ * Future
+ * Disable Update and Delete buttons for List function.
  *****************************************************************************/
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 # set banner message and style
