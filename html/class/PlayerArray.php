@@ -1,13 +1,14 @@
 <?php
 /******************************************************************************
- *  File name: playerArray.class.php
+ *  File name: PlayerArray.class.php
  *  Created by: David Demaree
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Class definition for a player
  *** History ***  
- * 2014-03-08 Original.  DHD
+ * 14-03-18 Changed name to title case.  DHD
+ * 14-03-08 Original.  DHD
  *****************************************************************************/
-class playerArray extends player
+class PlayerArray extends player
 {
   public $playerList = array();
   public $playerCount;
@@ -22,26 +23,26 @@ class playerArray extends player
 require(BASE_URI . "includes/pok_open.inc.php");
       # get number of players
       $query = "SELECT COUNT(member_id) AS playerCount FROM members ";
-      if ($debug) { echo "playerArray:players:count:query=$query.<br>"; }
+      if ($debug) { echo "PlayerArray:players:count:query=$query.<br>"; }
       $stmt = $pokdb->prepare($query);
       $stmt->execute();
       $row = $stmt->fetch();
-      if ($debug) { echo "playerArray:playerCount={$row['playerCount']}.<br>"; }
+      if ($debug) { echo "PlayerArray:playerCount={$row['playerCount']}.<br>"; }
       $this->playerCount = $row['playerCount'];
       # get members row
       $query = "SELECT MIN(member_id) AS first FROM members ";
-      if ($debug) { echo "playerArray:players:next:query=$query.<br>"; }
+      if ($debug) { echo "PlayerArray:players:next:query=$query.<br>"; }
       $stmt = $pokdb->prepare($query);
       $stmt->execute();
       $row_count = $stmt->rowCount();
       if ($row_count == 1) {
         $row = $stmt->fetch();
-        if ($debug) { echo "playerArray:first={$row['first']}.<br>"; }
+        if ($debug) { echo "PlayerArray:first={$row['first']}.<br>"; }
         $next_member_id = $row['first'];
         $loaded = 0;
         for ($i=0; $i < $this->playerCount; $i++) {
 #        for ($i=0; $i < 3; $i++) {
-          $this->playerList[$i] = new player;
+          $this->playerList[$i] = new Player;
           $this->playerList[$i]->set_member_id($next_member_id);
           # Save row
           $this->playerList[$i]->get();
@@ -55,7 +56,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
           $next_member_id = $row['next'];
         } 
       } else {
-        if ($debug) { echo "playerArray:rows=$row_count.<br>"; }
+        if ($debug) { echo "PlayerArray:rows=$row_count.<br>"; }
       }
     } catch (PDOException $e) {
       echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br/>";
@@ -87,7 +88,7 @@ public static function sortScore($a, $b)
   public function listing()
   {
     global $debug;
-    if ($debug) { echo "playerArray:" . __FUNCTION__ . ".<br>"; }
+    if ($debug) { echo "PlayerArray:" . __FUNCTION__ . ".<br>"; }
 
     echo "*** Dump players *** ({$this->playerCount} players)<br>";
     echo "<table border='1'>";
@@ -105,8 +106,8 @@ public static function sortScore($a, $b)
     echo "</tr>";
   
     $counter = 0;
-    if ($debug) { echo "playerArray:listing count={$this->playerCount}:"; count($this->playerList); echo ".<br>"; }
-  #  echo "playerArray:listing [0]="; $this[0]->listRow(); echo ".<br>";
+    if ($debug) { echo "PlayerArray:listing count={$this->playerCount}:"; count($this->playerList); echo ".<br>"; }
+  #  echo "PlayerArray:listing [0]="; $this[0]->listRow(); echo ".<br>";
     foreach ($this->playerList as $row) {
       $counter++;
 //      if ($debug) { echo "player {$row->get_member_id()} ($counter of {$this->playerCount})<br>";}
@@ -129,6 +130,6 @@ public static function sortScore($a, $b)
 #    echo ".<br>";
   }
 //******************************************************************************
-} # end class playerArray
+} # end class PlayerArray
 //******************************************************************************
 ?>

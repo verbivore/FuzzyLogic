@@ -5,7 +5,7 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Set up and show the page
  *** History ***  
- * 14-03-18 Recovered member class include.  DHD
+ * 14-03-18 Recovered member class include. Renamed classes to title case.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
 /*
@@ -85,9 +85,9 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 require('./includes/header.inc.php');
 if ($debug) { echo "include:" . __FILE__ . ";>>>>>>>.<br>"; }
 // Include the module files:
-require_once(BASE_URI . 'class/member.class.php');
-require_once(BASE_URI . 'class/player.class.php');
-require_once(BASE_URI . 'class/playerArray.class.php');
+require_once(BASE_URI . 'class/Member.php');
+require_once(BASE_URI . 'class/Player.php');
+require_once(BASE_URI . 'class/PlayerArray.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.

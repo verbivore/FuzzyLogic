@@ -1,6 +1,6 @@
 <?php
 # player record to be used for this page
-$plyr = new player;
+$plyr = new Player;
 # list of form fields to process
 //$player_form_fields = array("member_id", "name_last", "name_first", "nickname", "stamp", "invite_cnt", "yes_cnt", "maybe_cnt", "no_cnt", "flake_cnt", "score");
 $player_form_fields = array("member_id", "name_last", "name_first", "nickname");

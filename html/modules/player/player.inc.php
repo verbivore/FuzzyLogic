@@ -139,11 +139,11 @@ function playerList() {
 global $debug;
 
 
-$players = new playerArray;
+$players = new PlayerArray;
 if ($debug) { echo "player:List count={$players->playerCount}:" . count($players->playerList) . ".<br>"; }
 $players->listing();
 #$players->sortNick();
-usort($players->playerList, array('playerArray','sortNick')); 
+usort($players->playerList, array('PlayerArray','sortNick')); 
 
 $players->listing();
 /*

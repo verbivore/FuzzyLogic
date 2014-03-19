@@ -1,16 +1,26 @@
 <?php
 /******************************************************************************
- *  File name: player.class.php
+ *  File name: Player.php
  *  Created by: David Demaree
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Class definition for a player
  *** History ***  
- * 14-03-18 Fixed final echo in insert().  Updated 2210 message.  DHD
+ * 14-03-18 Fixed final echo in insert().  Updated 2210 message. Moved attributes to top.  Changed file name from player.class.php to Player.php.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
 
-class player extends member
+class Player extends Member
 {
+
+//*****************************************************************************
+// Attributes
+//*****************************************************************************
+  protected $invite_cnt;
+  protected $yes_cnt;
+  protected $maybe_cnt;
+  protected $no_cnt;
+  protected $flake_cnt;
+  protected $score;
 
 //*****************************************************************************
 // Getters
@@ -101,16 +111,6 @@ class player extends member
 #    if ($debug) { echo "player.validate arraysize="; echo sizeof($errors); echo ".<br>"; }
     return($errors);
   }
-
-//*****************************************************************************
-// Data members
-//*****************************************************************************
-  protected $invite_cnt;
-  protected $yes_cnt;
-  protected $maybe_cnt;
-  protected $no_cnt;
-  protected $flake_cnt;
-  protected $score;
 
 //*****************************************************************************
 // List of names of SQL columns for the members table
