@@ -1,14 +1,14 @@
 <?php # index.php
-/******************************************************************************
+/**
+ *  Set up and show the page
  *  File name: index.php
- *  Created by: David Demaree (from Larry Ulman)
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Set up and show the page
+ *  @author David Demaree (from Larry Ulman) <dave.demaree@yahoo.com>
  *** History ***  
  * 14-03-18 Recovered member class include. Renamed classes to title case.  
             Added play-delt & from_page_id.  DHD
  * 14-03-08 Original.  DHD
- *****************************************************************************/
+ */
+
 /*
 <?php if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; } ?>
 <?php if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; } ?>

@@ -25,6 +25,22 @@ class Player extends Member
   protected $flake_cnt;
   protected $score;
 
+//******************************************************************************
+// constructor
+//******************************************************************************
+  function __construct()
+  {
+    global $debug;
+#    if ($debug) { echo "player:__construct.<br>"; }
+    parent::__construct();
+    $this->invite_cnt = null;
+    $this->yes_cnt = null;
+    $this->maybe_cnt = null;
+    $this->no_cnt = null;
+    $this->flake_cnt = null;
+    $this->score = null;
+  }
+
 //*****************************************************************************
 // Getters
 //*****************************************************************************
@@ -118,7 +134,7 @@ class Player extends Member
 //*****************************************************************************
 // List of names of SQL columns for the members table
 //*****************************************************************************
-  private $PLAYER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
+  private static $PLAYER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
                                "name_first", "stamp");
 
 //******************************************************************************
@@ -162,23 +178,6 @@ class Player extends Member
 //    if ($debug) { echo "player:sql_column_name_value_pairs()=$list.<br>"; }
     return $list;
   }  
-
-
-//******************************************************************************
-// constructor
-//******************************************************************************
-  function __construct()
-  {
-    global $debug;
-    if ($debug) { echo "player:__construct.<br>"; }
-    parent::__construct();
-    $this->invite_cnt = null;
-    $this->yes_cnt = null;
-    $this->maybe_cnt = null;
-    $this->no_cnt = null;
-    $this->flake_cnt = null;
-    $this->score = null;
-  }
 
 //******************************************************************************
 // set the data members of this player to the values found in $_POST.       
@@ -399,7 +398,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
     if (sizeof($val_errors) == 0 ) {
       try {
         require(BASE_URI . "includes/pok_open.inc.php");
-        # insert player
+        # insert player FUTURE: move to Member
         $query = "INSERT INTO members ({$this->sql_column_name_list()}) " .
          "VALUES ({$this->sql_column_value_list()})" ;
         if ($debug) { echo "player:find:query=$query.<br>"; }

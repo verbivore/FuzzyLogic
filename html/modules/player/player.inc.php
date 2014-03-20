@@ -5,6 +5,7 @@
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Do Player actions.
  *** History ***  
+ * 14-03-19 Added button attributes.  DHD
  * 14-03-18 Removed playerListDeprecated.  Stubbed playerDelete().  DHD
  * 14-03-09 Original.  DHD
  * Future:
@@ -16,6 +17,11 @@ if ($debug) { echo "include file=player.inc.php:$page_id.<br>"; }
 post_dump();
 session_dump();
 require(BASE_URI . "modules/player/player.update.inc.php");
+$butt_att_find = "";
+$butt_att_updt = "";
+$butt_att_list = "";
+$butt_att_delt = "";
+$butt_att_burp = " disabled";
 
 // Determine which page to display:
 switch ($page_id) {
@@ -27,6 +33,8 @@ switch ($page_id) {
     }
     break;
   case 'play-list':
+    $butt_att_updt .= " disabled";
+    $butt_att_delt .= " disabled";
     playerList();
     break;
   case 'play-updt':
@@ -37,6 +45,7 @@ switch ($page_id) {
     }
     break;
   case 'play-delt':
+    $butt_att_updt .= " disabled";
     if ($_SESSION['from_page_id'] == 'play-list') {
       playerNew();
     } else {
@@ -55,11 +64,11 @@ switch ($page_id) {
 ?> 
 
 <!--  Player tab buttons  -->
-    <input type="submit" id="find" name="p-find" value="Find" >
-    <input type="submit" id="updt" name="p-updt" value="Update" <?php if ($page_id == "play-list") echo "disabled"; ?> >
-    <input type="submit" id="list" name="p-list" value="List" >
-    <input type="submit" id="delt" name="p-delt" value="Delete" <?php if ($page_id == "play-list") echo "disabled"; ?> >
-    <input type="submit" id="burp" name="burp" value="burp" >
+    <input type="submit" id="find" name="p-find" value="Find"   <?php echo "$butt_att_find"; ?> >
+    <input type="submit" id="updt" name="p-updt" value="Update" <?php echo "$butt_att_updt"; ?> >
+    <input type="submit" id="list" name="p-list" value="List"   <?php echo "$butt_att_list"; ?> >
+    <input type="submit" id="delt" name="p-delt" value="Delete" <?php echo "$butt_att_delt"; ?> >
+    <input type="submit" id="burp" name="burp" value="burp"     <?php echo "$butt_att_burp"; ?> >
   <br>
 <?php
 
@@ -182,24 +191,22 @@ function plyrTest() {
 * Purpose: Show a list of players.
 *******************************************************************************/
 function playerList() {
-global $debug;
+  global $debug;
 
 
-$players = new PlayerArray;
-if ($debug) { echo "player:List count={$players->playerCount}:" . count($players->playerList) . ".<br>"; }
-$players->listing();
-#$players->sortNick();
-usort($players->playerList, array('PlayerArray','sortNick')); 
+  $players = new PlayerArray;
+  if ($debug) { echo "player:List count={$players->playerCount}:" . count($players->playerList) . ".<br>"; }
+#  $players->listing();
+#  $players->sortNick();
+  usort($players->playerList, array('PlayerArray','sortNick')); 
 
-$players->listing();
-/*
-//foreach($players as $p) { $p->listing(); }
-usort($players, function($a, $b)
-{
-    return ($a->get_score() < $b->get_score());
-});
-*/
-//foreach($players as $p) { $p->listing(); }
+  $players->listing();
+  usort($players->playerList, array('PlayerArray','sortScore')); 
+
+require(BASE_URI . "modules/player/player.list.form.php");
+
 }
 
-# End of player.inc.php
+//******************************************************************************
+// End of player.inc.php
+//******************************************************************************

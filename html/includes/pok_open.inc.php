@@ -10,7 +10,7 @@ try {
   unset ($pokdb);
   $pokdb = new PDO($dsn, $username, $password);
   $pokdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  if ($debug) { echo "poker database open successful.<br>"; }
+#  if ($debug) { echo "poker database open successful.<br>"; }
 //    var_dump($pokdb);
 //    echo ".<br>";
 } catch (PDOException $e) {

@@ -21,6 +21,24 @@ class Member
   protected $name_first;
   protected $stamp;
 
+// List of names of SQL columns for the members table
+  private static $MEMBER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
+                               "name_first", "stamp");
+
+//******************************************************************************
+// constructor
+//******************************************************************************
+  function __construct()
+  {
+    global $debug;
+#    if ($debug) { echo "Member:__construct.<br>"; }
+    $this->member_id = null;
+    $this->nickname = null;
+    $this->name_last = null;
+    $this->name_first = null;
+    $this->stamp = null;
+  }
+
 //*****************************************************************************
 // Getters
 //*****************************************************************************
@@ -72,7 +90,6 @@ class Member
 
   }
 
-
 //*****************************************************************************
 // Validate members fields
 //*****************************************************************************
@@ -104,12 +121,6 @@ class Member
     return($errors);
   }
 
-//*****************************************************************************
-// List of names of SQL columns for the members table
-//*****************************************************************************
-  private $MEMBER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
-                               "name_first", "stamp");
-
 //******************************************************************************
 // create a list of comma-separated column names for SQL statements.          
 //******************************************************************************
@@ -123,7 +134,23 @@ class Member
 //    if ($debug) { echo "Member:sql_column_name_list()=$list.<br>"; }
     return $list;
   }  
-
+/*
+//******************************************************************************
+// create a list of comma-separated writable column names for SQL statements.          
+//******************************************************************************
+  private function sql_column_name_list_writable() {
+    global $debug;
+    $list = "";
+    foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
+      if ($item != "stamp") {
+        $list .= "$item, ";
+      }
+    }
+    $list = rtrim($list, ", ");
+//    if ($debug) { echo "Member:sql_column_name_list()=$list.<br>"; }
+    return $list;
+  }  
+*/
 //******************************************************************************
 // create a list of quoted, comma-separated column values for SQL statements. 
 //******************************************************************************
@@ -138,6 +165,23 @@ class Member
     return $list;
   }  
 
+/*
+//******************************************************************************
+// create a list of quoted, comma-separated writable column values for SQL statements. 
+//******************************************************************************
+  private function sql_column_value_list_writable() {
+    global $debug;
+    $list = "";
+    foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
+      if ($item != "stamp") {
+        $list = $list . "\"{$this->$item}\", ";
+      }
+    }
+    $list = rtrim($list, ", ");
+//    if ($debug) { echo "Member:sql_column_value_list()=$list.<br>"; }
+    return $list;
+  }  
+*/
 //******************************************************************************
 // create a list of pairs of column names with values, used for SQL INSERT    
 //******************************************************************************
@@ -145,27 +189,14 @@ class Member
     global $debug;
     $list = "";
     foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
-      $list = $list . "$item = \"{$this->$item}\", ";
+      if ($item != "stamp") {
+        $list = $list . "$item = \"{$this->$item}\", ";
+      }
     }
     $list = rtrim($list, ", ");
-//    if ($debug) { echo "Member:sql_column_name_value_pairs()=$list.<br>"; }
+    if ($debug) { echo "Member:sql_column_name_value_pairs()=$list.<br>"; }
     return $list;
   }  
-
-
-//******************************************************************************
-// constructor
-//******************************************************************************
-  function __construct()
-  {
-    global $debug;
-    if ($debug) { echo "Member:__construct.<br>"; }
-    $this->member_id = null;
-    $this->nickname = null;
-    $this->name_last = null;
-    $this->name_first = null;
-    $this->stamp = null;
-  }
 
 //******************************************************************************
 // set the data members of this member to the values found in $_POST.       
