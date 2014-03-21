@@ -1,13 +1,13 @@
 <?php # config.inc.php
-/******************************************************************************
- *  File name: config.inc.php
- *  Created by: David Demaree (from Larry Ullman)
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Set constants and error handler
+/**
+ * Set constants and error handler
+ * File name: config.inc.php
+ * @author David Demaree (from Larry Ullman) <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-18 Moved directory from poker to FuzzyLogic.  Added post_dump and session_dump.  DHD
  * 14-03-08 Original.  DHD
- *****************************************************************************/
+ */
 
 # ******************** #
 # ***** SETTINGS ***** #
@@ -35,6 +35,8 @@ if ($local) {
     define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');
     define('BASE_URL', 'http://localhost/dev/FuzzyLogic/');
     define('DB', '/path/to/mysql.inc.php');
+    define('TEST_URI', '/home/dave/dev/utl/html/');
+//    define('TEST_DB', '/home/dave/dev/utl/html/');
     
 } else {
 
@@ -69,7 +71,7 @@ if (!isset($debug)) {
 session_start();
 
 if (!isset($_SESSION['startTime'])) {
-  $_SESSION['startTime'] = date("M/d/y g:i:sa");
+    $_SESSION['startTime'] = date("M/d/y g:i:sa");
 }
 $_SESSION['counter'] += 1;
 
@@ -77,50 +79,54 @@ $_SESSION['counter'] += 1;
 # ******************** #
 
 
-function session_dump() {
-  # Dump _SESSION array
-  global $debug;
-  if ($debug) {
-#    echo '<pre>'; # formats list one per line
-    print "_SESSION var dump: ";
-    var_dump($_SESSION);
-    print ".<br/>";
+function session_dump() 
+{
+    # Dump _SESSION array
+    global $debug;
+    if ($debug) {
+#        echo '<pre>'; # formats list one per line
+        print "_SESSION var dump: ";
+        var_dump($_SESSION);
+        print ".<br/>";
 #    echo '</pre>';
-  }
+    }
 }
 
-function session_list() {
+function session_list() 
+{
   # List contents of the _SESSION array
-  global $debug;
-  if ($debug) {
-    echo '<pre>'; # formats list one per line
-    print "_SESSION var list: ";
-    var_dump($_SESSION);
-    print ".<br/>";
-    echo '</pre>';
-  }
+    global $debug;
+    if ($debug) {
+        echo '<pre>'; # formats list one per line
+        print "_SESSION var list: ";
+        var_dump($_SESSION);
+        print ".<br/>";
+        echo '</pre>';
+    }
 }
 
-function post_dump() {
-  # Dump _POST array
-  global $debug;
-  if ($debug) {
-    print "_POST var dump: ";
-    var_dump($_POST);
-    print ".<br/>";
-  }
+function post_dump() 
+{
+    # Dump _POST array
+    global $debug;
+    if ($debug) {
+        print "_POST var dump: ";
+        var_dump($_POST);
+        print ".<br/>";
+    }
 }
 
-function post_list() {
-  # List contents of the _POST array
-  global $debug;
-  if ($debug) {
-    echo '<pre>'; # formats list one per line
-    print "_POST var list: ";
-    var_dump($_POST);
-    print ".<br/>";
-    echo '</pre>';
-  }
+function post_list() 
+{
+    # List contents of the _POST array
+    global $debug;
+    if ($debug) {
+        echo '<pre>'; # formats list one per line
+        print "_POST var list: ";
+        var_dump($_POST);
+        print ".<br/>";
+        echo '</pre>';
+    }
 }
 
 

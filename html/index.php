@@ -1,8 +1,8 @@
 <?php # index.php
 /**
- *  Set up and show the page
+ *  Set up and show the page.
  *  File name: index.php
- *  @author David Demaree (from Larry Ulman) <dave.demaree@yahoo.com>
+ *  @author David Demaree <dave.demaree@yahoo.com> (from Larry Ulman) <dave.demaree@yahoo.com>
  *** History ***  
  * 14-03-18 Recovered member class include. Renamed classes to title case.  
             Added play-delt & from_page_id.  DHD
@@ -20,72 +20,78 @@ require('./includes/config.inc.php');
 
 // Determine which page to show:
 if (isset($_POST['main'])) {
-  $page_id = 'main';
+    $page_id = 'main';
 } elseif (isset($_POST['play'])) {
-  $page_id = 'play';
+    $page_id = 'play';
 } elseif (isset($_POST['p-find'])) {
-  $page_id = 'play-find';
+    $page_id = 'play-find';
 } elseif (isset($_POST['p-list'])) {
-  $page_id = 'play-list';
+    $page_id = 'play-list';
 } elseif (isset($_POST['p-updt'])) {
-  $page_id = 'play-updt';
+    $page_id = 'play-updt';
 } elseif (isset($_POST['p-delt'])) {
-  $page_id = 'play-delt';
+    $page_id = 'play-delt';
+} elseif (isset($_POST['p-burp'])) {
+    $page_id = 'play-burp';
 } elseif (isset($_POST['game'])) {
-  $page_id = 'game';
+    $page_id = 'game';
 } elseif (isset($_POST['join'])) {
-  $page_id = 'join';
+    $page_id = 'join';
 } elseif (isset($_GET['p'])) {
-  $page_id = $_GET['p'];
+    $page_id = $_GET['p'];
 } else {
-  $page_id = NULL;
+    $page_id = NULL;
 }
 
 // Determine which page to display:
 switch ($page_id) {
-  case 'play':
-    $page_file = 'player/player.inc.php';
-    $page_title = 'Players | Poker';
-    break;
-  case 'play-find':
-    $page_file = 'player/player.inc.php';
-    $page_title = 'Find | Players | Poker';
-    break;
-  case 'play-list':
-    $page_file = 'player/player.inc.php';
-    $page_title = 'List | Players | Poker';
-    break;
-  case 'play-updt':
-    $page_file = 'player/player.inc.php';
-    $page_title = 'Update | Players | Poker';
-    break;
-  case 'play-delt':
-    $page_file = 'player/player.inc.php';
-    $page_title = 'Update | Players | Poker';
-    break;
-  case 'game':
-    $page_file = 'game/game.inc.php';
-    $page_title = 'Games';
-    break;
- 
-  case 'join':
-    $page_file = 'seat/seat.inc.php';
-    $page_title = 'Reserve a Seat';
-    break;
- 
-  // Default is to include the main page.
-  default:
-    $page_file = 'main.inc.php';
-    $page_title = 'Poker';
-    break;
-   
+    case 'play':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Players | Poker';
+        break;
+    case 'play-find':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Find | Players | Poker';
+        break;
+    case 'play-list':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'List | Players | Poker';
+        break;
+    case 'play-updt':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Update | Players | Poker';
+        break;
+    case 'play-delt':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Delete | Players | Poker';
+        break;
+    case 'play-burp':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Burp | Players | Poker';
+        break;
+    case 'game':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Games';
+        break;
+  
+    case 'join':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Reserve a Seat';
+        break;
+  
+    // Default is to include the main page.
+    default:
+        $page_file = 'main.inc.php';
+        $page_title = 'Poker';
+        break;
+      
 } // End of main switch.
 
 //Make sure the file exists:
 
 if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
-  $page_file = 'main.inc.php';
-  $page_title = 'Poker Default Page';
+    $page_file = 'main.inc.php';
+    $page_title = 'Poker Default Page';
 }
 
 // Include the header file:

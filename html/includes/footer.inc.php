@@ -1,9 +1,9 @@
 
-    <br>
+        <br>
 <?php if ($debug) { echo "file:" . __FILE__ . ";VVVVVVV.<br>"; } ?>
-    <br>
-  </form>
+        <br>
+    </form>
 <?php if ($debug) { echo "file:" . __FILE__ . ";^^^^^^^.<br>"; } ?>
- </body>
+  </body>
 </html>
 

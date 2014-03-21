@@ -1,13 +1,12 @@
 <?php  # player.form.init.php
-/******************************************************************************
- *  File name: player.form.init.php
- *  Created by: David Demaree
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Initialization for the html form for a single player
+/**
+ * Initialization of the html form for a single player
+ * File name: player.form.init.php
+ * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
  * 14-03-18 Added stats fields to player_form_fields.  DHD
  * 14-03-08 Original.  DHD
- *****************************************************************************/
+ */
 # player record to be used for this page
 $plyr = new Player;
 # list of form fields to process
@@ -20,9 +19,12 @@ $error_msgs = array();
 $error_msgs['count'] = 0;
 $error_msgs['errorDiv'] = "";
 foreach ($player_form_fields as $field) {
-  $error_msgs["$field"] = "";
+    $error_msgs["$field"] = "";
 }
 
 #if ($debug) { foreach ($error_msgs as $col => $val) { echo "plyr.error_field=$col:$val.<br>"; } }
+//******************************************************************************
+// End of player.form.init.php
+//******************************************************************************
 ?>
 

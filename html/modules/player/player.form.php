@@ -1,7 +1,7 @@
 <?php  # player.form.php
 /******************************************************************************
  *  File name: player.form.php
- *  Created by: David Demaree
+ *  @author David Demaree <dave.demaree@yahoo.com>
  *  Contact: dave.demaree@yahoo.com
  *  Purpose: Shows the html form for a single player
  *** History ***  

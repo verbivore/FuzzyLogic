@@ -1,22 +1,22 @@
 <?php  # player.list.form.php
-/******************************************************************************
- *  File name: player.list.form.php
- *  Created by: David Demaree
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Shows the html form for a list of players
+/**
+ * Shows the html form for a list of players
+ * File name: player.list.form.php
+ * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-19 Original.  DHD
  * Future
- *****************************************************************************/
+ */
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 /*
 # set banner message and style
 $message_banner = "{$error_msgs['errorDiv']}";
 if ("{$error_msgs['count']}" != "0") {
-  $message_class = "errorClass";
-  $message_banner .= " ({$error_msgs['count']}).";
+    $message_class = "errorClass";
+    $message_banner .= " ({$error_msgs['count']}).";
 } else {
-  $message_class = "infoClass";
+    $message_class = "infoClass";
 }
 */
 $message_class = "infoClass";
@@ -26,11 +26,11 @@ $message_banner = "message banner";
 # ************************* #
 # ***** Show the form ***** #
 
-    echo "*** Dump players *** ({$players->playerCount} players)<br>";
+if ($debug) { echo "*** Dump players *** ({$players->playerCount} players)<br>"; }
 ?>
   <div>
     <fieldset>
-      <legend> Player List </legend>
+      <legend> Player List (<?php echo "{$players->playerCount} players)"; ?> </legend>
       <div id="errorDiv" <?php echo "class={$message_class} >{$message_banner}"; ?> </div> 
       <p>
         <table border='1'>
@@ -51,19 +51,19 @@ $message_banner = "message banner";
 <?php  
     foreach ($players->playerList as $row) {
 //      $counter++;
-      echo "<tr>";
-      echo "<td>" . $row->get_member_id() . "</td>";
-      echo "<td>" . $row->get_nickname() . "</td>";
-      echo "<td>" . $row->get_name_last() . "</td>";
-      echo "<td>" . $row->get_name_first() . "</td>";
-      echo "<td>" . $row->get_invite_cnt() . "</td>";
-      echo "<td>" . $row->get_yes_cnt() . "</td>";
-      echo "<td>" . $row->get_maybe_cnt() . "</td>";
-      echo "<td>" . $row->get_no_cnt() . "</td>";
-      echo "<td>" . $row->get_flake_cnt() . "</td>";
-      echo "<td>" . $row->get_score() . "</td>";
-      echo "<td>" . $row->get_stamp() . "</td>";
-      echo "</tr>";
+        echo "<tr>";
+        echo "<td>" . $row->get_member_id() . "</td>";
+        echo "<td>" . $row->get_nickname() . "</td>";
+        echo "<td>" . $row->get_name_last() . "</td>";
+        echo "<td>" . $row->get_name_first() . "</td>";
+        echo "<td>" . $row->get_invite_cnt() . "</td>";
+        echo "<td>" . $row->get_yes_cnt() . "</td>";
+        echo "<td>" . $row->get_maybe_cnt() . "</td>";
+        echo "<td>" . $row->get_no_cnt() . "</td>";
+        echo "<td>" . $row->get_flake_cnt() . "</td>";
+        echo "<td>" . $row->get_score() . "</td>";
+        echo "<td>" . $row->get_stamp() . "</td>";
+        echo "</tr>";
     }
     echo "</table>";
 ?>

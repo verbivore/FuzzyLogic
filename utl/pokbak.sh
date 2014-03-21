@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-cd ~/dev/poker
+cd ~/dev/FuzzyLogic
 bak -n99 -s $* utl/*
 bak -n99 -s $* utl/data/*
 bak -n99 -s $* utl/work/*
