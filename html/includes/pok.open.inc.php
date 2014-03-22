@@ -3,24 +3,26 @@
 $host="localhost";
 $dbname="poker";
 #$username="root";
-#$password="foobar";
+#$directory="foobar";
 $username = getenv('APACHE_DEV_USER');
-$password = getenv('APACHE_DEV_DIR');
+$directory = getenv('APACHE_DEV_DIR');
 $dsn="mysql:host=$host;dbname=$dbname;charset=utf8";
 
-if ($debug) { echo "pok_open:$username:$password.<br>"; }
+if ($debug) { echo "pok_open:$username:$directory.<br>"; }
 
 try {
     unset ($pokdb);
-    $pokdb = new PDO($dsn, $username, $password);
+    $pokdb = new PDO($dsn, $username, $directory);
     $pokdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 #  if ($debug) { echo "poker database open successful.<br>"; }
 //    var_dump($pokdb);
 //    echo ".<br>";
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     echo "PDO Exception: ".$e->getCode().": ".$e->getMessage()."<br>";
     exit();
-} catch (Exception $e) {
+} 
+catch (Exception $e) {
     echo "Exception: ".$e->getCode().": ".$e->getMessage()."<br>";  
     exit();
 }

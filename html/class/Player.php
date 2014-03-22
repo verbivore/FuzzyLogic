@@ -1,8 +1,10 @@
 <?php
 /**
- *   Class definition for a player.
- *   File name: Player.php
- *   @author David Demaree <dave.demaree@yahoo.com>
+ * Class definition for a player.
+ * File name: Player.php
+ * @author David Demaree <dave.demaree@yahoo.com>
+ * Future: Add bonus_cnt attribute.
+ * Future: Get the "ON UPDATE CURRENT_TIMESTAMP" working.
  * ** History ***  
  *  14-03-20 Updated for phpDoc.  DHD
  *  14-03-18 Fixed final echo in insert().  Updated 2210 message. 
@@ -426,18 +428,20 @@ require(BASE_URI . "includes/pok_open.inc.php");
 
 /**
  * update a members row from a player object                         
+ * Future: use Members::update?
  */
     public function update()
     {
         global $debug;
-        if ($debug) { echo "player.update:vvv:$this->member_id.<br/
+        if ($debug) { echo "player.update:vvv:$this->member_id:$this->stamp.<br/
 >"; }
         $val_errors = $this->validate();
 //    if ($debug) { echo "player.update error list size:"; echo sizeof($val_errors); echo ".<br>"; }
         if (sizeof($val_errors) == 0 ) {
             try {
-                require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok_open.inc.php");
                 # update player
+                $this->set_stamp(null);
                 $update = "UPDATE members SET {$this->sql_column_name_value_pairs()} " . 
                       " WHERE member_id = \"{$this->member_id}\" ";
                 if ($debug) { echo "player:update:stmt_str=$update.<br>"; }

@@ -1,13 +1,13 @@
 <?php
 /**
- *  File name: PlayerArray.php
+ *  Class definition for an array of player
  *  @author David Demaree <dave.demaree@yahoo.com>
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Class definition for a player
  *** History ***  
  * 14-03-20 Updated __construct to ignore 2210.  DHD
  * 14-03-18 Changed name to title case.  DHD
  * 14-03-08 Original.  DHD
+ * Future:
+ * Incorporate games stats to player score.
  */
 class PlayerArray extends player
 {

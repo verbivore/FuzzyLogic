@@ -128,6 +128,7 @@ if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
         <span class="errorFeedback errorSpan" id="scoreError" > <?php echo $error_msgs['score']?> </span>
       <br />
 -->
+    </fieldset>
   </div>
 <?php
 $_POST['stamp'] = $plyr->get_stamp();

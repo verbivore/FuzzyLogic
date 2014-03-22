@@ -35,6 +35,25 @@ if (isset($_POST['main'])) {
     $page_id = 'play-burp';
 } elseif (isset($_POST['game'])) {
     $page_id = 'game';
+} elseif (isset($_POST['g-prev'])) {
+    $page_id = 'game-prev';
+} elseif (isset($_POST['g-find'])) {
+    $page_id = 'game-find';
+} elseif (isset($_POST['g-next'])) {
+    $page_id = 'game-next';
+} elseif (isset($_POST['g-list'])) {
+    $page_id = 'game-list';
+} elseif (isset($_POST['g-updt'])) {
+    $page_id = 'game-updt';
+} elseif (isset($_POST['g-delt'])) {
+    $page_id = 'game-delt';
+} elseif (isset($_POST['g-burp'])) {
+    $page_id = 'game-burp';
+
+
+
+
+
 } elseif (isset($_POST['join'])) {
     $page_id = 'join';
 } elseif (isset($_GET['p'])) {
@@ -73,6 +92,38 @@ switch ($page_id) {
         $page_file = 'game/game.inc.php';
         $page_title = 'Games';
         break;
+
+
+    case 'game-prev':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Previous | Games | Poker';
+        break;
+    case 'game-find':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Find | Games | Poker';
+        break;
+    case 'game-next':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Next | Games | Poker';
+        break;
+    case 'game-list':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'List | Games | Poker';
+        break;
+    case 'game-updt':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Update | Games | Poker';
+        break;
+    case 'game-delt':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Delete | Games | Poker';
+        break;
+    case 'game-burp':
+        $page_file = 'game/game.inc.php';
+        $page_title = 'Burp | Games | Poker';
+        break;
+
+
   
     case 'join':
         $page_file = 'seat/seat.inc.php';
@@ -101,6 +152,7 @@ if ($debug) { echo "file:" . __FILE__ . ";>>>>>>>.<br>"; }
 require_once(BASE_URI . 'class/Member.php');
 require_once(BASE_URI . 'class/Player.php');
 require_once(BASE_URI . 'class/PlayerArray.php');
+require_once(BASE_URI . 'class/Game.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.

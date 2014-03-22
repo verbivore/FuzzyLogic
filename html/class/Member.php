@@ -343,6 +343,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
 /**
  * insert a members row from a member object
  */
+/* not used yet
     public function insert()
     {
         global $debug;
@@ -378,10 +379,11 @@ require(BASE_URI . "includes/pok_open.inc.php");
 //    $inserted_member_id = $pokdb->lastInsertId(); 
 //    if ($debug) { echo "Member number:$inserted_member_id.<br>"; }
     }
-
+*/
 /**
  * update a members row from a member object                         
  */
+/* not used yet
     public function update()
     {
         global $debug;
@@ -415,7 +417,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         }
         if ($debug) { echo "Member.update:end:$this->member_id:$this->eff_date.<br>"; }
     }
-
+*/
 /**
  * create a fictitious member for test purposes                         
  */
