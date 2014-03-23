@@ -21,7 +21,7 @@ class PlayerArray extends player
         $this->playerCount = 0;
         try {
 # Open poker database
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
             # get number of players
             $query = "SELECT COUNT(member_id) AS playerCount FROM members ";
             if ($debug) { echo "PlayerArray:players:count:query=$query.<br>"; }

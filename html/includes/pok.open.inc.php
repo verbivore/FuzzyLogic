@@ -2,13 +2,15 @@
 # open poker db
 $host="localhost";
 $dbname="poker";
-#$username="root";
-#$directory="foobar";
+
 $username = getenv('APACHE_DEV_USER');
 $directory = getenv('APACHE_DEV_DIR');
+
+#$username="root";
+#$directory="foobar";
 $dsn="mysql:host=$host;dbname=$dbname;charset=utf8";
 
-if ($debug) { echo "pok_open:$username:$directory.<br>"; }
+//if ($debug) { echo "pok.open:$username:$directory.<br>"; }
 
 try {
     unset ($pokdb);
@@ -19,11 +21,13 @@ try {
 //    echo ".<br>";
 } 
 catch (PDOException $e) {
-    echo "PDO Exception: ".$e->getCode().": ".$e->getMessage()."<br>";
+    echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br>";
+    echo $e->getCode() . ": " . $e->getMessage() . "<br>";
     exit();
 } 
 catch (Exception $e) {
-    echo "Exception: ".$e->getCode().": ".$e->getMessage()."<br>";  
+    echo "Exception: " . __FILE__ . " line: " . __LINE__ . "<br>";
+    echo $e->getCode() . ": " . $e->getMessage() . "<br>";
     exit();
 }
 ?>

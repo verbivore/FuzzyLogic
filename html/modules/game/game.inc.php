@@ -106,13 +106,13 @@ function gameNew() {
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
 
-    if ($debug) { echo "gamz:gamzNew.<br>"; }
+    if ($debug) { echo "gameNew.<br>"; }
 
     # Get the next available game id number
-    $gamz->get_next_id();
+    $gamz->getNew();
     $error_msgs['errorDiv'] = "Add new game:";
 
-    if ($debug) { echo "gamz:gamzNew:end={$gamz->get_game_id()}.<br>"; }
+    if ($debug) { echo "gameNew:end={$gamz->get_game_id()}.<br>"; }
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
@@ -130,13 +130,13 @@ function gameDelete() {
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
 
-    if ($debug) { echo "gamz:gamzDelete.<br>"; }
+    if ($debug) { echo "gameDelete.<br>"; }
     $gamz->set_to_POST();
     # Get the next available game id number
     $gamz->delete();
 //    $error_msgs['errorDiv'] = "Delete game not yet implemented.";
 
-    if ($debug) { echo "gamz:gamzDelete:end={$gamz->get_game_id()}.<br>"; }
+    if ($debug) { echo "gameDelete:end={$gamz->get_game_id()}.<br>"; }
 
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "game deleted.";
@@ -165,8 +165,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
     if ($debug) { echo "gameFind:{$gamz->get_game_id()}. <br>"; }
     try {
         $gamz->get($findType);
-    }
-    catch (gameException $d) {
+    } catch (gameException $d) {
         #echo "gamz get failed:{$gamz->get_game_id()}.<br>";
         switch ($d->getCode()) {
         case 32210:  # no games rows
@@ -188,12 +187,111 @@ require(BASE_URI . "modules/game/game.form.init.php");
     }
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "game found.";
+#        gameGetNames();
+
+    $mmbr = new Member();
+    $mmbr->set_member_id($gamz->get_member_snack());
+    try {
+        $mmbr->get();
+        $member_names['snack'] = $mmbr->get_full_name();
+    } catch (Exception $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names['snack'] = null;
+            break;
+        default:
+            echo "gameFind snack name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
+    }
+    $mmbr->set_member_id($gamz->get_member_host());
+    try {
+        $mmbr->get();
+        $member_names['host'] = $mmbr->get_full_name();
+    } catch (Exception $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names['host'] = null;
+            break;
+        default:
+            echo "gameFind host name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
+    }
+    $mmbr->set_member_id($gamz->get_member_gear());
+    try {
+        $mmbr->get();
+        $member_names['gear'] = $mmbr->get_full_name();
+    } catch (Exception $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names['gear'] = null;
+            break;
+        default:
+            echo "gameFind gear name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
+    }
+    $mmbr->set_member_id($gamz->get_member_caller());
+    try {
+        $mmbr->get();
+        $member_names['caller'] = $mmbr->get_full_name();
+    } catch (Exception $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names['caller'] = null;
+            break;
+        default:
+            echo "gameFind caller name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
     }
 
-    if ($debug) { echo "gamz:gameFind:end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}.<br>"; }
+
+
+    }
+
+    if ($debug) { echo "gameFind:end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}.<br>"; }
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
+
+}
+
+/**
+ * Search for an existing game and display the results
+ */
+function gameGetNames() {
+    # declare globals
+    global $debug, $gamz, $member_names;
+    if ($debug) { echo "gameGetNames={$_POST['game_id']}.<br>"; }
+    $mmbr = new Member();
+    $mmbr->set_member_id($gamz->get_member_snack());
+    try {
+        $mmbr->get();
+        $member_names['snack'] = $mmbr->get_full_name();
+    } catch (gameException $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names['snack'] = null;
+            break;
+        default:
+            echo "gameFind snack name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
+    }
+
+    if ($debug) { echo "gameGetNames:end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}.<br>"; }
 
 }
 
@@ -202,7 +300,7 @@ require(BASE_URI . "modules/game/game.form.php");
  */
 function gameTest() {
     global $debug, $gamz, $error_msgs;
-    if ($debug) { echo "gamz:gameTest.<br>"; }
+    if ($debug) { echo "gameTest.<br>"; }
     #post_dump();
 
 # initialize the game form
@@ -215,7 +313,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
 
-    if ($debug) { echo "gamz:gamzTest:end={$gamz->get_game_id()}.<br>"; }
+    if ($debug) { echo "gamzTest:end={$gamz->get_game_id()}.<br>"; }
 
 }
 

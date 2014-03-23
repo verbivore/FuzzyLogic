@@ -174,7 +174,11 @@ class Player extends Member
         global $debug;
         $list = "";
         foreach ($this->PLAYER_TABLE_COLUMNS as $item) {
-            $list = $list . "$item = \"{$this->$item}\", ";
+            if ($item == "stamp") { # stamp must be null for auto-update
+                $list = $list . "$item = NULL, ";
+            } else {
+                $list = $list . "$item = \"{$this->$item}\", ";
+            }
         }
         $list = rtrim($list, ", ");
 //    if ($debug) { echo "player:sql_column_name_value_pairs()=$list.<br>"; }
@@ -204,7 +208,7 @@ class Player extends Member
         global $debug;
 #    if ($debug) { echo "player:get={$this->member_id}.<br>"; }
         try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
             # get players row
             $query = "SELECT * FROM members " . 
                                   "WHERE member_id = \"$this->member_id\" ";
@@ -242,8 +246,8 @@ require(BASE_URI . "includes/pok_open.inc.php");
                 throw new playerException('Multiple records for player ' . $this->member_id . ' were found', 2212);
             }
         } catch (PDOException $e) {
-            echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br/>";
-            echo $e->getCode() . ": " . $e->getMessage() . "<br/>";  
+            echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br>";
+            echo $e->getCode() . ": " . $e->getMessage() . "<br>";  
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -307,7 +311,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         global $debug;
 #    if ($debug) { echo "get_next_id:"; }
         try {
-            require(BASE_URI . "includes/pok_open.inc.php");
+            require(BASE_URI . "includes/pok.open.inc.php");
             # get player table
             $stmt = $pokdb->prepare("SELECT MAX(member_id) FROM members");
             $stmt->execute();
@@ -368,7 +372,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         $row_count = -1;
         if ($debug) { echo "player:find={$this->member_id}.<br>"; }
         try {
-            require(BASE_URI . "includes/pok_open.inc.php");
+            require(BASE_URI . "includes/pok.open.inc.php");
             # find player rows
             $query = "SELECT * FROM members " . 
                                   "WHERE member_id = \"$this->member_id\"  ";
@@ -398,7 +402,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         $val_errors = ($this->validate());
         if (sizeof($val_errors) == 0 ) {
             try {
-                require(BASE_URI . "includes/pok_open.inc.php");
+                require(BASE_URI . "includes/pok.open.inc.php");
                 # insert player FUTURE: move to Member
                 $query = "INSERT INTO members ({$this->sql_column_name_list()}) " .
                   "VALUES ({$this->sql_column_value_list()})" ;
@@ -433,13 +437,12 @@ require(BASE_URI . "includes/pok_open.inc.php");
     public function update()
     {
         global $debug;
-        if ($debug) { echo "player.update:vvv:$this->member_id:$this->stamp.<br/
->"; }
+        if ($debug) { echo "player.update:vvv:$this->member_id:$this->stamp.<br>"; }
         $val_errors = $this->validate();
 //    if ($debug) { echo "player.update error list size:"; echo sizeof($val_errors); echo ".<br>"; }
         if (sizeof($val_errors) == 0 ) {
             try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
                 # update player
                 $this->set_stamp(null);
                 $update = "UPDATE members SET {$this->sql_column_name_value_pairs()} " . 
@@ -471,12 +474,11 @@ require(BASE_URI . "includes/pok_open.inc.php");
     public function delete()
     {
         global $debug;
-        if ($debug) { echo "player.delete:vvv:$this->member_id.<br/
->"; }
+        if ($debug) { echo "player.delete:vvv:$this->member_id.<br>"; }
 //        if ($debug) { echo "player.delete error list size:"; echo sizeof($val_errors); echo ".<br>"; }
 //        if (sizeof($val_errors) == 0 ) {
             try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
                 # delete attendance
                 $delete = "DELETE FROM seats " . 
                       " WHERE member_id = \"{$this->member_id}\" ";
@@ -516,6 +518,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         # id
         $this->get_next_id();
 require(TEST_URI . "testdb.open.php"); #
+        # surname
         $nameCount = $this->getRowCount($testdb, "surnames");
         $nameId = rand(1, $nameCount);
         $query="SELECT * FROM surnames WHERE name_id = $nameId";
@@ -557,6 +560,7 @@ require(TEST_URI . "testdb.open.php"); #
         }
 
 #  echo "Next this:{$this->get_member_id()}.<br>";
+        # nickname
         $this->set_nickname("M");
 
         if ($debug) { echo "player.testData:^^^.<br>"; }

@@ -23,8 +23,8 @@ SELECT '       * Creating poker users' AS 'STATUS:***********************';
 SELECT user FROM mysql.user;
 DROP USER 'juik'@'localhost';
 CREATE USER 'juik'@'localhost' IDENTIFIED BY 'kiuj';
-GRANT ALL PRIVILEGES ON poker TO 'juik'@'localhost';
-GRANT ALL PRIVILEGES ON poker TO 'dave'@'localhost';
+GRANT ALL PRIVILEGES ON poker.* TO 'juik'@'localhost';
+GRANT ALL PRIVILEGES ON poker.* TO 'dave'@'localhost';
 SHOW GRANTS FOR 'juik'@'localhost';
 
 #*****************************************

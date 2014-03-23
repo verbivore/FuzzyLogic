@@ -47,6 +47,8 @@ class Member
     public function get_name_last() { return ($this->name_last); }
     public function get_name_first() { return $this->name_first; }
     public function get_stamp() { return $this->stamp; }
+    public function get_full_name() { return $this->name_first . " '" .  $this->nickname . "' " . $this->name_last; }
+   
 
 /**
  * Setters
@@ -218,7 +220,7 @@ class Member
         global $debug;
 #    if ($debug) { echo "Member:get={$this->member_id}.<br>"; }
         try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
             # get members row
             $query = "SELECT * FROM members " . 
                                   "WHERE member_id = \"$this->member_id\" ";
@@ -233,11 +235,11 @@ require(BASE_URI . "includes/pok_open.inc.php");
             } elseif ($row_count < 1) {
 #        if ($debug) { echo "Member:get=member not found.<br>"; }
                 #error_log($e->getTraceAsString());
-                throw new memberException('No records for this member were found', 2210);
+                throw new Exception('No records for this member were found', 32210);
             } else {
 #        if ($debug) { echo "Member:get=multiple member records found.<br>"; }
                 #error_log($e->getTraceAsString());
-                throw new memberException('Multiple records for this member were found', 2211);
+                throw new Exception('Multiple records for this member were found', 32211);
             }
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
@@ -266,7 +268,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         global $debug;
 #    if ($debug) { echo "get_next_id:"; }
         try {
-            require(BASE_URI . "includes/pok_open.inc.php");
+            require(BASE_URI . "includes/pok.open.inc.php");
             # get member table
             $stmt = $pokdb->prepare("SELECT MAX(member_id) FROM members");
             $stmt->execute();
@@ -321,7 +323,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         $row_count = -1;
         if ($debug) { echo "Member:find={$this->member_id}:{$this->eff_date}.<br>"; }
         try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
             # find member rows
             $query = "SELECT * FROM members " . 
                                   "WHERE member_id = \"$this->member_id\"  ";
@@ -353,7 +355,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
         $val_errors = ($this->validate());
         if (sizeof($val_errors) == 0 ) {
             try {
-require(BASE_URI . "includes/pok_open.inc.php");
+require(BASE_URI . "includes/pok.open.inc.php");
                 # insert member
                 $query = "INSERT INTO members ({$this->sql_column_name_list()}) " .
                   "VALUES ({$this->sql_column_value_list()})" ;
@@ -393,7 +395,7 @@ require(BASE_URI . "includes/pok_open.inc.php");
 //    if ($debug) { echo "Member.update error list size:"; echo sizeof($val_errors); echo ".<br>"; }
         if (sizeof($val_errors) == 0 ) {
             try {
-                require(BASE_URI . "includes/pok_open.inc.php");
+                require(BASE_URI . "includes/pok.open.inc.php");
                 # update member
                 $update = "UPDATE members SET {$this->sql_column_name_value_pairs()} " . 
                       " WHERE member_id = \"{$this->member_id}\" AND eff_date = \"{$this->eff_date}\" ";
