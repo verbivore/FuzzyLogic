@@ -1,0 +1,10 @@
+# gedit backup files
+*~
+
+# bakcup directories
+bak/
+*/bak/
+*/*/bak/
+
+# experimental files
+/utl/work/
