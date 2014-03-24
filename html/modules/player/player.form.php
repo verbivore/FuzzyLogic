@@ -8,7 +8,8 @@
  * 14-03-18 Changed stats fields to readonly.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+dbg("+include file:".__FILE__);
+//if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 # set banner message and style
 $message_banner = "{$error_msgs['errorDiv']}";
 if ("{$error_msgs['count']}" != "0") {
@@ -18,7 +19,7 @@ if ("{$error_msgs['count']}" != "0") {
   $message_class = "infoClass";
 }
 
-if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
+dbg(" ".__FUNCTION__."plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>");
 
 # ************************* #
 # ***** Show the form ***** #
@@ -77,6 +78,11 @@ if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
               value="<?php echo "{$plyr->get_score()}"; ?>" >
         <span class="errorFeedback errorSpan" id="scoreError" > <?php echo $error_msgs['score']?> </span>
       <br />
+      <fieldlabel for="stamp">stamp: </fieldlabel>
+        <input type="number" id="stamp" name="score" size="10" maxsize="20" readonly="true" 
+              value="<?php echo "{$plyr->get_stamp()}"; ?>" >
+        <span class="errorFeedback errorSpan" id="stampError" > <?php echo $error_msgs['stamp']?> </span>
+      <br />
 <!--
       <br />
       <fieldlabel for="yesses">Yesses: </fieldlabel> <?php echo "{$plyr->get_yes_cnt()}"; ?>
@@ -132,7 +138,8 @@ if ($debug) { echo "plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>"; }
   </div>
 <?php
 $_POST['stamp'] = $plyr->get_stamp();
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+//if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("-include file:".__FILE__);
 # ***** Show the form ***** #
 # ************************* #
 ?>

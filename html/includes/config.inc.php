@@ -30,6 +30,8 @@ if ($local) {
 
     // Always debug when running locally:
     $debug = TRUE;
+    $_SESSION['dbug'] = TRUE;
+//    $_SESSION['dbug'] = 0;
     
     // Define the constants:
     define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');
@@ -70,8 +72,14 @@ if (!isset($debug)) {
 # initializing php code for the first page
 session_start();
 
+if (!isset($from_page_id)) {
+    $from_page_id = "new";
+}
 if (!isset($_SESSION['startTime'])) {
     $_SESSION['startTime'] = date("M/d/y g:i:sa");
+}
+if (!isset($_SESSION['counter'])) {
+    $_SESSION['counter'] = 0;
 }
 $_SESSION['counter'] += 1;
 
@@ -128,6 +136,35 @@ function post_list()
         echo '</pre>';
     }
 }
+
+function dbg($parm) 
+{
+    $preChar = ">";
+    static $depth = 0;
+//session_list();
+    if ($_SESSION['dbug']) {
+        $prefix = "";
+        $direction = substr($parm, 0, 1);
+        if ($direction == "+") {
+            $depth++;
+            $prefix = str_repeat("+", $depth);
+        } elseif ($direction == "-") {
+            $prefix = str_repeat("-", $depth);
+            $depth--;
+        } else {
+            $prefix = str_repeat("=", $depth);
+        }
+        echo '<div class="dbgClass">';
+        echo $prefix . ":" . $parm . ".<br\n>";
+        echo '</div>';
+    }
+//        echo '<span class="dbgClass"'; # formats list one per line
+//        echo $prefix . ":" . $parm;
+//        echo '>' . ".<br\n>";
+
+}
+
+
 
 
 

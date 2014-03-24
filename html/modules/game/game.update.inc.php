@@ -15,7 +15,7 @@ function gameUpdate() {
  * Add or Update                                                           
  */
     # declare globals
-    global $debug, $gamz, $game_form_fields, $error_msgs;
+    global $debug, $gamz, $game_form_fields, $error_msgs, $member_names;
     if ($debug) { echo "function:" . __FUNCTION__ . "={$_POST['game_id']}.<br>"; }
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
@@ -68,6 +68,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
                 echo "Game Previous exception:{$gamz->get_game_id()}:" . $p->getMessage() . ".<br>";
                 throw new Exception($p);
             }
+            
 #      if ($d->getCode() > 0) {  # Assume that message is user-friendly
 #      } else {  # Undefined error
         } 
@@ -82,6 +83,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
         # get the new row to verify and get stamp
         try {
             $gamz->get("");
+            gameGetNames();
         } catch (gameException $d) {
             echo "Game insert/update failed:{$gamz->get_game_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
             $p = new Exception($d->getPrevious());

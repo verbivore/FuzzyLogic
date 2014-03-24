@@ -10,21 +10,27 @@
  */
 
 /*
-<?php if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; } ?>
-<?php if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; } ?>
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+<?php dbg("include:" . __FILE__ . ";VVVVVVV");?>
+<?php dbg("include:" . __FILE__ . ";^^^^^^^"); ?>
+dbg("include:" . __FILE__ . ";VVVVVVV");
 tail -f /var/log/apache2/*.log
 */
 // Require the configuration file before any PHP code:
 require('./includes/config.inc.php');
+
+$_SESSION['dbug'] = TRUE;
 
 // Determine which page to show:
 if (isset($_POST['main'])) {
     $page_id = 'main';
 } elseif (isset($_POST['play'])) {
     $page_id = 'play';
+} elseif (isset($_POST['p-prev'])) {
+    $page_id = 'play-prev';
 } elseif (isset($_POST['p-find'])) {
     $page_id = 'play-find';
+} elseif (isset($_POST['p-next'])) {
+    $page_id = 'play-next';
 } elseif (isset($_POST['p-list'])) {
     $page_id = 'play-list';
 } elseif (isset($_POST['p-updt'])) {
@@ -33,6 +39,7 @@ if (isset($_POST['main'])) {
     $page_id = 'play-delt';
 } elseif (isset($_POST['p-burp'])) {
     $page_id = 'play-burp';
+
 } elseif (isset($_POST['game'])) {
     $page_id = 'game';
 } elseif (isset($_POST['g-prev'])) {
@@ -50,10 +57,6 @@ if (isset($_POST['main'])) {
 } elseif (isset($_POST['g-burp'])) {
     $page_id = 'game-burp';
 
-
-
-
-
 } elseif (isset($_POST['join'])) {
     $page_id = 'join';
 } elseif (isset($_GET['p'])) {
@@ -68,9 +71,17 @@ switch ($page_id) {
         $page_file = 'player/player.inc.php';
         $page_title = 'Players | Poker';
         break;
+    case 'play-prev':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Previous | Player | Poker';
+        break;
     case 'play-find':
         $page_file = 'player/player.inc.php';
-        $page_title = 'Find | Players | Poker';
+        $page_title = 'Find | Player | Poker';
+        break;
+    case 'play-next':
+        $page_file = 'player/player.inc.php';
+        $page_title = 'Next | Player | Poker';
         break;
     case 'play-list':
         $page_file = 'player/player.inc.php';
@@ -78,20 +89,24 @@ switch ($page_id) {
         break;
     case 'play-updt':
         $page_file = 'player/player.inc.php';
-        $page_title = 'Update | Players | Poker';
+        $page_title = 'Update | Player | Poker';
         break;
     case 'play-delt':
         $page_file = 'player/player.inc.php';
-        $page_title = 'Delete | Players | Poker';
+        $page_title = 'Delete | Player | Poker';
         break;
     case 'play-burp':
         $page_file = 'player/player.inc.php';
-        $page_title = 'Burp | Players | Poker';
+        $page_title = 'Burp | Player | Poker';
         break;
+
+
+
     case 'game':
         $page_file = 'game/game.inc.php';
         $page_title = 'Games';
         break;
+
 
 
     case 'game-prev':
@@ -147,22 +162,25 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 
 // Include the header file:
 require('./includes/header.inc.php');
-if ($debug) { echo "file:" . __FILE__ . ";>>>>>>>.<br>"; }
+dbg("file:" . __FILE__ . ";>>>>>>>");
+dbg("+include >>>>>:" . __FILE__);
 // Include the module files:
 require_once(BASE_URI . 'class/Member.php');
 require_once(BASE_URI . 'class/Player.php');
 require_once(BASE_URI . 'class/PlayerArray.php');
 require_once(BASE_URI . 'class/Game.php');
+require_once(TEST_URI . 'testPerson.class.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.
 #echo "tail -f /var/log/apache2/*.log <br>";
-if ($debug) { echo "page_id=$page_id, page_file=$page_file, page_title=$page_title.<br>"; }
+dbg("page_id=$page_id, page_file=$page_file, page_title=$page_title.");
 require(BASE_URI . 'modules/' . $page_file);
 
 // Include the footer file to complete the template:
 require(BASE_URI . 'includes/footer.inc.php');
 $_SESSION['from_page_id'] = $page_id;
-if ($debug) { echo "file:" . __FILE__ . ";^^^^^^^.<br>"; }
+//dbg("file:" . __FILE__ . ";^^^^^^^.");
+//dbg("-include ^^^^^:" . __FILE__);
 ?>
 

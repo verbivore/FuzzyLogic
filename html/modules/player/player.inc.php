@@ -4,6 +4,7 @@
  * File name: player.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added prev/next buttons.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-19 Added button attributes.  DHD
  * 14-03-18 Removed playerListDeprecated.  Stubbed playerDelete().  DHD
@@ -13,12 +14,14 @@
  * After list, Find & Delete buttons show blank form, Update button goes to playerNew.
  */
 
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
-if ($debug) { echo "include file=player.inc.php:$page_id.<br>"; }
-post_dump();
-session_dump();
+dbg("+include:" . __FILE__ . "");
+dbg(" ".__FUNCTION__.":$page_id");
+//post_dump();
+//session_dump();
 require(BASE_URI . "modules/player/player.update.inc.php");
+$butt_att_prev = "";
 $butt_att_find = "";
+$butt_att_next = "";
 $butt_att_updt = "";
 $butt_att_list = "";
 $butt_att_delt = "";
@@ -26,11 +29,31 @@ $butt_att_burp = "";
 
 // Determine which page to display:
 switch ($page_id) {
+    case 'play-prev':
+        if ($_SESSION['from_page_id'] == 'play-list') {
+            # find first game
+            $_POST['player_id'] = 0;
+            playerFind("next");
+        } else {
+            playerFind("prev");
+        }
+        break;
     case 'play-find':
         if ($_SESSION['from_page_id'] == 'play-list') {
-            playerNew();
+            # find first game
+            $_POST['player_id'] = 9999;
+            playerFind("prev");
         } else {
-            playerFind();
+            playerFind("");
+        }
+        break;
+    case 'play-next':
+        if ($_SESSION['from_page_id'] == 'play-list') {
+            # find first game
+            $_POST['player_id'] = 9999;
+            playerFind("prev");
+        } else {
+            playerFind("next");
         }
         break;
     case 'play-list':
@@ -72,15 +95,17 @@ switch ($page_id) {
 ?> 
 
 <!--  Player tab buttons  -->
-    <input type="submit" id="find" name="p-find" value="Find"   <?php echo "$butt_att_find"; ?> >
-    <input type="submit" id="updt" name="p-updt" value="Update" <?php echo "$butt_att_updt"; ?> >
-    <input type="submit" id="list" name="p-list" value="List"   <?php echo "$butt_att_list"; ?> >
-    <input type="submit" id="delt" name="p-delt" value="Delete" <?php echo "$butt_att_delt"; ?> >
+    <input type="submit" id="prev" name="p-prev" value="Previous" <?php echo "$butt_att_prev"; ?> >
+    <input type="submit" id="find" name="p-find" value="Find"     <?php echo "$butt_att_find"; ?> >
+    <input type="submit" id="next" name="p-next" value="Next"     <?php echo "$butt_att_next"; ?> >
+    <input type="submit" id="updt" name="p-updt" value="Update"   <?php echo "$butt_att_updt"; ?> >
+    <input type="submit" id="list" name="p-list" value="List"     <?php echo "$butt_att_list"; ?> >
+    <input type="submit" id="delt" name="p-delt" value="Delete"   <?php echo "$butt_att_delt"; ?> >
     <input type="submit" id="burp" name="p-burp" value="burp"     <?php echo "$butt_att_burp"; ?> >
   <br>
 <?php
 
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("-".__FILE__."");
 
 /**
  * Set up a blank player form, ready for find or add
@@ -92,13 +117,13 @@ function playerNew() {
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
 
-    if ($debug) { echo "plyr:plyrNew.<br>"; }
+    dbg("+".__FUNCTION__."");
 
     # Get the next available player id number
     $plyr->get_next_id();
     $error_msgs['errorDiv'] = "Add new player:";
 
-    if ($debug) { echo "plyr:plyrNew:end={$plyr->get_member_id()}.<br>"; }
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
 
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");
@@ -116,13 +141,13 @@ function playerDelete() {
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
 
-    if ($debug) { echo "plyr:plyrDelete.<br>"; }
+    dbg("+".__FUNCTION__."");
     $plyr->set_to_POST();
     # Get the next available player id number
     $plyr->delete();
 //    $error_msgs['errorDiv'] = "Delete player not yet implemented.";
 
-    if ($debug) { echo "plyr:plyrDelete:end={$plyr->get_member_id()}.<br>"; }
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
 
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "player deleted.";
@@ -137,38 +162,38 @@ require(BASE_URI . "modules/player/player.form.php");
 /**
  * Search for an existing player and display the results
  */
-function playerFind() {
+function playerFind($getType) {
     # declare globals
     global $debug;
-    if ($debug) { echo "plyr:playerFind={$_POST['member_id']}.<br>"; }
+    dbg("+".__FUNCTION__.":$getType:{$_POST['member_id']}");
     #post_dump();
 
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
+    $new_player = FALSE;
 
     # Look for player by id 
     $plyr->set_member_id($_POST['member_id']);
-    if ($debug) { echo "plyr finding:{$plyr->get_member_id()}. <br>"; }
     try {
-        $plyr->get();
+        $plyr->get("$getType");
     }
     catch (playerException $d) {
         #echo "plyr get failed:{$plyr->get_member_id()}.<br>";
         switch ($d->getCode()) {
-        case 2210:  # no seats rows
+        case 22210:  # no seats rows
             $error_msgs['invite_cnt'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See note below";
 //            $error_msgs['count'] += 1;
             break;
-        case 2211:  # no members rows
+        case 22211:  # no members rows
+        case 22212:  # multiple member rows
             $error_msgs['member_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See error(s) below";
             $error_msgs['count'] += 1;
             break;
-        case 2212:  # multiple member rows
-            $error_msgs['member_id'] = "{$d->getMessage()} ({$d->getCode()})";
-            $error_msgs['errorDiv'] = "See errors below";
-            $error_msgs['count'] += 1;
+        case 22213:  # No next ID found, add it.
+            $error_msgs['errorDiv'] = "{$d->getMessage()} ({$d->getCode()})";
+            $new_player = TRUE;
             break;
         default:
             echo "plyr find failed:plyr->get_member_id():" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
@@ -177,11 +202,11 @@ require(BASE_URI . "modules/player/player.form.init.php");
             throw new Exception($p);
         }
     }
-    if ($error_msgs['count'] == 0) {
+    if ($error_msgs['count'] == 0 && !$new_player) {
         $error_msgs['errorDiv'] = "player found.";
     }
 
-    if ($debug) { echo "plyr:playerFind:end={$plyr->get_member_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}.<br>"; }
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}");
 
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");
@@ -193,7 +218,7 @@ require(BASE_URI . "modules/player/player.form.php");
  */
 function playerTest() {
     global $debug, $plyr, $error_msgs;
-    if ($debug) { echo "plyr:playerTest.<br>"; }
+    dbg("+".__FUNCTION__."");
     #post_dump();
 
 # initialize the player form
@@ -206,7 +231,7 @@ require(BASE_URI . "modules/player/player.form.init.php");
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");
 
-    if ($debug) { echo "plyr:plyrTest:end={$plyr->get_member_id()}.<br>"; }
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
 
 }
 
@@ -218,7 +243,7 @@ function playerList() {
     global $debug;
 
     $players = new PlayerArray;
-    if ($debug) { echo "player:List count={$players->playerCount}:" . count($players->playerList) . ".<br>"; }
+    dbg("".__FUNCTION__.":count={$players->playerCount}:" . count($players->playerList) . "");
 #  $players->listing();
 #  $players->sortNick();
 //    usort($players->playerList, array('PlayerArray','sortNick')); 

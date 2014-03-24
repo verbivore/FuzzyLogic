@@ -1,9 +1,9 @@
 
         <br>
-<?php if ($debug) { echo "file:" . __FILE__ . ";VVVVVVV.<br>"; } ?>
+<?php dbg("+include:".__FILE__.""); ?>
         <br>
     </form>
-<?php if ($debug) { echo "file:" . __FILE__ . ";^^^^^^^.<br>"; } ?>
+<?php dbg("-include:".__FILE__.""); ?>
   </body>
 </html>
 

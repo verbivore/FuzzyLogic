@@ -8,7 +8,6 @@
  * 14-03-08 Original.  DHD
  */
 if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
-#if ($debug) { echo "include file=game.update.inc.php:$page_id.<br>"; }
 # game record to be used for this page
 $gamz = new Game;
 # list of form fields to process

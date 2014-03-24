@@ -160,7 +160,9 @@ class Game
         global $debug;
         $list = "";
         foreach ($this->GAME_TABLE_COLUMNS as $item) {
-            $list .= "$item, ";
+            if ($item != "stamp") { # stamp must be null for auto-update
+                $list .= "$item, ";
+            }
         }
         $list = rtrim($list, ", ");
 //    if ($debug) { echo "Game:sql_column_name_list()=$list.<br>"; }
@@ -174,7 +176,9 @@ class Game
         global $debug;
         $list = "";
         foreach ($this->GAME_TABLE_COLUMNS as $item) {
-            $list = $list . "\"{$this->$item}\", ";
+            if ($item != "stamp") { # stamp must be null for auto-update
+                $list = $list . "\"{$this->$item}\", ";
+            }
         }
         $list = rtrim($list, ", ");
 //    if ($debug) { echo "Game:sql_column_value_list()=$list.<br>"; }
@@ -220,7 +224,7 @@ class Game
     public function get($getType)
     {
         global $debug;
-#        if ($debug) { echo "Game:get={$this->game_id}.<br>"; }
+        if ($debug) { echo "Game:" . __FUNCTION__ . "={$this->game_id}.<br>"; }
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             switch ($getType) {
@@ -256,8 +260,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
                     throw new gameException('No previous game for ID ' . $this->game_id . ' found', 32210);
                 } elseif ($getType == 'next') {
                     $this->getNew();
+                    throw new gameException('Add new game (' . $this->game_id . ')', 32213);
                 } else {
-                    throw new gameException('No game found with this ID (' . $this->game_id . ')', 32210);
+                    throw new gameException('No game found with this ID (' . $this->game_id . ')', 32212);
                 }
             } else {
 #                if ($debug) { echo "Game:get=multiple game records found.<br>"; }
@@ -298,7 +303,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $stmt = $pokdb->prepare("SELECT game_id, game_date FROM games WHERE game_id =  (SELECT MAX(game_id) FROM games) ");
             $stmt->execute();
             $foo = array($stmt->fetch());
-var_dump($foo); echo "<br>";
+#var_dump($foo); echo "<br>";
 //            $this->game_id = $stmt->fetchColumn(0) + 1;
 //            $this->game_date = $stmt->fetchColumn();
             $prev_game_id = $foo[0][0];
@@ -306,32 +311,32 @@ var_dump($foo); echo "<br>";
             $prev_game_date = $foo[0][1];
             $phpdate = strtotime( $prev_game_date );
             $dayOfMonth = date( 'd', $phpdate );
-            echo "Game date:$this->game_date:$phpdate:dayOfMonth:$dayOfMonth.<br>";
+#            echo "Game date:$this->game_date:$phpdate:dayOfMonth:$dayOfMonth.<br>";
             if ($dayOfMonth < 15 ) { # it's the 1st game of the month (Wed) so calc 4th Friday
-              $baseDate = date("Y-m-", $phpdate) . "01";
-              $nextDate = date("Y-m-d", strtotime("4 weeks friday", strtotime($baseDate)));
+                $baseDate = date("Y-m-", $phpdate) . "01";
+                $nextDate = date("Y-m-d", strtotime("4 weeks friday", strtotime($baseDate)));
+#                echo "nextDate:$nextDate:$baseDate.<br>";
             } else { # it's a Friday so...) calc 2nd Wed.
-              $nextDate = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
+                $nextDate = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
+#                echo "nextDate:$nextDate.<br>";
             }
             $this->game_date = $nextDate;
-            echo "nextDate:$nextDate:$baseDate.<br>";
-
-$wed = date("n/j/Y", strtotime("2 weeks wednesday",mktime(0,0,0,11,1,2014)));
-$wed = date("n/j/Y", strtotime("2 weeks wednesday", $phpdate));
-echo "2nd Wed:$wed=" . date('l', strtotime($wed)) . ".<br>";
+            #$wed = date("Y-m-d", strtotime("2 weeks wednesday",mktime(0,0,0,11,1,2014)));
+            #$wed = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
+            #echo "2nd Wed:$wed=" . date('l', strtotime($wed)) . ".<br>";
 
 
 //$month = date("M", $this->game_date);
 //echo "Month:$month.<br>";
 
-$tomorrow  = date('F jS, Y = l', mktime(0, 0, 0, date("m", $phpdate)  , date("d", $phpdate)+1, date("Y", $phpdate)));
-echo "Tomorrow:$tomorrow.<br>";
+            #$tomorrow  = date('F jS, Y = l', mktime(0, 0, 0, date("m", $phpdate)  , date("d", $phpdate)+1, date("Y", $phpdate)));
+            #echo "Tomorrow:$tomorrow.<br>";
 
-echo $this->game_date . ":" . date('l', strtotime( $this->game_date)) . "<br>";
+            #echo $this->game_date . ":" . date('l', strtotime( $this->game_date)) . "<br>";
 #":" . date_format($this->game_date, 'Y-m-d H:i:s') . 
 
-$tempDate = date('F jS, Y = l', strtotime(" next wednesday {$this->game_date}"));
-echo $tempDate . "<br>";
+            #$tempDate = date('F jS, Y = l', strtotime(" next wednesday {$this->game_date}"));
+            #echo $tempDate . "<br>";
 
 
 #      if ($debug) { echo "$this->game_id.<br>"; }
@@ -385,24 +390,25 @@ echo $tempDate . "<br>";
     {
         global $debug;
         $row_count = -1;
-        if ($debug) { echo "Game:find={$this->game_id}.<br>"; }
+        if ($debug) { echo "Game:" . __FUNCTION__ . ":vvv={$this->game_id}.<br>"; }
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             # find game rows
             $query = "SELECT * FROM games " . 
                                   "WHERE game_id = \"$this->game_id\"  ";
-            if ($debug) { echo "Game:find:query=$query.<br>"; }
+            if ($debug) { echo "Game:" . __FUNCTION__ . ":query=$query.<br>"; }
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-            if ($debug) { echo "Game:find:$this->game_id:rows=$row_count.<br>"; }
+            if ($debug) { echo "Game:" . __FUNCTION__ . ":$this->game_id:rows=$row_count.<br>"; }
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new gameException('PDO Exception', -2010, $e);
+            throw new gameException('PDO Exception', -32010, $e);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
         }
+        if ($debug) { echo "Game:" . __FUNCTION__ . ":^^^={$this->game_id}.<br>"; }
         return($row_count);
     }
 
@@ -425,13 +431,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {
-                if ($e->getCode() == 23000) {
-                    #error_log($e->getTraceAsString());
-                    throw new gameException('Duplicate entry', 2110, $e);
-                } else {
-                    echo "Game.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new gameException('Unknown error', -2110, $e);
-                }
+                echo "Game.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                throw new gameException('Unknown error', -32110, $e);
             } catch (Exception $e) {
                 echo "Game.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
                 throw new gameException($e);
@@ -456,7 +457,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
 //    if ($debug) { echo "Game.update error list size:"; echo sizeof($val_errors); echo ".<br>"; }
         if (sizeof($val_errors) == 0 ) {
             try {
-                require(BASE_URI . "includes/pok.open.inc.php");
+# open database
+require(BASE_URI . "includes/pok.open.inc.php");
                 # update game
                 $update = "UPDATE games SET {$this->sql_column_name_value_pairs()} " . 
                       " WHERE game_id = \"{$this->game_id}\" ";
@@ -466,19 +468,53 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new gameException('Duplicate entry', 2110, $e);
+                    throw new gameException('Duplicate entry', 32110, $e);
                 } else {
                     echo "Game.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new gameException('Unknown error', -2110, $e);
+                    throw new gameException('Unknown error', -32110, $e);
                 }
             } catch (Exception $e) {
                 echo "Game.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
                 throw new gameException($e);
             }
         } else {
-            throw new gameException("Data validation errors", 2104, null, $val_errors);
+            throw new gameException("Data validation errors", 32104, null, $val_errors);
         }
         if ($debug) { echo "Game.update:end:$this->game_id.<br>"; }
+    }
+/**
+ * delete all games and seats rows for a game                         
+ */
+    public function delete()
+    {
+        global $debug;
+        if ($debug) { echo "Game::" . __FUNCTION__ . ":vvv:$this->game_id.<br>"; }
+//        if ($debug) { echo "player.delete error list size:"; echo sizeof($val_errors); echo ".<br>"; }
+//        if (sizeof($val_errors) == 0 ) {
+            try {
+require(BASE_URI . "includes/pok.open.inc.php");
+                # delete attendance
+                $delete = "DELETE FROM seats " . 
+                      " WHERE game_id = \"{$this->game_id}\" ";
+                if ($debug) { echo "Game::" . __FUNCTION__ . ":stmt_str=$delete.<br>"; }
+                $stmt = $pokdb->prepare($delete);
+                $stmt->execute();
+                $delete = "DELETE FROM games " . 
+                      " WHERE game_id = \"{$this->game_id}\" ";
+                if ($debug) { echo "Game::" . __FUNCTION__ . ":stmt_str=$delete.<br>"; }
+                $stmt = $pokdb->prepare($delete);
+                $stmt->execute();
+            } catch (PDOException $e) {
+                echo "Game.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                throw new gameException('Unknown error', -32110, $e);
+            } catch (Exception $e) {
+                echo "Game.delete: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+                throw new gameException($e);
+            }
+//        } else {
+//            throw new playerException("Data validation errors", 2104, null, $val_errors);
+//        }
+        if ($debug) { echo "Game::" . __FUNCTION__ . ":^^^:$this->game_id.<br>"; }
     }
 
 /**
@@ -487,13 +523,20 @@ require(BASE_URI . "includes/pok.open.inc.php");
     function testGame()
     {
         global $debug;
-        if ($debug) { echo "Game.testGame start.<br>"; }
-        # id
-        $this->get_next_id();
-        $testy = new testPerson();
-        $this->member_snack = $testy->get_member_snack();
-        $this->member_host = $testy->get_member_host();
-        $this->game_date = $testy->get_game_date();
+        if ($debug) { echo "Game::" . __FUNCTION__ . ":start.<br>"; }
+        # id, date
+        $this->getNew();
+        # get highest player_id
+        $testPlay = new Player();
+        $testPlay->get_next_id();
+        $high = $testPlay->get_member_id();
+        $this->member_snack = rand(1,$high);
+        $this->member_host = rand(1,$high);
+        $this->member_gear = rand(1,$high);
+        $this->member_caller = rand(1,$high);
+//        $this->game_date = rand(1,$high);
+        if ($debug) { echo "Game::" . __FUNCTION__ . ":end:high=$high:{$this->game_id}:{$this->game_date}:{$this->member_snack}:{$this->member_host}:{$this->member_gear}:{$this->member_caller}.<br>"; }
+        unset($testy);
 /*
         # member_snack
 require("../inc/testdb_open.php"); #

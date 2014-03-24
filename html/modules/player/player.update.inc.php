@@ -8,30 +8,29 @@
  * 14-03-09 Original.  DHD
  * Future:
  */
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
-if ($debug) { echo "include file=player.update.inc.php:$page_id.<br>"; }
+dbg("+include:" . __FILE__ . "$page_id");
 function playerUpdate() {
 /**
  * Add or Update                                                           
  */
     # declare globals
     global $debug, $plyr, $error_msgs;
-    if ($debug) { echo "function:" . __FUNCTION__ . "={$_POST['member_id']}.<br>"; }
+    dbg("+".__FUNCTION__."={$_POST['member_id']}");
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
     $plyr->set_to_POST();   # initialize player with data from $_POST
 
     plyrValidate();
-//  if ($debug) { echo "plyr:plyrUpdate={$plyr->get_member_id()}:{$error_msgs['count']}.<br>"; }
+//  dbg("+".__FUNCTION__."={$plyr->get_member_id()}:{$error_msgs['count']}");
     if ($error_msgs['count'] == 0) {
         try {
             # is this an insert or an update?
             $row_count = $plyr->find();
             if($row_count == 0) {  
-                if ($debug) { echo "plyr:plyrUpdate:inserting:{$plyr->get_member_id()}. <br>"; }
+                dbg("+".__FUNCTION__.":inserting:{$plyr->get_member_id()}");
                 $plyr->insert();
             } elseif($row_count == 1) {
-                if ($debug) { echo "plyr:plyrUpdate:updating:{$plyr->get_member_id()}. <br>"; }
+                dbg("+".__FUNCTION__.":updating:{$plyr->get_member_id()}");
                 $plyr->update();
             } else {
                 $e = new Exception("Multiple ($row_count) player ({$plyr->get_member_id()}) records for effective date ({$plyr->get_eff_date()}).", 20000);
@@ -40,7 +39,7 @@ require(BASE_URI . "modules/player/player.form.init.php");
         }
         catch (playerException $d) {
             switch ($d->getCode()) {
-            case 2110:
+            case 23110:
                 $error_msgs['nickname'] = "Player with this nickname ({$plyr->get_nickname()}) already exists. ({$d->getCode()})";
                 $error_msgs['errorDiv'] = "See errors below";
                 $error_msgs['count'] += 1;
@@ -50,16 +49,16 @@ require(BASE_URI . "modules/player/player.form.init.php");
                 $err_list[] = array();
                 $error_msgs['errorDiv'] = $d->getMessage() . " (2104)";
                 $err_list = $d->getOptions();
-                if ($debug) { echo "plyr:plyrUpdate arraysize="; echo sizeof($err_list); echo ".<br>"; }
+                dbg("+".__FUNCTION__.":arraysize=" . sizeof($err_list));
                 foreach ($err_list as $col => $val) {
 //          echo "plyr.update errors=$col:$val[0]:$val[1].<br>";
                     $error_msgs["$col"] = $val[1];
                     $error_msgs['count'] += 1;
-                    if ($debug) { echo "plyr:plyrUpdate err col=$col:{$error_msgs["$col"]}.<br>"; }
+                    dbg("+".__FUNCTION__.":err col=$col:{$error_msgs["$col"]}");
 /*
                     $errMsgField="$col" . "ErrorMsg";
                     ${$errMsgField} = $val[1];
-                    if ($debug) { echo "plyr:plyrUpdate errMsgField=$errMsgField:${$errMsgField}.<br>"; }
+                    dbg("+".__FUNCTION__.":errMsgField=$errMsgField:${$errMsgField}");
 */
                 }
                 break;
@@ -82,7 +81,7 @@ require(BASE_URI . "modules/player/player.form.init.php");
         }
     }
 
-    if ($debug) { echo "plyr:plyrUpdate:end={$plyr->get_member_id()}.<br>"; }
+    dbg("-".__FUNCTION__.":end={$plyr->get_member_id()}");
 # Future: Get player stats
 
 
@@ -98,24 +97,20 @@ function plyrValidate() {
  */
     # declare globals
     global $debug, $plyr, $player_form_fields, $error_msgs;
-    if ($debug) { echo "plyr:plyrValidate={$_POST['member_id']}.<br>"; }
+    dbg("+".__FUNCTION__."={$_POST['member_id']}");
 #kluge!!!  Should be picked up in player.form.init.php!
 $player_form_fields = array("member_id", "name_last", "name_first", "nickname");
 
-        if ($debug) { echo "player_form_fields=";
-            print_r($player_form_fields);
-            echo ".<br>"; 
-        }
-
+        dbg(" ".__FUNCTION__.":player_form_fields=" . print_r($player_form_fields));
         # validate fields
         foreach ($player_form_fields as $field) {
             try {
                 $func = "validate_$field";
-//        if ($debug) { echo "plyr:plyrUpdate:validate fields={$func}.<br>"; }
+//        dbg(" ".__FUNCTION__.":plyr:plyrUpdate:validate fields={$func}");
                 $plyr->$func();
             }
             catch (playerException $e) {
-                if ($debug) { echo "plyr:plyrValidate error={$e->getMessage()}.<br>"; }
+                dbg(" ".__FUNCTION__.":error={$e->getMessage()}");
                 $error_msgs["$field"] = $e->getMessage();
                 $error_msgs['count'] += 1;
 //      $error_msgs['errorDiv'] = "See errors below";
@@ -123,12 +118,11 @@ $player_form_fields = array("member_id", "name_last", "name_first", "nickname");
         }
 #    session_dump();
 
-
-    if ($debug) { echo "plyr:plyrValidate:end={$plyr->get_member_id()}:{$error_msgs['count']}.<br>"; }
+    dbg("-".__FUNCTION__.":end={$plyr->get_member_id()}:{$error_msgs['count']}");
 
 }
 
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("-include:" . __FILE__ . "");
 //******************************************************************************
 // End of player.update.inc.php
 //******************************************************************************
