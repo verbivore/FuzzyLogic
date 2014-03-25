@@ -134,7 +134,7 @@ class Player extends Member
 //        echo "player.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s.");
             dbg(__METHOD__.": errors=$col:{$val[0]}:{$val[1]}");
         }
-        dbg("-".__METHOD__.":arraysize=" . sizeof($errors));
+        dbg("-".__METHOD__.";arraysize=" . sizeof($errors));
         return($errors);
     }
 
@@ -205,7 +205,7 @@ class Player extends Member
     public function get($getType)
     {
         global $debug;
-        dbg("+".__METHOD__.":$getType:{$this->member_id}.");
+        dbg("+".__METHOD__.";$getType:{$this->member_id}.");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             switch ($getType) {
@@ -231,29 +231,29 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-            dbg(__METHOD__.":Player:" . __FUNCTION__ . ":$this->member_id:rows=$row_count.");
+            dbg(__METHOD__.";$this->member_id:rows=$row_count.");
             if ($row_count == 1) {
                 $row = $stmt->fetch();
                 $this->setThisToMemberRow($row);
                 # get seats rows
                 $query = "SELECT * FROM seats " . 
                          "WHERE member_id = $this->member_id ";
-                dbg(__METHOD__.":Player:" . __FUNCTION__ . ":seats:get:query=$query.");
+                dbg(__METHOD__.";seats:get:query=$query.");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
                 $row_count = $stmt->rowCount();
-                dbg(__METHOD__.":Player:" . __FUNCTION__ . ":seats:get:$this->member_id:rows=$row_count.");
+                dbg(__METHOD__.";seats:get:$this->member_id:rows=$row_count.");
                 if ($row_count > 0) {
                     $rows = $stmt->fetchAll();
                     $this->setThisToSeatsRows($rows);
                 } else {
-#                  dbg(__METHOD__.":player:seats:get=player not found.");
+#                  dbg(__METHOD__.";seats:get=player not found.");
                     #error_log($e->getTraceAsString());
                     throw new playerException('Player ' . $this->member_id . ' has not been invited to any games yet.', 22210);
                 }
             } elseif ($row_count < 1) {
                 if ($getType == 'prev') {
-                    throw new playerException('No previous player for ID ' . $this->member_id . ' found', 22210);
+                    throw new playerException('No previous player for ID ' . $this->member_id . ' found', 22211);
                 } elseif ($getType == 'next') {
                     $this->get_next_id();
                     throw new playerException('Add new player (' . $this->member_id . ')', 22213);
@@ -266,21 +266,21 @@ require(BASE_URI . "includes/pok.open.inc.php");
 
 #                dbg(__METHOD__.":player:get=player not found.");
                 #error_log($e->getTraceAsString());
-                    throw new playerException('Player ' . $this->member_id . ' not found.', 2211);
+                    throw new playerException('Player ' . $this->member_id . ' not found.', 22221);
             } else {
 #                dbg(__METHOD__.":player:get=multiple player records found.");
                 #error_log($e->getTraceAsString());
-                throw new playerException('Multiple records for player ' . $this->member_id . ' were found', 2212);
+                throw new playerException('Multiple records for player ' . $this->member_id . ' were found', 22222);
             }
         } catch (PDOException $e) {
             $err_string = "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br>" . $e->getCode() . ": " . $e->getMessage() . "<br>";  
             echo $err_string;
-            throw new playerException($err_string, 22219);
+            throw new playerException($err_string, 22223);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
         }
-        dbg("-".__METHOD__.":$getType:{$this->member_id}.");
+        dbg("-".__METHOD__.";$getType:{$this->member_id}.");
     }
 //******************************************************************************
 // populate a player object with data from a player table row        
@@ -338,7 +338,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
 /*  public function get_next_id()
     {
         global $debug;
-#    dbg("+".__METHOD__.":get_next_id:"; }
+#    dbg("+".__METHOD__.";get_next_id:"; }
         try {
             require(BASE_URI . "includes/pok.open.inc.php");
             # get player table
@@ -412,7 +412,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             dbg(__METHOD__.":player:find:$this->member_id:rows=$row_count.");
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new playerException('PDO Exception', -2010, $e);
+            throw new playerException('PDO Exception', -22231, $e);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -428,7 +428,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
     {
         global $debug;
         $val_errors = array ();
-        dbg("+".__METHOD__.":$this->member_id:{$this->sql_column_name_value_pairs()}.");
+        dbg("+".__METHOD__.";$this->member_id:{$this->sql_column_name_value_pairs()}.");
         $val_errors = ($this->validate());
         if (sizeof($val_errors) == 0 ) {
             try {
@@ -442,17 +442,17 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new playerException('Duplicate entry', 23110, $e);
+                    throw new playerException('Duplicate entry', 22241, $e);
                 } else {
                     echo "player.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new playerException('Unknown error', -23110, $e);
+                    throw new playerException('Unknown error', 22242, $e);
                 }
             } catch (Exception $e) {
                 echo "player.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
                 throw new playerException($e);
             }
         } else {
-            throw new playerException("Data validation errors", 22104, null, $val_errors);
+            throw new playerException("Data validation errors", 22243, null, $val_errors);
         }
 //    dbg(__METHOD__.":player added.");
 //    $inserted_member_id = $pokdb->lastInsertId(); 
@@ -467,7 +467,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
     public function update()
     {
         global $debug;
-        dbg("+".__METHOD__.":$this->member_id:$this->stamp.");
+        dbg("+".__METHOD__.";$this->member_id:$this->stamp.");
         $val_errors = $this->validate();
 //    dbg(__METHOD__.":player.update error list size:"; echo sizeof($val_errors); echo ".");
         if (sizeof($val_errors) == 0 ) {
@@ -482,15 +482,15 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt->execute();
             } catch (PDOException $e) {
                 echo "player.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new playerException('Unknown error', -22110, $e);
+                throw new playerException('Unknown error', 22251, $e);
             } catch (Exception $e) {
                 echo "player.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
                 throw new playerException($e);
             }
         } else {
-            throw new playerException("Data validation errors", 22104, null, $val_errors);
+            throw new playerException("Data validation errors", 22252, null, $val_errors);
         }
-        dbg("-".__METHOD__.":$this->member_id.");
+        dbg("-".__METHOD__.";$this->member_id.");
     }
 
 /**
@@ -499,7 +499,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
     public function delete()
     {
         global $debug;
-        dbg("+".__METHOD__.":$this->member_id.");
+        dbg("+".__METHOD__.";$this->member_id.");
         $deleted_seats = 0;
         $deleted_members = 0;
         try {
@@ -521,7 +521,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             dbg(__METHOD__.":members deleted:" . $deleted_members . ".");
         } catch (PDOException $e) {
             echo "player.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new playerException('Unknown error', -22110, $e);
+            throw new playerException('Unknown error', 22261, $e);
         } catch (Exception $e) {
             echo "player.delete: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
             throw new playerException($e);
@@ -529,7 +529,11 @@ require(BASE_URI . "includes/pok.open.inc.php");
 //    } else {
 //        throw new playerException("Data validation errors", 2104, null, $val_errors);
 //    }
-        dbg("-".__METHOD__.":$this->member_id.");
+        $rows_deleted = $deleted_seats + $deleted_members;
+        if ($rows_deleted == 0 ) {
+            throw new playerException("Member ({$this->member_id}) not found", 22262, new Exception());
+        }
+        dbg("-".__METHOD__.";$this->member_id;$rows_deleted");
     }
 
 /**

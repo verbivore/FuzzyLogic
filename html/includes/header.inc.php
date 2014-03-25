@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
+  <head>
+    <meta charset="utf-8"/>
 <!-- 
+  -  Common page header for site.
+  -  Show site page header and main menu.
   -  File name: header.inc.php
   -  @author David Demaree <dave.demaree@yahoo.com>
-  -  Contact: dave.demaree@yahoo.com
-  -  Purpose: Set constants and error handler
   --- History ---  
+  - 14-03-23 Added dbg().  DHD
   - 14-03-08 Original.  DHD
   -->
 <!-- not supported yet :(  <link rel="import" href="../inc/headmeta.html"> -->
@@ -18,13 +19,14 @@
     <link rel="stylesheet" type="text/css" href="style/poker.css">
   </head>
   <body>
-<?php dbg("+include:" . __FILE__ . ":host=$host; local=$local; debug=$debug; counter={$_SESSION['counter']}; start={$_SESSION['startTime']}; HTTP_HOST={$_SERVER['HTTP_HOST']}"); ?> 
+<?php dbg("+include:".basename(__FILE__).""); ?> 
+<?php dbg("=".basename(__FILE__).":host=$host; local=$local; debug=$debug; counter={$_SESSION['counter']}; start={$_SESSION['startTime']}; HTTP_HOST={$_SERVER['HTTP_HOST']}"); ?> 
 
     <form id="pokerMain" method="POST" action="<?php $self ?>">
       <input type="submit" id="main" name="main" value="Main" >
       <input type="submit" id="play" name="play" value="Players" >
       <input type="submit" id="game" name="game" value="Games" >
-      <input type="submit" id="join" name="join" value="Join" >
+      <input type="submit" id="seat" name="seat" value="Join" >
     <br>
-<?php dbg("-include:" . __FILE__ . ""); ?>
+<?php dbg("-include:".basename(__FILE__).""); ?>
 

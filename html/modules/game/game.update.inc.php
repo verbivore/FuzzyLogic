@@ -8,30 +8,29 @@
  * 14-03-09 Original.  DHD
  * Future:
  */
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
-if ($debug) { echo "include file=game.update.inc.php:$page_id.<br>"; }
+dbg("+".basename(__FILE__).";");
 function gameUpdate() {
 /**
  * Add or Update                                                           
  */
     # declare globals
     global $debug, $gamz, $game_form_fields, $error_msgs, $member_names;
-    if ($debug) { echo "function:" . __FUNCTION__ . "={$_POST['game_id']}.<br>"; }
+    dbg("=".__FUNCTION__.";function:" . __FUNCTION__ . "={$_POST['game_id']}");
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
     $gamz->set_to_POST();   # initialize game with data from $_POST
 
     gameValidate();
-//  if ($debug) { echo "gameUpdate={$gamz->get_game_id()}:{$error_msgs['count']}.<br>"; }
+//  dbg("=".__FUNCTION__.";gameUpdate={$gamz->get_game_id()}:{$error_msgs['count']}");
     if ($error_msgs['count'] == 0) {
         try {
             # is this an insert or an update?
             $row_count = $gamz->find();
             if($row_count == 0) {  
-                if ($debug) { echo "gameUpdate:inserting:{$gamz->get_game_id()}. <br>"; }
+                dbg("=".__FUNCTION__.";gameUpdate:inserting:{$gamz->get_game_id()}");
                 $gamz->insert();
             } elseif($row_count == 1) {
-                if ($debug) { echo "gameUpdate:updating:{$gamz->get_game_id()}. <br>"; }
+                dbg("=".__FUNCTION__.";gameUpdate:updating:{$gamz->get_game_id()}");
                 $gamz->update();
             } else {
                 $e = new Exception("Multiple ($row_count) game records for game ({$gamz->get_game_id()}).", 20000);
@@ -49,16 +48,16 @@ require(BASE_URI . "modules/game/game.form.init.php");
                 $err_list[] = array();
                 $error_msgs['errorDiv'] = $d->getMessage() . " (2104)";
                 $err_list = $d->getOptions();
-                if ($debug) { echo "gameUpdate arraysize="; echo sizeof($err_list); echo ".<br>"; }
+                dbg("=".__FUNCTION__.";arraysize=".sizeof($err_list)."");
                 foreach ($err_list as $col => $val) {
 //          echo "gamz.update errors=$col:$val[0]:$val[1].<br>";
                     $error_msgs["$col"] = $val[1];
                     $error_msgs['count'] += 1;
-                    if ($debug) { echo "gameUpdate err col=$col:{$error_msgs["$col"]}.<br>"; }
+                    dbg("=".__FUNCTION__.";gameUpdate err col=$col:{$error_msgs["$col"]}");
 /*
                     $errMsgField="$col" . "ErrorMsg";
                     ${$errMsgField} = $val[1];
-                    if ($debug) { echo "gameUpdate errMsgField=$errMsgField:${$errMsgField}.<br>"; }
+                    dbg("=".__FUNCTION__.";gameUpdate errMsgField=$errMsgField:${$errMsgField}");
 */
                 }
                 break;
@@ -92,7 +91,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
         }
     }
 
-    if ($debug) { echo "gameUpdate:end={$gamz->get_game_id()}.<br>"; }
+    dbg("=".__FUNCTION__.";gameUpdate:end={$gamz->get_game_id()}");
 # Future: Get game stats
 
 
@@ -108,26 +107,23 @@ function gameValidate() {
  */
     # declare globals
     global $debug, $gamz, $game_form_fields, $error_msgs;
-    if ($debug) { echo "gameValidate={$_POST['game_id']}.<br>"; }
-    if ($debug) { echo "gameValidate:fields=" . sizeof($game_form_fields) . ":msgs=" . sizeof($error_msgs) . ".<br>"; }
+    dbg("+".__FUNCTION__.";ID={$_POST['game_id']}");
+    dbg("=".__FUNCTION__.";fields=" . sizeof($game_form_fields) . ":msgs=" . sizeof($error_msgs) . "");
 
 #kluge!!!  Should be picked up in game.form.init.php!
 #$game_form_fields = array("game_id", "name_last", "name_first", "nickname");
 
-        if ($debug) { echo "game_form_fields=";
-            print_r($game_form_fields);
-            echo ".<br>"; 
-        }
+        dbg("=".__FUNCTION__.";game_form_fields=".print_r($game_form_fields)."");
 
         # validate fields
         foreach ($game_form_fields as $field) {
             try {
                 $func = "validate_$field";
-//              if ($debug) { echo "gameUpdate:validate fields={$func}.<br>"; }
+//              dbg("=".__FUNCTION__.";gameUpdate:validate fields={$func}");
                 $gamz->$func();
             }
             catch (gameException $e) {
-                if ($debug) { echo "gamz:gameValidate error={$e->getMessage()}.<br>"; }
+                dbg("=".__FUNCTION__.";error={$e->getMessage()}");
                 $error_msgs["$field"] = $e->getMessage();
                 $error_msgs['count'] += 1;
 //              $error_msgs['errorDiv'] = "See errors below";
@@ -136,11 +132,11 @@ function gameValidate() {
 #    session_dump();
 
 
-    if ($debug) { echo "gameValidate:end={$gamz->get_game_id()}:{$error_msgs['count']}.<br>"; }
+    dbg("-".__FUNCTION__.";={$gamz->get_game_id()}:{$error_msgs['count']}");
 
 }
 
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("=".basename(__FILE__).";");
 //******************************************************************************
 // End of game.update.inc.php
 //******************************************************************************

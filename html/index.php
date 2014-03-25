@@ -10,9 +10,8 @@
  */
 
 /*
-<?php dbg("include:" . __FILE__ . ";VVVVVVV");?>
-<?php dbg("include:" . __FILE__ . ";^^^^^^^"); ?>
-dbg("include:" . __FILE__ . ";VVVVVVV");
+<?php dbg("+include:" . __FILE__ . "");?>
+dbg("+include:" . __FILE__ . "");
 tail -f /var/log/apache2/*.log
 */
 // Require the configuration file before any PHP code:
@@ -57,8 +56,30 @@ if (isset($_POST['main'])) {
 } elseif (isset($_POST['g-burp'])) {
     $page_id = 'game-burp';
 
-} elseif (isset($_POST['join'])) {
-    $page_id = 'join';
+
+} elseif (isset($_POST['seat'])) {
+    $page_id = 'seat';
+} elseif (isset($_POST['s-preg'])) {
+    $page_id = 'seat-preg';
+} elseif (isset($_POST['s-prep'])) {
+    $page_id = 'seat-prep';
+} elseif (isset($_POST['s-find'])) {
+    $page_id = 'seat-find';
+} elseif (isset($_POST['s-nexg'])) {
+    $page_id = 'seat-nexg';
+} elseif (isset($_POST['s-nexp'])) {
+    $page_id = 'seat-nexp';
+} elseif (isset($_POST['s-list'])) {
+    $page_id = 'seat-list';
+} elseif (isset($_POST['s-updt'])) {
+    $page_id = 'seat-updt';
+} elseif (isset($_POST['s-delt'])) {
+    $page_id = 'seat-delt';
+} elseif (isset($_POST['s-burp'])) {
+    $page_id = 'seat-burp';
+
+
+
 } elseif (isset($_GET['p'])) {
     $page_id = $_GET['p'];
 } else {
@@ -106,9 +127,6 @@ switch ($page_id) {
         $page_file = 'game/game.inc.php';
         $page_title = 'Games';
         break;
-
-
-
     case 'game-prev':
         $page_file = 'game/game.inc.php';
         $page_title = 'Previous | Games | Poker';
@@ -140,9 +158,45 @@ switch ($page_id) {
 
 
   
-    case 'join':
+    case 'seat':
         $page_file = 'seat/seat.inc.php';
-        $page_title = 'Reserve a Seat';
+        $page_title = 'Seats';
+        break;
+    case 'seat-preg':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Previous Game | Seats | Poker';
+        break;
+    case 'seat-prep':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Previous Player | Seats | Poker';
+        break;
+    case 'seat-find':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Find | Seats | Poker';
+        break;
+    case 'seat-nexg':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Next Game | Seats | Poker';
+        break;
+    case 'seat-nexp':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Next Player | Seats | Poker';
+        break;
+    case 'seat-list':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'List | Seats | Poker';
+        break;
+    case 'seat-updt':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Update | Seats | Poker';
+        break;
+    case 'seat-delt':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Delete | Seats | Poker';
+        break;
+    case 'seat-burp':
+        $page_file = 'seat/seat.inc.php';
+        $page_title = 'Burp | Seats | Poker';
         break;
   
     // Default is to include the main page.
@@ -162,25 +216,31 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 
 // Include the header file:
 require('./includes/header.inc.php');
-dbg("file:" . __FILE__ . ";>>>>>>>");
-dbg("+include >>>>>:" . __FILE__);
+dbg("+".basename(__FILE__)."");
+
 // Include the module files:
-require_once(BASE_URI . 'class/Member.php');
-require_once(BASE_URI . 'class/Player.php');
-require_once(BASE_URI . 'class/PlayerArray.php');
+dbg("=".basename(__FILE__).":loading Game");
 require_once(BASE_URI . 'class/Game.php');
+dbg("=".basename(__FILE__).":loading Member");
+require_once(BASE_URI . 'class/Member.php');
+dbg("=".basename(__FILE__).":loading Player");
+require_once(BASE_URI . 'class/Player.php');
+dbg("=".basename(__FILE__).":loading PlayerArray");
+require_once(BASE_URI . 'class/PlayerArray.php');
+dbg("=".basename(__FILE__).":loading Seat");
+require_once(BASE_URI . 'class/Seat.php');
+dbg("=".basename(__FILE__).":loading testPerson");
 require_once(TEST_URI . 'testPerson.class.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.
 #echo "tail -f /var/log/apache2/*.log <br>";
-dbg("page_id=$page_id, page_file=$page_file, page_title=$page_title.");
+dbg("=".__FUNCTION__.":page_id=$page_id, page_file=$page_file, page_title=$page_title.");
 require(BASE_URI . 'modules/' . $page_file);
 
 // Include the footer file to complete the template:
 require(BASE_URI . 'includes/footer.inc.php');
 $_SESSION['from_page_id'] = $page_id;
-//dbg("file:" . __FILE__ . ";^^^^^^^.");
-//dbg("-include ^^^^^:" . __FILE__);
+dbg("-".basename(__FILE__)."");
 ?>
 

@@ -7,10 +7,10 @@
  * 14-03-18 Changed stats fields to readonly.  DHD
  * 14-03-08 Original.  DHD
  *****************************************************************************/
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+dbg("+".basename(__FILE__).";");
 # set banner message and style
 $message_banner = "{$error_msgs['errorDiv']}";
-if ($debug) { echo "game.form:errors count={$error_msgs['count']}:" . sizeof($error_msgs) . ".<br>"; }
+dbg("=".basename(__FILE__).";errors count={$error_msgs['count']}:" . sizeof($error_msgs) . "");
 
 
 if ("{$error_msgs['count']}" == "0") {
@@ -35,7 +35,7 @@ if ("{$error_msgs['count']}" == "0") {
     $message_banner .= " ({$error_msgs['count']}).";
 }
 
-if ($debug) { echo "gamz ID={$gamz->get_game_id()}:{$message_banner}.<br>"; }
+dbg("=".basename(__FILE__).";ID={$gamz->get_game_id()}:{$message_banner}");
 
 # ************************* #
 # ***** Show the form ***** #
@@ -85,7 +85,7 @@ if ($debug) { echo "gamz ID={$gamz->get_game_id()}:{$message_banner}.<br>"; }
   </div>
 <?php
 $_POST['stamp'] = $gamz->get_stamp();
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("-".basename(__FILE__).";");
 # ***** Show the form ***** #
 # ************************* #
 ?>

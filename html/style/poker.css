@@ -1,6 +1,6 @@
 form fieldset {
   display: inline-block;
-  font-size: 200%;
+  font-size: 100%;
 }
 form fieldlabel {
   width: 11em;
@@ -21,10 +21,11 @@ form dateInput {
   text-align: left;
 }
 .dbgClass {
-  font-weight: bold;
-  font-size: 500%;
+/*  font-weight: bold;*/
+  font-family: Courier, "Courier New", "Lucida Typewriter", "Lucida Sans Typewriter", monospace;
+  font-size: 100%;
   color: blue;
-  background-color: #FFA500; /*Dum pg 139 */
+/*  background-color: #FFA500; /* Orange */ /*Dum pg 139 */
 } 
 .errorClass {
   color: black;

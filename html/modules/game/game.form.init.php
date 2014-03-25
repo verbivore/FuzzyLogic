@@ -7,7 +7,7 @@
  * 14-03-18 Added stats fields to game_form_fields.  DHD
  * 14-03-08 Original.  DHD
  */
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+dbg("+".basename(__FILE__).";");
 # game record to be used for this page
 $gamz = new Game;
 # list of form fields to process
@@ -24,9 +24,9 @@ $error_msgs['errorDiv'] = "";
 foreach ($game_form_fields as $field) {
     $error_msgs["$field"] = "";
 }
-if ($debug) { echo "game.form.init.php:fields=" . sizeof($game_form_fields) . ":msgs=" . sizeof($error_msgs) . ".<br>"; }
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
-#if ($debug) { foreach ($error_msgs as $col => $val) { echo "gamz.error_field=$col:$val.<br>"; } }
+dbg("=".basename(__FILE__).";fields=" . sizeof($game_form_fields) . ";msgs=" . sizeof($error_msgs) . "");
+dbg("-".basename(__FILE__).";");
+#if ($debug) { foreach ($error_msgs as $col => $val) { echo "gamz.error_field=$col:$val"); }
 //******************************************************************************
 // End of game.form.init.php
 //******************************************************************************

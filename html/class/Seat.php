@@ -1,31 +1,30 @@
 <?php
 /**
- *  Class definition for a game
- *  File name: Game.php
+ *  Class definition for a seat
+ *  File name: Seat.php
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***
  * 14-03-23 Added dbg().  DHD
  * 14-03-21 Cloned from Member.  DHD
  */
 
-class Game
+class Seat
 {
 
 /**
  *Attributes
  */
     protected $game_id;
-    protected $game_date;
-    protected $member_snack;
-    protected $member_host;
-    protected $member_gear;
-    protected $member_caller;
+    protected $member_id;
+    protected $response;
+    protected $note_member;
+    protected $note_master;
     protected $stamp;
 
-// List of names of SQL columns for the games table
-    private $GAME_TABLE_COLUMNS = array("game_id", "game_date", "member_snack", 
-                                        "member_host", "member_gear", 
-                                        "member_caller", "stamp");
+// List of names of SQL columns for the seats table
+    private $GAME_TABLE_COLUMNS = array("game_id", "member_id", "response", 
+                                        "note_member", "note_master", 
+                                        "stamp");
 
 /*
  * Constructor
@@ -35,11 +34,10 @@ class Game
         
 #    dbg("=".__METHOD__.";");
         $this->game_id = null;
-        $this->game_date = null;
-        $this->member_snack = null;
-        $this->member_host = null;
-        $this->member_gear = null;
-        $this->member_caller = null;
+        $this->member_id = null;
+        $this->response = null;
+        $this->note_member = null;
+        $this->note_master = null;
         $this->stamp = null;
     }
 
@@ -47,23 +45,21 @@ class Game
  * Getters
  */
     public function get_game_id() { return $this->game_id; }
-    public function get_game_date() { return $this->game_date; }
-    public function get_game_day() { return date('l', strtotime($this->game_date)); }
-    public function get_member_snack() { return ($this->member_snack); }
-    public function get_member_host() { return $this->member_host; }
-    public function get_member_gear() { return $this->member_gear; }
-    public function get_member_caller() { return $this->member_caller; }
+    public function get_member_id() { return $this->member_id; }
+    public function get_member_name() { return date('stub'); }
+    public function get_response() { return ($this->response); }
+    public function get_note_member() { return $this->note_member; }
+    public function get_note_master() { return $this->note_master; }
     public function get_stamp() { return $this->stamp; }
 
 /**
  * Setters
  */
     public function set_game_id($P) { $this->game_id = $P; }
-    public function set_game_date($P) { $this->game_date = $P; }
-    public function set_member_snack($P) { $this->member_snack = $P; }
-    public function set_member_host($P) { $this->member_host = $P; }
-    public function set_member_gear($P) { $this->member_gear = $P; }
-    public function set_member_caller($P) { $this->member_caller = $P; }
+    public function set_member_id($P) { $this->member_id = $P; }
+    public function set_response($P) { $this->response = $P; }
+    public function set_note_member($P) { $this->note_member = $P; }
+    public function set_note_master($P) { $this->note_master = $P; }
     public function set_stamp($P) { $this->stamp = $P; }
 
 /**
@@ -72,34 +68,26 @@ class Game
     public function validate_game_id() {
         # numeric
         # !> highest existing game_id + 1
-//    dbg("=".__METHOD__.":Game.validate_game_id=$this->game_id");
+//    dbg("=".__METHOD__.":Seat.validate_game_id=$this->game_id");
         $e = array(0,"");
         return($e);
     }
 
-    public function validate_game_date() {
+    public function validate_member_id() {
         # "S" or "M"
         $e = array(0,"");
         return($e);
     }
 
-    public function validate_member_snack() {
+    public function validate_response() {
         # string
         # alphabetic/spaces, starts with capital?, 
-//  public function validate_member_snack() { if(is_string($P)) { $this->member_snack = (string)$P; } }
+//  public function validate_response() { if(is_string($P)) { $this->response = (string)$P; } }
         $e = array(0,"");
         return($e);
     }
 
-    public function validate_member_host() {
-        # string
-        # alphabetic/spaces, starts with capital?, 
-        $e = array(0,"");
-        return($e);
-
-    }
-
-    public function validate_member_gear() {
+    public function validate_note_member() {
         # string
         # alphabetic/spaces, starts with capital?, 
         $e = array(0,"");
@@ -107,7 +95,7 @@ class Game
 
     }
 
-    public function validate_member_caller() {
+    public function validate_note_master() {
         # string
         # alphabetic/spaces, starts with capital?, 
         $e = array(0,"");
@@ -124,7 +112,7 @@ class Game
     }
 
 /**
- * Validate games fields
+ * Validate seats fields
  */
     public function validate()
     {
@@ -136,19 +124,19 @@ class Game
         # validate fields
         foreach ($this->GAME_TABLE_COLUMNS as $column) {
             $func = "validate_$column";
-//      dbg("=".__METHOD__.":Game.validate column={$func}");
+//      dbg("=".__METHOD__.":Seat.validate column={$func}");
             $foo = $this->$func();
-//      dbg("=".__METHOD__.":Game.validate col:$column="; var_dump($foo); echo "");
+//      dbg("=".__METHOD__.":Seat.validate col:$column="; var_dump($foo); echo "");
             if ($foo[0]) {
                 $errors["$column"][0] = $foo[0];
                 $errors["$column"][1] = $foo[1];
-//        dbg("=".__METHOD__.":Game.validate col:$column:$foo[0]:$foo[1]");
+//        dbg("=".__METHOD__.":Seat.validate col:$column:$foo[0]:$foo[1]");
             }
         }
 //        if ($debug) {
 //        foreach ($errors as $col => $val) {
-//      echo "Game.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
-//            echo "Game.validate errors=$col:$val[0]:$val[1]");
+//      echo "Seat.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
+//            echo "Seat.validate errors=$col:$val[0]:$val[1]");
 //        }
         dbg("-".__METHOD__.":error arraysize=".sizeof($errors));
         return($errors);
@@ -166,7 +154,7 @@ class Game
             }
         }
         $list = rtrim($list, ", ");
-//    dbg("=".__METHOD__.":Game:sql_column_name_list()=$list");
+//    dbg("=".__METHOD__.":Seat:sql_column_name_list()=$list");
         return $list;
     }  
 
@@ -182,7 +170,7 @@ class Game
             }
         }
         $list = rtrim($list, ", ");
-//    dbg("=".__METHOD__.":Game:sql_column_value_list()=$list");
+//    dbg("=".__METHOD__.":Seat:sql_column_value_list()=$list");
         return $list;
     }  
 
@@ -206,72 +194,125 @@ class Game
     }  
 
 /**
- * set the data games of this game to the values found in $_POST.       
+ * set the data seats of this seat to the values found in $_POST.       
  */
     public function set_to_POST()
     {
     $this->set_game_id($_POST['game_id']);
-    $this->set_game_date($_POST['game_date']);
-    $this->set_member_snack($_POST['member_snack']);
-    $this->set_member_host($_POST['member_host']);
-    $this->set_member_gear($_POST['member_gear']);
-    $this->set_member_caller($_POST['member_caller']);
+    $this->set_member_id($_POST['member_id']);
+    $this->set_response($_POST['response']);
+    $this->set_note_member($_POST['note_member']);
+    $this->set_note_master($_POST['note_master']);
     $this->set_stamp($_POST['stamp']);
     }
 
 /**
- * get a game row by game_id.                   
+ * get a seat row by game_id.                   
  */
     public function get($getType)
     {
+        $this_game = "game_id = (\"$this->game_id\"";
+        $prev_game = "game_id = ("
+                     .   "SELECT MAX(game_id) FROM seats "
+                     .   "WHERE game_id < \"$this->game_id\") ";
+        $next_game = "game_id = ("
+                     .   "SELECT MIN(game_id) FROM seats "
+                     .   "WHERE game_id > \"$this->game_id\") ";
+        $first_player = "member_id = (SELECT MIN(member_id) FROM seats ";
+        $last_player  = "member_id = (SELECT MAX(member_id) FROM seats ";
+        $next_player  = "member_id = (SELECT MIN(member_id) FROM seats "
+                        .   "WHERE member_id > \"$this->member_id\" ";
+
         
-        dbg("+".__METHOD__ . "={$this->game_id}");
+        dbg("+".__METHOD__ . "={$getType}");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             switch ($getType) {
-                case 'prev':
-                    $query = "SELECT * FROM games WHERE game_id = " . 
-                             "(SELECT MAX(game_id) FROM games " . 
-                             "WHERE game_id < \"$this->game_id\") ";
+                case 'preg': 
+                    $query = "SELECT * FROM seats " .
+                             # previous game
+                             "WHERE game_id = (" . 
+                                 "SELECT MAX(game_id) FROM seats " . 
+                                 "WHERE game_id < \"$this->game_id\") " .
+                             # last player
+                             "AND member_id = (" . 
+                                 "SELECT MAX(member_id) FROM seats " . 
+                                 # previous game
+                                 "WHERE game_id = (" . 
+                                     "SELECT MAX(game_id) FROM seats " . 
+                                     "WHERE game_id < \"$this->game_id\")) ";
                     break;
-                case 'next':
-                    $query = "SELECT * FROM games WHERE game_id = " . 
-                             "(SELECT MIN(game_id) FROM games " . 
-                             "WHERE game_id > \"$this->game_id\") ";
+                case 'prep': 
+                    $query = "SELECT * FROM seats " .
+                             # this game
+                             "WHERE game_id = \"$this->game_id\" " .
+                             # previous player
+                             "AND member_id = (" . 
+                                 "SELECT MAX(member_id) FROM seats " . 
+                                 "WHERE member_id < \"$this->member_id\" " .
+                                 # this game
+                                 "AND game_id = \"$this->game_id\")";
+                    break;
+                case 'nexg':  
+                    $query = "SELECT * FROM seats " . 
+                             # next game
+                             "WHERE game_id = (" . 
+                                 "SELECT MIN(game_id) FROM seats " . 
+                                 "WHERE game_id > \"$this->game_id\") " .
+                             # first player
+                             "AND member_id = (" . 
+                                 "SELECT MIN(member_id) FROM seats " . 
+                                 # next game
+                                 "WHERE game_id = (" . 
+                                     "SELECT MIN(game_id) FROM seats " . 
+                                     "WHERE game_id > \"$this->game_id\")) ";
+                    break;
+                case 'nexp':
+                    $query = "SELECT * FROM seats " . 
+                             # this game
+                             "WHERE game_id = \"$this->game_id\" " .
+                             # next player
+                             "AND member_id = (" . 
+                                 "SELECT MIN(member_id) FROM seats " . 
+                                 "WHERE member_id > \"$this->member_id\" " .
+                                 # this game
+                                 "AND game_id = \"$this->game_id\") ";
                     break;
                 default:
-                    $query = "SELECT * FROM games " . 
-                             "WHERE game_id = \"$this->game_id\" ";
+                    $query = "SELECT * FROM seats " . 
+                             "WHERE game_id = \"$this->game_id\" " . 
+                             "AND member_id = \"$this->member_id\" ";
                     break;
             }
-            # get games row
-            dbg("=".__METHOD__.":Game:games:get:query=$query");
+            # get seats row
+            dbg("=".__METHOD__.";query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-#            dbg("=".__METHOD__.":Game:get:$this->game_id:rows=$row_count");
+#            dbg("=".__METHOD__.":Seat:get:$this->game_id:rows=$row_count");
             if ($row_count == 1) {
                 $row = $stmt->fetch();
-                $this->setThisToGameRow($row);
+                $this->setThisToSeatRow($row);
                 #echo "row:"; var_dump($row); echo ".<br>";
             } elseif ($row_count < 1) {
-#                dbg("=".__METHOD__.":Game:get=game not found");
+#                dbg("=".__METHOD__.":Seat:get=seat not found");
                 #error_log($e->getTraceAsString());
                 if ($getType == 'prev') {
-                    throw new gameException('No previous game for ID ' . $this->game_id . ' found', 32210);
+                    throw new seatException('No previous seat for ID ' . $this->game_id . ' found', 32210);
                 } elseif ($getType == 'next') {
                     $this->getNew();
-                    throw new gameException('Add new game (' . $this->game_id . ')', 32213);
+                    throw new seatException('Add new seat (' . $this->game_id . ')', 32213);
                 } else {
-                    throw new gameException('No game found with this ID (' . $this->game_id . ')', 32212);
+                    throw new seatException('No seat found with this ID (' . $this->game_id . ')', 32212);
                 }
             } else {
-#                dbg("=".__METHOD__.":Game:get=multiple game records found");
+#                dbg("=".__METHOD__.":Seat:get=multiple seat records found");
                 #error_log($e->getTraceAsString());
-                throw new gameException('Multiple records for this game were found', 32211);
+                throw new seatException('Multiple records for this seat were found', 32211);
             }
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new seatException('mySQL Error', 32212);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -279,21 +320,20 @@ require(BASE_URI . "includes/pok.open.inc.php");
         dbg("-".__METHOD__ . "={$this->game_id}");
     }
 /**
- * populate a game object with data from a game table row        
+ * populate a seat object with data from a seat table row        
  */
-    protected function setThisToGameRow($row) 
+    protected function setThisToSeatRow($row) 
     {
         $this->game_id = $row['game_id'];
-        $this->game_date = $row['game_date'];
-        $this->member_snack = $row['member_snack'];
-        $this->member_host = $row['member_host'];
-        $this->member_gear = $row['member_gear'];
-        $this->member_caller = $row['member_caller'];
+        $this->member_id = $row['member_id'];
+        $this->response = $row['response'];
+        $this->note_member = $row['note_member'];
+        $this->note_master = $row['note_master'];
         $this->stamp = $row['stamp'];
     }
 
 /**
- * Get the next available game number and date
+ * Get the next available seat number and date
  */
     public function getNew()
     {
@@ -301,20 +341,20 @@ require(BASE_URI . "includes/pok.open.inc.php");
         dbg("+".__METHOD__.";");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
-            # get game
-            $stmt = $pokdb->prepare("SELECT game_id, game_date FROM games WHERE game_id =  (SELECT MAX(game_id) FROM games) ");
+            # get seat
+            $stmt = $pokdb->prepare("SELECT game_id, member_id FROM seats WHERE game_id =  (SELECT MAX(game_id) FROM seats) ");
             $stmt->execute();
             $foo = array($stmt->fetch());
 #var_dump($foo); echo "<br>";
 //            $this->game_id = $stmt->fetchColumn(0) + 1;
-//            $this->game_date = $stmt->fetchColumn();
+//            $this->member_id = $stmt->fetchColumn();
             $prev_game_id = $foo[0][0];
             $this->game_id = $prev_game_id + 1;
-            $prev_game_date = $foo[0][1];
-            $phpdate = strtotime( $prev_game_date );
+            $prev_member_id = $foo[0][1];
+            $phpdate = strtotime( $prev_member_id );
             $dayOfMonth = date( 'd', $phpdate );
-#            echo "Game date:$this->game_date:$phpdate:dayOfMonth:$dayOfMonth.<br>";
-            if ($dayOfMonth < 15 ) { # it's the 1st game of the month (Wed) so calc 4th Friday
+#            echo "Seat date:$this->member_id:$phpdate:dayOfMonth:$dayOfMonth.<br>";
+            if ($dayOfMonth < 15 ) { # it's the 1st seat of the month (Wed) so calc 4th Friday
                 $baseDate = date("Y-m-", $phpdate) . "01";
                 $nextDate = date("Y-m-d", strtotime("4 weeks friday", strtotime($baseDate)));
 #                echo "nextDate:$nextDate:$baseDate.<br>";
@@ -322,22 +362,22 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $nextDate = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
 #                echo "nextDate:$nextDate.<br>";
             }
-            $this->game_date = $nextDate;
+            $this->member_id = $nextDate;
             #$wed = date("Y-m-d", strtotime("2 weeks wednesday",mktime(0,0,0,11,1,2014)));
             #$wed = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
             #echo "2nd Wed:$wed=" . date('l', strtotime($wed)) . ".<br>";
 
 
-//$month = date("M", $this->game_date);
+//$month = date("M", $this->member_id);
 //echo "Month:$month.<br>";
 
             #$tomorrow  = date('F jS, Y = l', mktime(0, 0, 0, date("m", $phpdate)  , date("d", $phpdate)+1, date("Y", $phpdate)));
             #echo "Tomorrow:$tomorrow.<br>";
 
-            #echo $this->game_date . ":" . date('l', strtotime( $this->game_date)) . "<br>";
-#":" . date_format($this->game_date, 'Y-m-d H:i:s') . 
+            #echo $this->member_id . ":" . date('l', strtotime( $this->member_id)) . "<br>";
+#":" . date_format($this->member_id, 'Y-m-d H:i:s') . 
 
-            #$tempDate = date('F jS, Y = l', strtotime(" next wednesday {$this->game_date}"));
+            #$tempDate = date('F jS, Y = l', strtotime(" next wednesday {$this->member_id}"));
             #echo $tempDate . "<br>";
 
 
@@ -347,46 +387,45 @@ require(BASE_URI . "includes/pok.open.inc.php");
         } catch (Exception $e) {
             echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
         }
-        dbg("-".__METHOD__.";{$this->game_id}:{$this->game_date}");
+        dbg("-".__METHOD__.";{$this->game_id}:{$this->member_id}");
     }
 
 
 /**
- * List a game
+ * List a seat
  */
     public function listing()
     {
-        echo "Game." . __FUNCTION__ . ".<br>";
+        echo "Seat." . __FUNCTION__ . ".<br>";
         $this->listIt(".<br>");
     }
 
     public function listRow()
     {
-        echo "Game." . __FUNCTION__ . ":";
+        echo "Seat." . __FUNCTION__ . ":";
         $this->listIt("; ");
         echo ".<br>";
     }
 
     private function listIt($d)
     {
-        echo "Game_id=$this->game_id$d";
-        echo "game_date=$this->game_date$d";
-        echo "member_host=$this->member_host$d";
-        echo "member_snack=$this->member_snack$d";
-        echo "member_gear=$this->member_gear$d";
-        echo "member_caller=$this->member_caller$d";
+        echo "Seat_id=$this->game_id$d";
+        echo "member_id=$this->member_id$d";
+        echo "note_member=$this->note_member$d";
+        echo "response=$this->response$d";
+        echo "note_master=$this->note_master$d";
         echo "stamp=$this->stamp$d";
     }
 
     public function dump()
     {
-        echo "Game.dump.<br>";
+        echo "Seat.dump.<br>";
         var_dump($this);
         echo ".<br>";
     }
 
 /**
- * find a games row by game_id.
+ * find a seats row by game_id.
  */
     public function find()
     {
@@ -395,8 +434,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
         dbg("+".__METHOD__ . "={$this->game_id}");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
-            # find game rows
-            $query = "SELECT * FROM games " . 
+            # find seat rows
+            $query = "SELECT * FROM seats " . 
                                   "WHERE game_id = \"$this->game_id\"  ";
             dbg("=".__METHOD__ . ":query=$query");
             $stmt = $pokdb->prepare($query);
@@ -405,7 +444,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             dbg("=".__METHOD__ . ":$this->game_id:rows=$row_count");
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new gameException('PDO Exception', -32010, $e);
+            throw new seatException('PDO Exception', -32010, $e);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -415,7 +454,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
     }
 
 /**
- * insert a games row from a game object
+ * insert a seats row from a seat object
  */
     public function insert()
     {
@@ -426,43 +465,43 @@ require(BASE_URI . "includes/pok.open.inc.php");
         if (sizeof($val_errors) == 0 ) {
             try {
 require(BASE_URI . "includes/pok.open.inc.php");
-                # insert game
-                $query = "INSERT INTO games ({$this->sql_column_name_list()}) " .
+                # insert seat
+                $query = "INSERT INTO seats ({$this->sql_column_name_list()}) " .
                   "VALUES ({$this->sql_column_value_list()})" ;
-                dbg("=".__METHOD__.":Game:find:query=$query");
+                dbg("=".__METHOD__.":Seat:find:query=$query");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {
-                echo "Game.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new gameException('Unknown error', -32110, $e);
+                echo "Seat.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                throw new seatException('Unknown error', -32110, $e);
             } catch (Exception $e) {
-                echo "Game.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
+                echo "Seat.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+                throw new seatException($e);
             }
         } else {
-            throw new gameException("Data validation errors", 2104, null, $val_errors);
+            throw new seatException("Data validation errors", 2104, null, $val_errors);
         }
-//    dbg("=".__METHOD__.":Game added");
+//    dbg("=".__METHOD__.":Seat added");
 //    $inserted_game_id = $pokdb->lastInsertId(); 
-//    dbg("=".__METHOD__.":Game number:$inserted_game_id");
+//    dbg("=".__METHOD__.":Seat number:$inserted_game_id");
         dbg("-".__METHOD__.";$this->game_id:".sizeof($val_errors)."");
     }
 
 /**
- * update a games row from a game object                         
+ * update a seats row from a seat object                         
  */
     public function update()
     {
         
         dbg("+".__METHOD__."=$this->game_id");
         $val_errors = $this->validate();
-//    dbg("=".__METHOD__.":Game.update error list size:"; echo sizeof($val_errors); echo "");
+//    dbg("=".__METHOD__.":Seat.update error list size:"; echo sizeof($val_errors); echo "");
         if (sizeof($val_errors) == 0 ) {
             try {
 # open database
 require(BASE_URI . "includes/pok.open.inc.php");
-                # update game
-                $update = "UPDATE games SET {$this->sql_column_name_value_pairs()} " . 
+                # update seat
+                $update = "UPDATE seats SET {$this->sql_column_name_value_pairs()} " . 
                       " WHERE game_id = \"{$this->game_id}\" ";
                 dbg("=".__METHOD__.";stmt_str=$update");
                 $stmt = $pokdb->prepare($update);
@@ -470,22 +509,22 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new gameException('Duplicate entry', 32110, $e);
+                    throw new seatException('Duplicate entry', 32110, $e);
                 } else {
-                    echo "Game.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new gameException('Unknown error', -32110, $e);
+                    echo "Seat.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                    throw new seatException('Unknown error', -32110, $e);
                 }
             } catch (Exception $e) {
-                echo "Game.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
+                echo "Seat.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+                throw new seatException($e);
             }
         } else {
-            throw new gameException("Data validation errors", 32104, null, $val_errors);
+            throw new seatException("Data validation errors", 32104, null, $val_errors);
         }
         dbg("-".__METHOD__.";$this->game_id:".sizeof($val_errors)."");
     }
 /**
- * delete all games and seats rows for a game                         
+ * delete all seats and seats rows for a seat                         
  */
     public function delete()
     {
@@ -499,22 +538,22 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 # delete attendance
                 $delete = "DELETE FROM seats " . 
                       " WHERE game_id = \"{$this->game_id}\" ";
-                dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":stmt_str=$delete");
+                dbg("=".__METHOD__.":Seat::" . __FUNCTION__ . ":stmt_str=$delete");
                 $stmt = $pokdb->prepare($delete);
                 $stmt->execute();
                 $deleted_seats = $stmt->rowCount();
-                $delete = "DELETE FROM games " . 
+                $delete = "DELETE FROM seats " . 
                       " WHERE game_id = \"{$this->game_id}\" ";
-                dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":stmt_str=$delete");
+                dbg("=".__METHOD__.":Seat::" . __FUNCTION__ . ":stmt_str=$delete");
                 $stmt = $pokdb->prepare($delete);
                 $stmt->execute();
-                $deleted_games = $stmt->rowCount();
+                $deleted_seats = $stmt->rowCount();
             } catch (PDOException $e) {
-                echo "Game.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new gameException('Unknown error', -32110, $e);
+                echo "Seat.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                throw new seatException('Unknown error', -32110, $e);
             } catch (Exception $e) {
-                echo "Game.delete: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
+                echo "Seat.delete: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+                throw new seatException($e);
             }
 //        } else {
 //            throw new playerException("Data validation errors", 2104, null, $val_errors);
@@ -523,9 +562,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
     }
 
 /**
- * create a fictitious game for test purposes                         
+ * create a fictitious seat for test purposes                         
  */
-    function testGame()
+    function testSeat()
     {
         
         dbg("+".__METHOD__."");
@@ -535,34 +574,33 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $testPlay = new Player();
         $testPlay->get_next_id();
         $high = $testPlay->get_member_id();
-        $this->member_snack = rand(1,$high);
-        $this->member_host = rand(1,$high);
-        $this->member_gear = rand(1,$high);
-        $this->member_caller = rand(1,$high);
-//        $this->game_date = rand(1,$high);
-        dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":end:high=$high:{$this->game_id}:{$this->game_date}:{$this->member_snack}:{$this->member_host}:{$this->member_gear}:{$this->member_caller}");
+        $this->response = rand(1,$high);
+        $this->note_member = rand(1,$high);
+        $this->note_master = rand(1,$high);
+//        $this->member_id = rand(1,$high);
+        dbg("=".__METHOD__.":Seat::" . __FUNCTION__ . ":end:high=$high:{$this->game_id}:{$this->member_id}:{$this->response}:{$this->note_member}:{$this->note_master}");
         unset($testy);
         dbg("-".__METHOD__."");
 /*
-        # member_snack
+        # response
 require("../inc/testdb_open.php"); #
         $nameCount = $this->getRowCount($testdb, "family_names");
         $nameId = rand(1, $nameCount);
         $query="SELECT * FROM family_names WHERE name_id = $nameId";
-//    echo "testGame family_names query=$query.<br>";
+//    echo "testSeat family_names query=$query.<br>";
         $stmt = $testdb->prepare($query);
         $stmt->execute();
         $row_count = $stmt->rowCount();
-        dbg("=".__METHOD__.":Game.testGame rows:$row_count");
+        dbg("=".__METHOD__.":Seat.testSeat rows:$row_count");
         if ($row_count == 1) {
             $row = $stmt->fetch();
-            $this->member_snack = $row['member_snack'];
-#      echo "Game.testGame member_snack=$this->member_snack.<br>";
+            $this->response = $row['response'];
+#      echo "Seat.testSeat response=$this->response.<br>";
         } else {
-            echo "testGame __construct member_snack error: Too many rows:$row_count.<br>";
-            throw new Exception('testGame member_snack SELECT error: Too many rows', -1);
+            echo "testSeat __construct response error: Too many rows:$row_count.<br>";
+            throw new Exception('testSeat response SELECT error: Too many rows', -1);
         }
-        # member_host
+        # note_member
         $gender = rand(0, 1); 
         if ($gender) {
             $table_name = "male_names";
@@ -571,23 +609,23 @@ require("../inc/testdb_open.php"); #
         }
         $nameCount = $this->getRowCount($testdb, $table_name);
         $nameId = rand(1, $nameCount); # Pick random male, female
-        $query = "SELECT member_host FROM $table_name WHERE name_id = $nameId";
+        $query = "SELECT note_member FROM $table_name WHERE name_id = $nameId";
         $stmt = $testdb->prepare($query);
-#    dbg("=".__METHOD__.":Game.testGame stmt:"; $stmt->debugDumpParams(); echo "<br>"; }
+#    dbg("=".__METHOD__.":Seat.testSeat stmt:"; $stmt->debugDumpParams(); echo "<br>"; }
         $stmt->execute();
         $row_count = $stmt->rowCount();
-//    dbg("=".__METHOD__.":Game.testGame rows:$row_count");
+//    dbg("=".__METHOD__.":Seat.testSeat rows:$row_count");
         if ($row_count == 1) {
             $row = $stmt->fetch();
-            $this->member_host = $row['member_host'];
-//      echo "Game.testGame member_host=$this->member_host.<br>";
+            $this->note_member = $row['note_member'];
+//      echo "Seat.testSeat note_member=$this->note_member.<br>";
         } else {
-            echo "testGame __construct member_host error: Too many rows:$row_count.<br>";
-            throw new Exception('testGame member_host SELECT error: Too many rows', -1);
+            echo "testSeat __construct note_member error: Too many rows:$row_count.<br>";
+            throw new Exception('testSeat note_member SELECT error: Too many rows', -1);
         }
 
 #  echo "Next this:{$this->get_game_id()}.<br>";
-        $this->set_game_date("M");
+        $this->set_member_id("M");
 */
 
     }
@@ -613,9 +651,9 @@ require("../inc/testdb_open.php"); #
 } 
 
 //******************************************************************************
-// end class Game
+// end class Seat
 //******************************************************************************
-class GameException extends Exception
+class SeatException extends Exception
 {
 #    
     private $_options = array();
@@ -624,7 +662,7 @@ class GameException extends Exception
                                 $code = 0, 
                                 Exception $previous = null,
                                 $options = array('params')) {
-#        dbg("=".__METHOD__.":GameException={$message}:$code");
+#        dbg("=".__METHOD__.":SeatException={$message}:$code");
             // make sure everything is assigned properly
             parent::__construct($message, $code, $previous);
 
@@ -638,7 +676,7 @@ class GameException extends Exception
     }
 
     public function GetOptions() { 
-#    dbg("=".__METHOD__.":GameException:GetOptions="; echo sizeof($this->_options); echo "");
+#    dbg("=".__METHOD__.":SeatException:GetOptions="; echo sizeof($this->_options); echo "");
     return $this->_options; 
     }
 }

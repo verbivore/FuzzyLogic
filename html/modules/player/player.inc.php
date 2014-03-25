@@ -4,7 +4,7 @@
  * File name: player.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
- * 14-03-23 Added prev/next buttons.  DHD
+ * 14-03-23 Added prev/next buttons.  Added dbg().  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-19 Added button attributes.  DHD
  * 14-03-18 Removed playerListDeprecated.  Stubbed playerDelete().  DHD
@@ -14,8 +14,7 @@
  * After list, Find & Delete buttons show blank form, Update button goes to playerNew.
  */
 
-dbg("+include:" . __FILE__ . "");
-dbg(" ".__FUNCTION__.":$page_id");
+dbg("+".basename(__FILE__) . ":$page_id");
 //post_dump();
 //session_dump();
 require(BASE_URI . "modules/player/player.update.inc.php");
@@ -105,8 +104,6 @@ switch ($page_id) {
   <br>
 <?php
 
-dbg("-".__FILE__."");
-
 /**
  * Set up a blank player form, ready for find or add
  */
@@ -144,14 +141,28 @@ require(BASE_URI . "modules/player/player.form.init.php");
     dbg("+".__FUNCTION__."");
     $plyr->set_to_POST();
     # Get the next available player id number
-    $plyr->delete();
-//    $error_msgs['errorDiv'] = "Delete player not yet implemented.";
-
-    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
+    try {
+        $plyr->delete();
+    }
+    catch (playerException $d) {
+        switch ($d->getCode()) {
+        case 22262:  # player not found
+            $error_msgs['member_id'] = "{$d->getMessage()} ({$d->getCode()})";
+            $error_msgs['errorDiv'] = "See note below";
+            $error_msgs['count'] += 1;
+            break;
+        default:
+            echo "playerDelete failed:{$plyr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "plyr Previous exception:plyr->get_member_id():" . $p->getMessage() . ".<br>";
+            throw new Exception($p);
+        }
+    }
 
     if ($error_msgs['count'] == 0) {
-        $error_msgs['errorDiv'] = "player deleted.";
+        $error_msgs['errorDiv'] = "Player deleted.";
     }
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
 
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");
@@ -254,7 +265,7 @@ function playerList() {
 require(BASE_URI . "modules/player/player.list.form.php");
 
 }
-
+dbg("-".basename(__FILE__)."");
 //******************************************************************************
 // End of player.inc.php
 //******************************************************************************

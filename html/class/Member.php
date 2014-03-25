@@ -4,10 +4,12 @@
  *  File name: Member.php
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***
+ * 14-03-23 Added dbg().  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-18 Renamed from member.class.php to Member.php.  Moved attributes to top. DHD
  * 14-03-08 Original.  DHD
  */
+dbg("+".basename(__FILE__)."");
 
 class Member
 {
@@ -30,8 +32,7 @@ class Member
  */
     function __construct()
     {
-        global $debug;
-#    dbg(" ".__METHOD__.":Member:__construct.");
+#    dbg("=".__METHOD__.";Member:__construct");
         $this->member_id = null;
         $this->nickname = null;
         $this->name_last = null;
@@ -65,7 +66,7 @@ class Member
     public function validate_member_id() {
         # numeric
         # !> highest existing member_id + 1
-//    dbg(" ".__METHOD__.":Member.validate_member_id=$this->member_id.");
+//    dbg("=".__METHOD__.";Member.validate_member_id=$this->member_id");
         $e = array(0,"");
         return($e);
     }
@@ -97,29 +98,28 @@ class Member
  */
     public function validate()
     {
-        global $debug;
-        dbg("+".__METHOD__."={$this->member_id}.");
+        dbg("+".__METHOD__."={$this->member_id}");
         $errors = array();
         $foo = array();
 #    global $MEMBER_TABLE_COLUMNS;
         # validate fields
         foreach ($this->MEMBER_TABLE_COLUMNS as $column) {
             $func = "validate_$column";
-//      dbg(.__METHOD__.":column={$func}.");
+//      dbg(.__METHOD__.":column={$func}");
             $foo = $this->$func();
-//      dbg(" ".__METHOD__." col:$column="; var_dump($foo); echo ".");
+//      dbg("=".__METHOD__." col:$column="; var_dump($foo); echo "");
             if ($foo[0]) {
                 $errors["$column"][0] = $foo[0];
                 $errors["$column"][1] = $foo[1];
-//        dbg(" ".__METHOD__." col:$column:$foo[0]:$foo[1].");
+//        dbg("=".__METHOD__." col:$column:$foo[0]:$foo[1]");
             }
         }
-        if ($debug) {
-        foreach ($errors as $col => $val) {
-//      echo "Member.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s.");
-            echo "Member.validate errors=$col:$val[0]:$val[1].<br>"; }
-        }
-#    dbg("-".__METHOD__." arraysize="; echo sizeof($errors); echo ".");
+//        if ($debug) {
+//        foreach ($errors as $col => $val) {
+//            echo "Member.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
+//            echo "Member.validate errors=$col:$val[0]:$val[1].<br>"; }
+//        }
+        dbg("-".__METHOD__." arraysize=".sizeof($errors));
         return($errors);
     }
 
@@ -127,7 +127,6 @@ class Member
  * create a list of comma-separated column names for SQL statements.          
  */
     private function sql_column_name_list() {
-        global $debug;
         $list = "";
         foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
             if ($item != "stamp") {
@@ -135,14 +134,13 @@ class Member
             }
         }
         $list = rtrim($list, ", ");
-//    dbg(" ".__METHOD__."=$list.");
+//    dbg("=".__METHOD__."=$list");
         return $list;
     }  
 /**
  * create a list of quoted, comma-separated column values for SQL statements. 
  */
     private function sql_column_value_list() {
-        global $debug;
         $list = "";
         foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
             if ($item != "stamp") {
@@ -150,7 +148,7 @@ class Member
             }
         }
         $list = rtrim($list, ", ");
-//    dbg(" ".__METHOD__."=$list.");
+//        dbg("=".__METHOD__."=$list");
         return $list;
     }  
 
@@ -158,7 +156,6 @@ class Member
  * create a list of pairs of column names with values, used for SQL INSERT    
  */
     private function sql_column_name_value_pairs() {
-        global $debug;
         $list = "";
         foreach ($this->MEMBER_TABLE_COLUMNS as $item) {
             if ($item != "stamp") {
@@ -166,7 +163,7 @@ class Member
             }
         }
         $list = rtrim($list, ", ");
-        dbg(" ".__METHOD__."=$list.");
+        dbg("=".__METHOD__."=$list");
         return $list;
     }  
 
@@ -188,27 +185,26 @@ class Member
 //    public function get()
     public function get($getType)
     {
-        global $debug;
-    dbg("+".__METHOD__.":$getType={$this->member_id}.");
+        dbg("+".__METHOD__.";$getType={$this->member_id}");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             # get members row
             $query = "SELECT * FROM members " . 
-                                  "WHERE member_id = \"$this->member_id\" ";
-#      dbg(" ".__METHOD__.":Member:members:get:query=$query.");
+                     "WHERE member_id = \"$this->member_id\" ";
+#            dbg("=".__METHOD__.";Member:members:get:query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-#      dbg(" ".__METHOD__.":Member:members:get:$this->member_id:rows=$row_count.");
+#            dbg("=".__METHOD__.";Member:members:get:$this->member_id:rows=$row_count");
             if ($row_count == 1) {
                 $row = $stmt->fetch();
                 $this->setThisTomemberRow($row);
             } elseif ($row_count < 1) {
-#        dbg(" ".__METHOD__.":Member:get=member not found.");
+#                dbg("=".__METHOD__.";Member:get=member not found");
                 #error_log($e->getTraceAsString());
                 throw new Exception('No records for this member were found', 32210);
             } else {
-#        dbg(" ".__METHOD__.":Member:get=multiple member records found.");
+#                dbg("=".__METHOD__.";Member:get=multiple member records found");
                 #error_log($e->getTraceAsString());
                 throw new Exception('Multiple records for this member were found', 32211);
             }
@@ -218,6 +214,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
         }
+        dbg("-".__METHOD__.";$getType={$this->member_id}");
     }
 /**
  * populate a member object with data from a member table row        
@@ -236,7 +233,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function get_next_id()
     {
-        global $debug;
         dbg("+".__METHOD__);
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
@@ -244,13 +240,12 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $stmt = $pokdb->prepare("SELECT MAX(member_id) FROM members");
             $stmt->execute();
             $this->member_id = $stmt->fetchColumn() + 1;
-            dbg(" ".__METHOD__."=$this->member_id.");
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
         } catch (Exception $e) {
             echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
         }
-        dbg("-".__METHOD__);
+        dbg("-".__METHOD__."=$this->member_id");
     }
 
 
@@ -259,20 +254,20 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function listing()
     {
-        dbg(" ".__METHOD__);
+        dbg("=".__METHOD__);
         $this->listIt(".<br>");
     }
 
     public function listRow()
     {
-        dbg(" ".__METHOD__);
+        dbg("=".__METHOD__);
         $this->listIt("; ");
         echo ".<br>";
     }
 
     private function listIt($d)
     {
-        dbg(" ".__METHOD__);
+        dbg("=".__METHOD__);
         echo "Member_id=$this->member_id$d";
         echo "nickname=$this->nickname$d";
         echo "name_last=$this->name_last$d";
@@ -282,7 +277,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
 
     public function dump()
     {
-        dbg(" ".__METHOD__);
+        dbg("=".__METHOD__);
         var_dump($this);
         echo ".<br>\n";
     }
@@ -292,19 +287,18 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function find()
     {
-        global $debug;
-        dbg("+".__METHOD__.":Member:find={$this->member_id}:{$this->eff_date}.");
+        dbg("+".__METHOD__.";Member:find={$this->member_id}:{$this->eff_date}");
         $row_count = -1;
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             # find member rows
             $query = "SELECT * FROM members " . 
                                   "WHERE member_id = \"$this->member_id\"  ";
-            dbg(" ".__METHOD__.":query=$query.");
+            dbg("=".__METHOD__.";query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-            dbg(" ".__METHOD__.":$this->member_id:rows=$row_count.");
+            dbg("=".__METHOD__.";$this->member_id:rows=$row_count");
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
             throw new memberException('PDO Exception', -2010, $e);
@@ -321,10 +315,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
 /* not used yet
     public function insert()
     {
-        global $debug;
         $val_errors = array ();
-        dbg("+".__METHOD__.":$this->member_id:$this->eff_date:
-{$this->sql_column_name_value_pairs()}.");
+        dbg("+".__METHOD__.";$this->member_id:$this->eff_date:
+{$this->sql_column_name_value_pairs()}");
         $val_errors = ($this->validate());
         if (sizeof($val_errors) == 0 ) {
             try {
@@ -332,7 +325,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 # insert member
                 $query = "INSERT INTO members ({$this->sql_column_name_list()}) " .
                   "VALUES ({$this->sql_column_value_list()})" ;
-                dbg(" ".__METHOD__.":query=$query.");
+                dbg("=".__METHOD__.";query=$query");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {
@@ -350,9 +343,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
         } else {
             throw new memberException("Data validation errors", 2104, null, $val_errors);
         }
-//    dbg(" ".__METHOD__.":added.");
+//    dbg("=".__METHOD__.";added");
 //    $inserted_member_id = $pokdb->lastInsertId(); 
-//    dbg("-".__METHOD__.":number:$inserted_member_id.");
+//    dbg("-".__METHOD__.";number:$inserted_member_id");
     }
 */
 /**
@@ -361,18 +354,17 @@ require(BASE_URI . "includes/pok.open.inc.php");
 /* not used yet
     public function update()
     {
-        global $debug;
-        dbg("+".__METHOD__.":Member.update:$this->member_id:$this->eff_date.<br/
+        dbg("+".__METHOD__.";Member.update:$this->member_id:$this->eff_date.<br/
 >"; }
         $val_errors = $this->validate();
-//    dbg(" ".__METHOD__.":Member.update error list size:"; echo sizeof($val_errors); echo ".");
+//    dbg("=".__METHOD__.";Member.update error list size:"; echo sizeof($val_errors); echo "");
         if (sizeof($val_errors) == 0 ) {
             try {
                 require(BASE_URI . "includes/pok.open.inc.php");
                 # update member
                 $update = "UPDATE members SET {$this->sql_column_name_value_pairs()} " . 
                       " WHERE member_id = \"{$this->member_id}\" AND eff_date = \"{$this->eff_date}\" ";
-                dbg(" ".__METHOD__.":Member:update:stmt_str=$update.");
+                dbg("=".__METHOD__.";Member:update:stmt_str=$update");
                 $stmt = $pokdb->prepare($update);
                 $stmt->execute();
             } catch (PDOException $e) {
@@ -390,7 +382,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         } else {
             throw new memberException("Data validation errors", 2104, null, $val_errors);
         }
-        dbg("-".__METHOD__.":Member.update:end:$this->member_id:$this->eff_date.");
+        dbg("-".__METHOD__.";Member.update:end:$this->member_id:$this->eff_date");
     }
 */
 /**
@@ -398,8 +390,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     function testData()
     {
-        global $debug;
-        dbg(" ".__METHOD__);
+        dbg("=".__METHOD__);
         # id
         $this->get_next_id();
         $testy = new testPerson();
@@ -416,7 +407,7 @@ require("../inc/testdb_open.php"); #
         $stmt = $testdb->prepare($query);
         $stmt->execute();
         $row_count = $stmt->rowCount();
-        dbg(" ".__METHOD__.":Member.testData rows:$row_count.");
+        dbg("=".__METHOD__.";Member.testData rows:$row_count");
         if ($row_count == 1) {
             $row = $stmt->fetch();
             $this->name_last = $row['name_last'];
@@ -436,20 +427,20 @@ require("../inc/testdb_open.php"); #
         $nameId = rand(1, $nameCount); # Pick random male, female
         $query = "SELECT name_first FROM $table_name WHERE name_id = $nameId";
         $stmt = $testdb->prepare($query);
-#    dbg(" ".__METHOD__.":Member.testData stmt:"; $stmt->debugDumpParams(); echo "");
+#        dbg("=".__METHOD__.";Member.testData stmt:"; $stmt->debugDumpParams(); echo "");
         $stmt->execute();
         $row_count = $stmt->rowCount();
-//    dbg(" ".__METHOD__.":Member.testData rows:$row_count.");
+//        dbg("=".__METHOD__.";Member.testData rows:$row_count");
         if ($row_count == 1) {
             $row = $stmt->fetch();
             $this->name_first = $row['name_first'];
-//      echo "Member.testData name_first=$this->name_first.<br>";
+//          echo "Member.testData name_first=$this->name_first.<br>";
         } else {
             echo "testData __construct name_first error: Too many rows:$row_count.<br>";
             throw new Exception('testData name_first SELECT error: Too many rows', -1);
         }
 
-#  echo "Next this:{$this->get_member_id()}.<br>";
+#        echo "Next this:{$this->get_member_id()}.<br>";
         $this->set_nickname("M");
 */
 
@@ -477,5 +468,6 @@ require("../inc/testdb_open.php"); #
 //******************************************************************************
 // end class Member
 //******************************************************************************
+dbg("-".basename(__FILE__)."");
 ?>
 

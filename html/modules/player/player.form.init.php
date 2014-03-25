@@ -4,10 +4,11 @@
  * File name: player.form.init.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg().  DHD
  * 14-03-18 Added stats fields to player_form_fields.  DHD
  * 14-03-08 Original.  DHD
  */
-dbg("+include file:".__FILE__);
+dbg("+".basename(__FILE__));
 //if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
 # player record to be used for this page
 $plyr = new Player;
@@ -24,7 +25,7 @@ foreach ($player_form_fields as $field) {
     $error_msgs["$field"] = "";
 }
 //if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
-dbg("-include file:".__FILE__);
+dbg("-".basename(__FILE__));
 
 #if ($debug) { foreach ($error_msgs as $col => $val) { echo "plyr.error_field=$col:$val.<br>"; } }
 //******************************************************************************

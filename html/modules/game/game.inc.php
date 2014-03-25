@@ -4,13 +4,12 @@
  * File name: game.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg().  DHD
  * 14-03-20 Cloned from Game.  DHD
  */
-
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
-if ($debug) { echo "include file=game.inc.php:$page_id.<br>"; }
-post_dump();
-session_dump();
+dbg("+".basename(__FILE__).";$page_id");
+//post_dump();
+//session_dump();
 require(BASE_URI . "modules/game/game.update.inc.php");
 $butt_att_prev = "";
 $butt_att_find = "";
@@ -94,7 +93,7 @@ switch ($page_id) {
   <br>
 <?php
 
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("=".__FUNCTION__.";include:" . __FILE__ . ";^^^^^^^");
 
 /**
  * Set up a blank game form, ready for find or add
@@ -106,13 +105,13 @@ function gameNew() {
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
 
-    if ($debug) { echo "gameNew.<br>"; }
+    dbg("=".__FUNCTION__.";gameNew");
 
     # Get the next available game id number
     $gamz->getNew();
     $error_msgs['errorDiv'] = "Add new game:";
 
-    if ($debug) { echo "gameNew:end={$gamz->get_game_id()}.<br>"; }
+    dbg("=".__FUNCTION__.";gameNew:end={$gamz->get_game_id()}");
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
@@ -130,13 +129,13 @@ function gameDelete() {
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
 
-    if ($debug) { echo "gameDelete.<br>"; }
+    dbg("=".__FUNCTION__.";gameDelete");
     $gamz->set_to_POST();
     # Get the next available game id number
     $gamz->delete();
 //    $error_msgs['errorDiv'] = "Delete game not yet implemented.";
 
-    if ($debug) { echo "gameDelete:end={$gamz->get_game_id()}.<br>"; }
+    dbg("=".__FUNCTION__.";gameDelete:end={$gamz->get_game_id()}");
 
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "game deleted.";
@@ -154,7 +153,7 @@ require(BASE_URI . "modules/game/game.form.php");
 function gameFind($findType) {
     # declare globals
     global $debug, $gamz, $member_names, $error_msgs;
-    if ($debug) { echo "game.inc:" . __FUNCTION__ . "vvv={$_POST['game_id']}.<br>"; }
+    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . "vvv={$_POST['game_id']}");
     #post_dump();
 
 # initialize the game form
@@ -162,7 +161,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
     $newGame = FALSE;
     # Look for game by id 
     $gamz->set_game_id($_POST['game_id']);
-    if ($debug) { echo "game.inc:" . __FUNCTION__ . ":{$gamz->get_game_id()}. <br>"; }
+    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . ":{$gamz->get_game_id()}");
     try {
         $gamz->get($findType);
     } catch (gameException $d) {
@@ -197,7 +196,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
         gameGetNames();
     }
 
-    if ($debug) { echo "game.inc:" . __FUNCTION__ . ":^^^={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}.<br>"; }
+    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . ":^^^={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}");
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
@@ -210,11 +209,11 @@ require(BASE_URI . "modules/game/game.form.php");
 function gameGetNames() {
     # declare globals
     global $debug, $gamz, $member_names, $error_msgs;
-    if ($debug) { echo "gameGetNames={$_POST['game_id']}.<br>"; }
+    dbg("=".__FUNCTION__.";gameGetNames={$_POST['game_id']}");
 
     $mmbr = new Member();
     $mmbr->set_member_id($gamz->get_member_snack());
-    if ($debug) { echo "gameGetNames snack:member={$mmbr->get_member_id()}.<br>"; }
+    dbg("=".__FUNCTION__.";gameGetNames snack:member={$mmbr->get_member_id()}");
     try {
         $mmbr->get("");
         $member_names['snack'] = $mmbr->get_full_name();
@@ -279,7 +278,7 @@ function gameGetNames() {
         }
     }
 
-    if ($debug) { echo "game:" . __FUNCTION__ . ":end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}:{$member_names['caller']}.<br>"; }
+    dbg("=".__FUNCTION__.";game:" . __FUNCTION__ . ":end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}:{$member_names['caller']}");
 
 }
 
@@ -288,7 +287,7 @@ function gameGetNames() {
  */
 function gameTest() {
     global $debug, $gamz, $member_names, $error_msgs;
-    if ($debug) { echo "gameTest.<br>"; }
+    dbg("=".__FUNCTION__.";gameTest");
     #post_dump();
 
 # initialize the game form
@@ -302,7 +301,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
 
-    if ($debug) { echo "game:" . __FUNCTION__ . ":end={$gamz->get_game_id()}.<br>"; }
+    dbg("=".__FUNCTION__.";game:" . __FUNCTION__ . ":end={$gamz->get_game_id()}");
 
 }
 
@@ -314,7 +313,7 @@ function gameList() {
     global $debug;
 
     $games = new GameArray;
-    if ($debug) { echo "game:List count={$games->gameCount}:" . count($games->gameList) . ".<br>"; }
+    dbg("=".__FUNCTION__.";game:List count={$games->gameCount}:" . count($games->gameList) . "");
 #  $games->listing();
 #  $games->sortNick();
 //    usort($games->gameList, array('GameArray','sortNick')); 
@@ -325,7 +324,7 @@ function gameList() {
 require(BASE_URI . "modules/game/game.list.form.php");
 
 }
-
+dbg("-".basename(__FILE__).";$page_id");
 //******************************************************************************
 // End of game.inc.php
 //******************************************************************************

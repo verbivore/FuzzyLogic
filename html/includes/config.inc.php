@@ -4,6 +4,7 @@
  * File name: config.inc.php
  * @author David Demaree (from Larry Ullman) <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-18 Moved directory from poker to FuzzyLogic.  Added post_dump and session_dump.  DHD
  * 14-03-08 Original.  DHD

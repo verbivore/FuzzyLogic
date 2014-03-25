@@ -1,9 +1,9 @@
 
         <br>
-<?php dbg("+include:".__FILE__.""); ?>
+<?php dbg("+".basename(__FILE__).""); ?>
         <br>
     </form>
-<?php dbg("-include:".__FILE__.""); ?>
+<?php dbg("-".basename(__FILE__).""); ?>
   </body>
 </html>
 

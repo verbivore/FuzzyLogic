@@ -1,25 +1,24 @@
 <?php  # player.form.php
-/******************************************************************************
- *  File name: player.form.php
- *  @author David Demaree <dave.demaree@yahoo.com>
- *  Contact: dave.demaree@yahoo.com
- *  Purpose: Shows the html form for a single player
+/**
+ * Shows the html form for a single player
+ * File name: player.form.php
+ * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg().  DHD
  * 14-03-18 Changed stats fields to readonly.  DHD
  * 14-03-08 Original.  DHD
- *****************************************************************************/
-dbg("+include file:".__FILE__);
-//if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+ */
+dbg("+".basename(__FILE__));
 # set banner message and style
 $message_banner = "{$error_msgs['errorDiv']}";
 if ("{$error_msgs['count']}" != "0") {
-  $message_class = "errorClass";
-  $message_banner .= " ({$error_msgs['count']}).";
+    $message_class = "errorClass";
+    $message_banner .= " ({$error_msgs['count']}).";
 } else {
-  $message_class = "infoClass";
+    $message_class = "infoClass";
 }
 
-dbg(" ".__FUNCTION__."plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>");
+dbg("=".basename(__FILE__).";ID={$plyr->get_member_id()}:{$message_banner}");
 
 # ************************* #
 # ***** Show the form ***** #
@@ -139,7 +138,7 @@ dbg(" ".__FUNCTION__."plyr ID={$plyr->get_member_id()}:{$message_banner}.<br>");
 <?php
 $_POST['stamp'] = $plyr->get_stamp();
 //if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
-dbg("-include file:".__FILE__);
+dbg("-".basename(__FILE__));
 # ***** Show the form ***** #
 # ************************* #
 ?>
