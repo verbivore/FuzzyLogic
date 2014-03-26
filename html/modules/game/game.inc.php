@@ -100,12 +100,11 @@ dbg("=".__FUNCTION__.";include:" . __FILE__ . ";^^^^^^^");
  */
 function gameNew() {
     # declare globals
-    global $debug;
+    dbg("+".__FUNCTION__.";gameNew");
 
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
 
-    dbg("=".__FUNCTION__.";gameNew");
 
     # Get the next available game id number
     $gamz->getNew();
@@ -116,6 +115,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
 
+    dbg("-".__FUNCTION__.";gameNew");
 }
 
 
@@ -152,8 +152,8 @@ require(BASE_URI . "modules/game/game.form.php");
  */
 function gameFind($findType) {
     # declare globals
-    global $debug, $gamz, $member_names, $error_msgs;
-    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . "vvv={$_POST['game_id']}");
+    global $gamz, $member_names, $error_msgs;
+    dbg("+".__FUNCTION__.";={$_POST['game_id']}");
     #post_dump();
 
 # initialize the game form
@@ -161,7 +161,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
     $newGame = FALSE;
     # Look for game by id 
     $gamz->set_game_id($_POST['game_id']);
-    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . ":{$gamz->get_game_id()}");
+    dbg("=".__FUNCTION__.";={$gamz->get_game_id()}");
     try {
         $gamz->get($findType);
     } catch (gameException $d) {
@@ -196,11 +196,11 @@ require(BASE_URI . "modules/game/game.form.init.php");
         gameGetNames();
     }
 
-    dbg("=".__FUNCTION__.";game.inc:" . __FUNCTION__ . ":^^^={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}");
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
 
+    dbg("-".__FUNCTION__.";game.inc:" . __FUNCTION__ . ":^^^={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}");
 }
 
 /**
@@ -319,7 +319,7 @@ function gameList() {
 //    usort($games->gameList, array('GameArray','sortNick')); 
 
     $games->listing();
-    usort($games->gameList, array('GameArray','sortScore')); 
+    usort($games->gameList, array('GameArray','sortDate')); 
 
 require(BASE_URI . "modules/game/game.list.form.php");
 

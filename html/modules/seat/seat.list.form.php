@@ -8,7 +8,7 @@
  * 14-03-19 Original.  DHD
  * Future
  */
-if ($debug) { echo "include:" . __FILE__ . ";VVVVVVV.<br>"; }
+dbg("+".basename(__FILE__)."");
 /*
 # set banner message and style
 $message_banner = "{$error_msgs['errorDiv']}";
@@ -21,12 +21,11 @@ if ("{$error_msgs['count']}" != "0") {
 */
 $message_class = "infoClass";
 $message_banner = "message banner";
-//if ($debug) { echo "plyr ID={$plyr->get_seat_id()}:{$message_banner}.<br>"; }
+//dbg("=".basename(__FILE__)."plyr ID={$plyr->get_seat_id()}:{$message_banner}");
 
 # ************************* #
 # ***** Show the form ***** #
 
-if ($debug) { echo "*** Dump seats *** ({$seats->seatCount} seats)<br>"; }
 ?>
   <div>
     <fieldset>
@@ -34,16 +33,11 @@ if ($debug) { echo "*** Dump seats *** ({$seats->seatCount} seats)<br>"; }
       <div id="errorDiv" <?php echo "class={$message_class} >{$message_banner}"; ?> </div> 
       <p>
         <table border='1'>
-        <th>ID</th>
-        <th>Nickname</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Invited</th>
-        <th>Yes</th>
-        <th>Maybe</th>
-        <th>No</th>
-        <th>Flake</th>
-        <th>Score</th>
+        <th>Game ID</th>
+        <th>Member ID</th>
+        <th>Response</th>
+        <th>Member Note</th>
+        <th>Notes</th>
         <th>Stamp</th>
         </tr>
 
@@ -52,16 +46,11 @@ if ($debug) { echo "*** Dump seats *** ({$seats->seatCount} seats)<br>"; }
     foreach ($seats->seatList as $row) {
 //      $counter++;
         echo "<tr>";
+        echo "<td>" . $row->get_game_id() . "</td>";
         echo "<td>" . $row->get_member_id() . "</td>";
-        echo "<td>" . $row->get_nickname() . "</td>";
-        echo "<td>" . $row->get_name_last() . "</td>";
-        echo "<td>" . $row->get_name_first() . "</td>";
-        echo "<td>" . $row->get_invite_cnt() . "</td>";
-        echo "<td>" . $row->get_yes_cnt() . "</td>";
-        echo "<td>" . $row->get_maybe_cnt() . "</td>";
-        echo "<td>" . $row->get_no_cnt() . "</td>";
-        echo "<td>" . $row->get_flake_cnt() . "</td>";
-        echo "<td>" . $row->get_score() . "</td>";
+        echo "<td>" . $row->get_response() . "</td>";
+        echo "<td>" . $row->get_note_member() . "</td>";
+        echo "<td>" . $row->get_note_master() . "</td>";
         echo "<td>" . $row->get_stamp() . "</td>";
         echo "</tr>";
     }
@@ -69,7 +58,7 @@ if ($debug) { echo "*** Dump seats *** ({$seats->seatCount} seats)<br>"; }
 ?>
   </div>
 <?php
-if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+dbg("=".basename(__FILE__)."");
 # ***** Show the form ***** #
 # ************************* #
 

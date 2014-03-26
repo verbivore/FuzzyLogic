@@ -4,6 +4,7 @@
  * File name: seat.form.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-23 Original, from game.form.php.  DHD
  *****************************************************************************/
 dbg("+".basename(__FILE__).";");
@@ -31,7 +32,7 @@ if ("{$error_msgs['count']}" == "0") {
     $message_banner .= " ({$error_msgs['count']}).";
 //}
 
-dbg("=".basename(__FILE__).";ID={$seaz->get_game_id()}:{$message_banner}");
+dbg("=".basename(__FILE__).";{$seaz->get_game_id()};{$seaz->get_member_id()};{$message_banner}");
 
 # ************************* #
 # ***** Show the form ***** #
@@ -39,7 +40,7 @@ dbg("=".basename(__FILE__).";ID={$seaz->get_game_id()}:{$message_banner}");
 ?>
   <div>
     <fieldset>
-      <legend> Game </legend>
+      <legend> Seat </legend>
       <p>
       <div id="errorDiv" <?php echo "class={$message_class} >{$message_banner}"; ?> </div> 
       <fieldlabel for="game_id">Game: </fieldlabel>

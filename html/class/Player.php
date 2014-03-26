@@ -5,14 +5,17 @@
  * @author David Demaree <dave.demaree@yahoo.com>
  * Future: Add bonus_cnt attribute.
  * Future: Get the "ON UPDATE CURRENT_TIMESTAMP" working.
+ * Future: Prevent overwriting player on update if member_id is changed.
  * ** History ***  
- *  14-03-20 Updated for phpDoc.  DHD
- *  14-03-18 Fixed final echo in insert().  Updated 2210 message. 
- *           Moved attributes to top.  
- *           Changed file name from player.class.php to Player.php.
- *           Fixed set_to_POST.  DHD
- *  14-03-08 Original.  DHD
+ * 14-03-23 Added dbg() function.  DHD
+ * 14-03-20 Updated for phpDoc.  DHD
+ * 14-03-18 Fixed final echo in insert().  Updated 2210 message. 
+ *          Moved attributes to top.  
+ *          Changed file name from player.class.php to Player.php.
+ *          Fixed set_to_POST.  DHD
+ * 14-03-08 Original.  DHD
  */
+dbg("+".basename(__FILE__)."");
 
 class Player extends Member
 {
@@ -31,7 +34,7 @@ class Player extends Member
  * List of names of SQL columns for the members table
  */
     private $PLAYER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
-                                                              "name_first", "stamp");
+                                          "name_first", "stamp");
 
 /**
  * constructor
@@ -613,7 +616,7 @@ require(TEST_URI . "testdb.open.php"); #
     }
 
 //******************************************************************************
-} // end class player
+} // end class Player
 //******************************************************************************
 
 
@@ -644,7 +647,10 @@ class playerException extends Exception
 #    dbg(__METHOD__.":playerException:GetOptions="; echo sizeof($this->_options); echo ".");
         return $this->_options; 
         }
-}
+//******************************************************************************
+} // end class playerException
+//******************************************************************************
 
+dbg("-".basename(__FILE__)."");
 ?>
 

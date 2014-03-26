@@ -4,6 +4,7 @@
  *  File name: index.php
  *  @author David Demaree <dave.demaree@yahoo.com> (from Larry Ulman) <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-18 Recovered member class include. Renamed classes to title case.  
             Added play-delt & from_page_id.  DHD
  * 14-03-08 Original.  DHD
@@ -17,7 +18,8 @@ tail -f /var/log/apache2/*.log
 // Require the configuration file before any PHP code:
 require('./includes/config.inc.php');
 
-$_SESSION['dbug'] = TRUE;
+//This statement should be in the config file but it doesn't seem to work there.
+//$_SESSION['dbug'] = false;
 
 // Determine which page to show:
 if (isset($_POST['main'])) {
@@ -216,31 +218,35 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 
 // Include the header file:
 require('./includes/header.inc.php');
-dbg("+".basename(__FILE__)."");
+dbg("+".basename(__FILE__).";(in progress, header set)");
 
 // Include the module files:
-dbg("=".basename(__FILE__).":loading Game");
-require_once(BASE_URI . 'class/Game.php');
-dbg("=".basename(__FILE__).":loading Member");
+dbg("=".basename(__FILE__).";loading Member");
 require_once(BASE_URI . 'class/Member.php');
-dbg("=".basename(__FILE__).":loading Player");
+dbg("=".basename(__FILE__).";loading Game");
+require_once(BASE_URI . 'class/Game.php');
+dbg("=".basename(__FILE__).";loading GameArray");
+require_once(BASE_URI . 'class/GameArray.php');
+dbg("=".basename(__FILE__).";loading Player");
 require_once(BASE_URI . 'class/Player.php');
-dbg("=".basename(__FILE__).":loading PlayerArray");
+dbg("=".basename(__FILE__).";loading PlayerArray");
 require_once(BASE_URI . 'class/PlayerArray.php');
-dbg("=".basename(__FILE__).":loading Seat");
+dbg("=".basename(__FILE__).";loading Seat");
 require_once(BASE_URI . 'class/Seat.php');
-dbg("=".basename(__FILE__).":loading testPerson");
+dbg("=".basename(__FILE__).";loading SeatArray");
+require_once(BASE_URI . 'class/SeatArray.php');
+dbg("=".basename(__FILE__).";loading testPerson");
 require_once(TEST_URI . 'testPerson.class.php');
 
 // Include the content-specific module:
 // $page_file is determined from the above switch.
 #echo "tail -f /var/log/apache2/*.log <br>";
-dbg("=".__FUNCTION__.":page_id=$page_id, page_file=$page_file, page_title=$page_title.");
+dbg("=".basename(__FILE__).";page_id=$page_id, page_file=$page_file, page_title=$page_title");
 require(BASE_URI . 'modules/' . $page_file);
 
 // Include the footer file to complete the template:
 require(BASE_URI . 'includes/footer.inc.php');
 $_SESSION['from_page_id'] = $page_id;
-dbg("-".basename(__FILE__)."");
+dbg("-".basename(__FILE__).";endof");
 ?>
 

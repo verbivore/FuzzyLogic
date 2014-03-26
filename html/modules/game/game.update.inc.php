@@ -4,6 +4,7 @@
  *  File name: game.update.inc.php
  *  @author David Demaree <dave.demaree@yahoo.com>
   *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-09 Original.  DHD
  * Future:
@@ -38,6 +39,11 @@ require(BASE_URI . "modules/game/game.form.init.php");
             }
         } catch (gameException $d) {
             switch ($d->getCode()) {
+            case 32010:
+                $error_msgs['game_id'] = "Game ({$gamz->get_geme_id()}) not found. ({$d->getCode()})";
+                $error_msgs['errorDiv'] = "See errors below";
+                $error_msgs['count'] += 1;
+                break;
             case 2110:
                 $error_msgs['nickname'] = "Game with this nickname ({$gamz->get_nickname()}) already exists. ({$d->getCode()})";
                 $error_msgs['errorDiv'] = "See errors below";
@@ -136,7 +142,7 @@ function gameValidate() {
 
 }
 
-dbg("=".basename(__FILE__).";");
+dbg("-".basename(__FILE__).";");
 //******************************************************************************
 // End of game.update.inc.php
 //******************************************************************************

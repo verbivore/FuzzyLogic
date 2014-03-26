@@ -82,6 +82,37 @@ dbg("=".basename(__FILE__).";ID={$gamz->get_game_id()}:{$message_banner}");
         <span class="errorFeedback errorSpan" id="stampError" > <?php echo $error_msgs['stamp']?> </span>
       <br />
     </fieldset>
+
+<?php  
+    $seats = new SeatArray($gamz->get_game_id());
+    if ($seats->seatCount > 0) {
+        echo "<table border='1'>";
+        echo "<tr>";
+        echo "<th>Game ID</th>";
+        echo "<th>Member ID</th>";
+        echo "<th>Response</th>";
+        echo "<th>Member Note</th>";
+        echo "<th>Notes</th>";
+        echo "<th>Stamp</th>";
+        echo "</tr>";
+
+
+        foreach ($seats->seatList as $row) {
+//            $counter++;
+            echo "<tr>";
+            echo "<td>" . $row->get_game_id() . "</td>";
+            echo "<td>" . $row->get_member_id() . "</td>";
+            echo "<td>" . $row->get_response() . "</td>";
+            echo "<td>" . $row->get_note_member() . "</td>";
+            echo "<td>" . $row->get_note_master() . "</td>";
+            echo "<td>" . $row->get_stamp() . "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
+?>
+
+
   </div>
 <?php
 $_POST['stamp'] = $gamz->get_stamp();

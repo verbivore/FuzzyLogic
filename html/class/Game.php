@@ -397,15 +397,19 @@ require(BASE_URI . "includes/pok.open.inc.php");
 require(BASE_URI . "includes/pok.open.inc.php");
             # find game rows
             $query = "SELECT * FROM games " . 
-                                  "WHERE game_id = \"$this->game_id\"  ";
+                          "WHERE game_id = \"$this->game_id\"  ";
             dbg("=".__METHOD__ . ":query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
             dbg("=".__METHOD__ . ":$this->game_id:rows=$row_count");
+            $foo = $stmt->fetchAll();
+//        echo '<pre>'; var_dump($foo); print ".<br/>"; echo '</pre>';
+
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new gameException('PDO Exception', -32010, $e);
+            dbg("-".__METHOD__ . "={$this->game_id};PDO Exception");
+            throw new gameException('PDO Exception', 32010, $e);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -429,7 +433,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 # insert game
                 $query = "INSERT INTO games ({$this->sql_column_name_list()}) " .
                   "VALUES ({$this->sql_column_value_list()})" ;
-                dbg("=".__METHOD__.":Game:find:query=$query");
+                dbg("=".__METHOD__.";query=$query");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {

@@ -25,14 +25,16 @@ if (in_array($host, array('local', '127.0', '192.1'))) {
     $local = FALSE;
 }
 
+# start the session
+session_start();
+
 // Determine location of files and the URL of the site:
 // Allow for development on different servers.
 if ($local) {
 
     // Always debug when running locally:
     $debug = TRUE;
-    $_SESSION['dbug'] = TRUE;
-//    $_SESSION['dbug'] = 0;
+    $_SESSION['dbug'] = FALSE;
     
     // Define the constants:
     define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');
@@ -46,7 +48,7 @@ if ($local) {
     define('BASE_URI', '/path/to/live/html/folder/');
     define('BASE_URL', 'http://www.example.com/');
     define('DB', '/path/to/live/mysql.inc.php');
-    
+
 }
     
 /* 
@@ -69,12 +71,14 @@ if (!isset($debug)) {
     $debug = FALSE;
 }
 
+if (!isset($_SESSION['dbug'])) {
+    $_SESSION['dbug'] = FALSE;
+}
 
 # initializing php code for the first page
-session_start();
 
-if (!isset($from_page_id)) {
-    $from_page_id = "new";
+if (!isset($_SESSION['from_page_id'])) {
+    $_SESSION['from_page_id'] = "new";
 }
 if (!isset($_SESSION['startTime'])) {
     $_SESSION['startTime'] = date("M/d/y g:i:sa");
@@ -140,10 +144,9 @@ function post_list()
 
 function dbg($parm) 
 {
-    $preChar = ">";
     static $depth = 0;
 //session_list();
-    if ($_SESSION['dbug']) {
+    if ($_SESSION['dbug']  == TRUE) {
         $prefix = "";
         $direction = substr($parm, 0, 1);
         if ($direction == "+") {
@@ -156,7 +159,7 @@ function dbg($parm)
             $prefix = str_repeat("=", $depth);
         }
         echo '<div class="dbgClass">';
-        echo $prefix . ":" . $parm . ".<br\n>";
+        echo $prefix . "# " . $parm . ".<br\n>";
         echo '</div>';
     }
 //        echo '<span class="dbgClass"'; # formats list one per line
@@ -171,6 +174,37 @@ function dbg($parm)
 
 # **************************** #
 # ***** ERROR MANAGEMENT ***** #
+
+class PokerException extends Exception
+{
+#    
+    private $_options = array();
+    // Redefine the exception so message isn't optional
+    public function __construct($message, 
+                                $code = 0, 
+                                Exception $previous = null,
+                                $options = array('params')) {
+#        dbg("=".__METHOD__.":SeatException={$message}:$code");
+            // make sure everything is assigned properly
+            parent::__construct($message, $code, $previous);
+
+            $this->_options = $options;
+
+    }
+
+    // custom string representation of object
+    public function __toString() {
+        return __CLASS__.": [{$this->code}]: {$this->message}\n";
+    }
+
+    public function GetOptions() { 
+#    dbg("=".__METHOD__.":SeatException:GetOptions=" . sizeof($this->_options) . "");
+    return $this->_options; 
+    }
+}
+
+
+
 
 // Create the error handler:
 function my_error_handler($e_number, $e_message, $e_file, $e_line, $e_vars) {

@@ -3,12 +3,15 @@
  *  Class definition for an array of player
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated __construct to ignore 2210.  DHD
  * 14-03-18 Changed name to title case.  DHD
  * 14-03-08 Original.  DHD
  * Future:
  * Incorporate games stats to player score.
  */
+dbg("+".basename(__FILE__)."");
+
 class PlayerArray extends player
 {
     public $playerList = array();
@@ -16,29 +19,29 @@ class PlayerArray extends player
 
     function __construct()
     {
-        global $debug;
-        if ($debug) { echo __METHOD__ . ".<br>"; }
+        dbg("=".__METHOD__."");
         $this->playerCount = 0;
         try {
 # Open poker database
 require(BASE_URI . "includes/pok.open.inc.php");
             # get number of players
             $query = "SELECT COUNT(member_id) AS playerCount FROM members ";
-            if ($debug) { echo "PlayerArray:players:count:query=$query.<br>"; }
+            dbg("=".__METHOD__.";query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row = $stmt->fetch();
-            if ($debug) { echo "PlayerArray:playerCount={$row['playerCount']}.<br>"; }
+            dbg("=".__METHOD__.";playerCount={$row['playerCount']}");
             $this->playerCount = $row['playerCount'];
+            # future:  fail if empty???
             # get members row
             $query = "SELECT MIN(member_id) AS first FROM members ";
-            if ($debug) { echo "PlayerArray:players:next:query=$query.<br>"; }
+            dbg("=".__METHOD__.";next:query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
             if ($row_count == 1) {
                 $row = $stmt->fetch();
-                if ($debug) { echo "PlayerArray:first={$row['first']}.<br>"; }
+                dbg("=".__METHOD__.";first={$row['first']}");
                 $next_member_id = $row['first'];
                 $loaded = 0;
                 for ($i=0; $i < $this->playerCount; $i++) {
@@ -47,31 +50,32 @@ require(BASE_URI . "includes/pok.open.inc.php");
                     $this->playerList[$i]->set_member_id($next_member_id);
                     # Save row
                     try {
-                        $this->playerList[$i]->get();
-                    }
-                    catch (playerException $d) {
+                        $this->playerList[$i]->get("");
+                    } catch (playerException $d) {
                         switch ($d->getCode()) {
-                        case 2210:  # no seats rows
-                            if ($debug) { echo "PlayerArray:__construct:exc 2110: No seats rows for={$this->playerList[$i]->get_member_id()}.<br>"; }
+                        case 22210:  # no seats rows
+                            dbg("=".__METHOD__.";exc 22110: No seats rows for={$this->playerList[$i]->get_member_id()}");
                             break;
                         default:
-                            echo "plyr find failed:plyr->get_member_id():" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
+                            dbg("=".__METHOD__.";plyr find failed:{$this->playerList[$i]->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . "");
                             $p = new Exception($d->getPrevious());
-                            echo "plyr Previous exception:plyr->get_member_id():" . $p->getMessage() . ".<br>";
+                            dbg("=".__METHOD__.";plyr Previous exception:{$this->playerList[$i]->get_member_id()}:" . $p->getMessage() . "");
                             throw new Exception($p);
                         }
                     }
-                    $loaded++;
-                    # set up next iteration
-                    $query = "SELECT MIN(member_id) AS next FROM members WHERE member_id > {$next_member_id} ";
-#          if ($debug) { echo "player:players:get:query=$query.<br>"; }
-                    $stmt = $pokdb->prepare($query);
-                    $stmt->execute();
-                    $row = $stmt->fetch();
-                    $next_member_id = $row['next'];
+                        # Bug: 
+                        $loaded++;
+                        # set up next iteration
+                        $query = "SELECT MIN(member_id) AS next FROM members " . 
+                                 "WHERE member_id > {$next_member_id} ";
+#                        dbg("=".__METHOD__."get:query=$query");
+                        $stmt = $pokdb->prepare($query);
+                        $stmt->execute();
+                        $row = $stmt->fetch();
+                        $next_member_id = $row['next'];
                 } 
             } else {
-                if ($debug) { echo "PlayerArray:rows=$row_count.<br>"; }
+                dbg("=".__METHOD__.";rows=$row_count");
             }
         } catch (PDOException $e) {
             echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br/>";
@@ -109,8 +113,7 @@ public static function sortNick()
  */
     public function listing()
     {
-        global $debug;
-        if ($debug) { echo "PlayerArray:" . __FUNCTION__ . ".<br>"; }
+        dbg("=".__METHOD__."");
 
         echo "*** Dump players *** ({$this->playerCount} players)<br>";
         echo "<table border='1'>";
@@ -128,11 +131,11 @@ public static function sortNick()
         echo "</tr>";
     
         $counter = 0;
-        if ($debug) { echo "PlayerArray:listing count={$this->playerCount}:"; echo count($this->playerList); echo ".<br>"; }
+        dbg("=".__METHOD__.";listing count={$this->playerCount}:".count($this->playerList)."");
     #  echo "PlayerArray:listing [0]="; $this[0]->listRow(); echo ".<br>";
         foreach ($this->playerList as $row) {
             $counter++;
-//      if ($debug) { echo "player {$row->get_member_id()} ($counter of {$this->playerCount})<br>";}
+//      dbg("=".__METHOD__."player {$row->get_member_id()} ($counter of {$this->playerCount})<br>");
 #      $row->listRow();
             echo "<tr>";
             echo "<td>" . $row->get_member_id() . "</td>";
@@ -154,4 +157,5 @@ public static function sortNick()
 //******************************************************************************
 } # end class PlayerArray
 //******************************************************************************
+dbg("-".basename(__FILE__)."");
 ?>

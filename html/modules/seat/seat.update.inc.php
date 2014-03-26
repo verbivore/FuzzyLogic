@@ -4,6 +4,7 @@
  *  File name: seat.update.inc.php
  *  @author David Demaree <dave.demaree@yahoo.com>
   *** History ***  
+ * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-09 Original.  DHD
  * Future:
@@ -36,7 +37,7 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
                 $e = new Exception("Multiple ($row_count) seat records for seat ({$seaz->get_game_id()}).", 20000);
                 throw new Exception($e);
             }
-        } catch (seatException $d) {
+        } catch (PokerException $d) {
             switch ($d->getCode()) {
             case 2110:
                 $error_msgs['nickname'] = "Game with this nickname ({$seaz->get_nickname()}) already exists. ({$d->getCode()})";
@@ -83,7 +84,7 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
         try {
             $seaz->get("");
             seatGetNames();
-        } catch (seatException $d) {
+        } catch (PokerException $d) {
             echo "Game insert/update failed:{$seaz->get_game_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
             $p = new Exception($d->getPrevious());
             echo "Game Previous exception:{$seaz->get_game_id()}:" . $p->getMessage() . ".<br>";
@@ -119,10 +120,10 @@ function seatValidate() {
         foreach ($seat_form_fields as $field) {
             try {
                 $func = "validate_$field";
-//              dbg("=".__FUNCTION__.";seatUpdate:validate fields={$func}");
+//              dbg("=".__FUNCTION__.";fields={$func}");
                 $seaz->$func();
             }
-            catch (seatException $e) {
+            catch (PokerException $e) {
                 dbg("=".__FUNCTION__.";error={$e->getMessage()}");
                 $error_msgs["$field"] = $e->getMessage();
                 $error_msgs['count'] += 1;
@@ -136,7 +137,7 @@ function seatValidate() {
 
 }
 
-dbg("=".basename(__FILE__).";");
+dbg("-".basename(__FILE__).";");
 //******************************************************************************
 // End of seat.update.inc.php
 //******************************************************************************

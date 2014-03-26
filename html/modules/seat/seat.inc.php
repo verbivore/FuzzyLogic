@@ -115,8 +115,6 @@ switch ($page_id) {
   <br>
 <?php
 
-dbg("=".__METHOD__."include:" . __FILE__ . ";^^^^^^^");
-
 /**
  * Set up a blank seat form, ready for find or add
  */
@@ -124,17 +122,17 @@ function seatNew() {
 # initialize the seat form
 require(BASE_URI . "modules/seat/seat.form.init.php");
 
-    dbg("=".__METHOD__."");
+    dbg("+".__METHOD__."");
 
     # Get the next available seat id number
     $seaz->getNew();
     $error_msgs['errorDiv'] = "Add new seat:";
 
-    dbg("=".__METHOD__."={$seaz->get_game_id()}");
 
 # Show the seat form
 require(BASE_URI . "modules/seat/seat.form.php");
 
+    dbg("-".__METHOD__."={$seaz->get_game_id()}");
 }
 
 
@@ -143,18 +141,17 @@ require(BASE_URI . "modules/seat/seat.form.php");
  */
 function seatDelete() {
     # declare globals
-    global $debug;
 
 # initialize the seat form
 require(BASE_URI . "modules/seat/seat.form.init.php");
 
-    dbg("=".__METHOD__."seatDelete");
+    dbg("=".__METHOD__."");
     $seaz->set_to_POST();
     # Get the next available seat id number
     $seaz->delete();
 //    $error_msgs['errorDiv'] = "Delete seat not yet implemented.";
 
-    dbg("=".__METHOD__."seatDelete:end={$seaz->get_game_id()}");
+    dbg("=".__METHOD__.";end={$seaz->get_game_id()}");
 
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "seat deleted.";
@@ -181,19 +178,20 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
     # Look for seat by id 
     $seaz->set_game_id($_POST['game_id']);
     $seaz->set_member_id($_POST['member_id']);
-    dbg("=".__FUNCTION__.";$findType;{$seaz->get_game_id()}");
+    dbg("=".__FUNCTION__.";$findType;{$seaz->get_game_id()};".Seat::ERR_GET_ZERO);
     try {
         $seaz->get($findType);
-    } catch (seatException $d) {
+    } catch (PokerException $d) {
         #echo "seaz get failed:{$seaz->get_game_id()}.<br>";
         switch ($d->getCode()) {
-        case 32210:  # no seats rows
-        case 32212:  # no seats rows
+        case Seat::ERR_GET_ZERO:  # no rows retrieved
+//            switch ($findType) {
+ //           case 
             $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See error(s) below";
             $error_msgs['count'] += 1;
             break;
-        case 32211:  # multiple seats rows
+        case Seat::ERR_GET_MULTI:  # multiple seats rows
             $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See errors below";
             $error_msgs['count'] += 1;
@@ -229,11 +227,11 @@ require(BASE_URI . "modules/seat/seat.form.php");
 function seatGetNames() {
     # declare globals
     global $debug, $seaz, $member_names, $error_msgs;
-    dbg("=".__METHOD__."seatGetNames={$_POST['game_id']}");
+    dbg("+".__METHOD__."={$_POST['game_id']}");
 
     $mmbr = new Member();
     $mmbr->set_member_id($seaz->get_response());
-    dbg("=".__METHOD__."seatGetNames snack:member={$mmbr->get_member_id()}");
+    dbg("=".__METHOD__.";snack={$mmbr->get_member_id()}");
     try {
         $mmbr->get("");
         $member_names['snack'] = $mmbr->get_full_name();
@@ -282,7 +280,7 @@ function seatGetNames() {
         }
     }
 
-    dbg("=".__METHOD__."seat:" . __FUNCTION__ . ":end={$seaz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}");
+    dbg("-".__METHOD__.";end={$seaz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}");
 
 }
 
@@ -291,7 +289,7 @@ function seatGetNames() {
  */
 function seatTest() {
     global $debug, $seaz, $member_names, $error_msgs;
-    dbg("=".__METHOD__."seatTest");
+    dbg("+".__METHOD__."seatTest");
     #post_dump();
 
 # initialize the seat form
@@ -305,7 +303,7 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
 # Show the seat form
 require(BASE_URI . "modules/seat/seat.form.php");
 
-    dbg("=".__METHOD__."seat:" . __FUNCTION__ . ":end={$seaz->get_game_id()}");
+    dbg("-".__METHOD__.";end={$seaz->get_game_id()}");
 
 }
 
@@ -313,20 +311,21 @@ require(BASE_URI . "modules/seat/seat.form.php");
 /**
  * Show a list of seats.
  */
-function seatList() {
-    global $debug;
+function seatList($gameId=0) {
+    dbg("+".__METHOD__.";$gameId");
 
-    $seats = new SeatArray;
-    dbg("=".__METHOD__."seat:List count={$seats->seatCount}:" . count($seats->seatList) . "");
+    $seats = new SeatArray($gameId);
+    dbg("=".__METHOD__.";count={$seats->seatCount}:" . count($seats->seatList) . "");
 #  $seats->listing();
 #  $seats->sortNick();
 //    usort($seats->seatList, array('SeatArray','sortNick')); 
 
     $seats->listing();
-    usort($seats->seatList, array('SeatArray','sortScore')); 
+    usort($seats->seatList, array('SeatArray','sortMember')); 
 
 require(BASE_URI . "modules/seat/seat.list.form.php");
 
+    dbg("-".__METHOD__.";count={$seats->seatCount}:" . count($seats->seatList) . "");
 }
 dbg("-".basename(__FILE__).";$page_id");
 //******************************************************************************

@@ -200,16 +200,18 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $row = $stmt->fetch();
                 $this->setThisTomemberRow($row);
             } elseif ($row_count < 1) {
-#                dbg("=".__METHOD__.";Member:get=member not found");
+                dbg("-".__METHOD__.";=member not found");
                 #error_log($e->getTraceAsString());
                 throw new Exception('No records for this member were found', 32210);
             } else {
-#                dbg("=".__METHOD__.";Member:get=multiple member records found");
+                dbg("-".__METHOD__.";=multiple member records found");
                 #error_log($e->getTraceAsString());
-                throw new Exception('Multiple records for this member were found', 32211);
+                throw new Exception("Multiple {$row_count} records for this member were found", 32211);
             }
         } catch (PDOException $e) {
+            dbg("-".__METHOD__.";=PDO Exception");
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new Exception('PDO Exception: ', 32212);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
