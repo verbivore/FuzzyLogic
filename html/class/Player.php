@@ -3,9 +3,10 @@
  * Class definition for a player.
  * File name: Player.php
  * @author David Demaree <dave.demaree@yahoo.com>
- * Future: Add bonus_cnt attribute.
- * Future: Get the "ON UPDATE CURRENT_TIMESTAMP" working.
- * Future: Prevent overwriting player on update if member_id is changed.
+ *  Future: 
+ *    Add bonus_cnt attribute and use it in score calc.
+ *    Get the "ON UPDATE CURRENT_TIMESTAMP" working.
+ *    Prevent overwriting player on update if member_id is changed.
  * ** History ***  
  * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
@@ -34,7 +35,7 @@ class Player extends Member
  * List of names of SQL columns for the members table
  */
     private $PLAYER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
-                                          "name_first", "stamp");
+                "name_first", "status", "email", "phone", "stamp");
 
 /**
  * constructor
@@ -334,29 +335,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->score = ($yess + $maybes + $nos - $flakes) / $invites;
     }
 
-
-//******************************************************************************
-// Get the next available player number        
-//******************************************************************************
-/*  public function get_next_id()
-    {
-        global $debug;
-#    dbg("+".__METHOD__.";get_next_id:"; }
-        try {
-            require(BASE_URI . "includes/pok.open.inc.php");
-            # get player table
-            $stmt = $pokdb->prepare("SELECT MAX(member_id) FROM members");
-            $stmt->execute();
-            $this->member_id = $stmt->fetchColumn() + 1;
-#      dbg(__METHOD__.":$this->member_id.");
-        } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-        } catch (Exception $e) {
-            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-        }
-    }
-*/
-
 /**
  * List a player
  */
@@ -501,8 +479,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function delete()
     {
-        global $debug;
-        dbg("+".__METHOD__.";$this->member_id.");
+        dbg("+".__METHOD__.";$this->member_id");
         $deleted_seats = 0;
         $deleted_members = 0;
         try {
@@ -510,18 +487,18 @@ require(BASE_URI . "includes/pok.open.inc.php");
             # delete attendance
             $delete = "DELETE FROM seats " . 
                       " WHERE member_id = \"{$this->member_id}\" ";
-            dbg(__METHOD__.":stmt_str=$delete.");
+            dbg("=".__METHOD__.":stmt_str=$delete.");
             $stmt = $pokdb->prepare($delete);
             $stmt->execute();
             $deleted_seats = $stmt->rowCount();
-            dbg(__METHOD__.":seats deleted:" . $deleted_seats . ".");
+            dbg("=".__METHOD__.":seats deleted:" . $deleted_seats . ".");
             $delete = "DELETE FROM members " . 
                       " WHERE member_id = \"{$this->member_id}\" ";
-            dbg(__METHOD__.":stmt_str=$delete.");
+            dbg("=".__METHOD__.":stmt_str=$delete.");
             $stmt = $pokdb->prepare($delete);
             $stmt->execute();
             $deleted_members = $stmt->rowCount();
-            dbg(__METHOD__.":members deleted:" . $deleted_members . ".");
+            dbg("=".__METHOD__.":members deleted:" . $deleted_members . ".");
         } catch (PDOException $e) {
             echo "player.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
             throw new playerException('Unknown error', 22261, $e);
@@ -536,89 +513,12 @@ require(BASE_URI . "includes/pok.open.inc.php");
         if ($rows_deleted == 0 ) {
             throw new playerException("Member ({$this->member_id}) not found", 22262, new Exception());
         }
-        dbg("-".__METHOD__.";$this->member_id;$rows_deleted");
-    }
-
-/**
- * create a fictitious player for test purposes                         
- */
-    function testPlayer()
-    {
-        global $debug;
-        dbg("+".__METHOD__."");
-        # id
-        $this->get_next_id();
-require(TEST_URI . "testdb.open.php"); #
-        # surname
-        $nameCount = $this->getRowCount($testdb, "surnames");
-        $nameId = rand(1, $nameCount);
-        $query="SELECT * FROM surnames WHERE name_id = $nameId";
-//    echo "testData surnames query=$query.<br>";
-        $stmt = $testdb->prepare($query);
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-        dbg(__METHOD__.":player.testData rows:$row_count.");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->name_last = $row['name_last'];
-#      echo "player.testData name_last=$this->name_last.<br>";
-        } else {
-            echo "testData __construct name_last error: Too many rows:$row_count.<br>";
-            throw new Exception('testData name_last SELECT error: Too many rows', -1);
-        }
-        # name_first
-        $gender = rand(0, 1); 
-        if ($gender) {
-            $table_name = "male_names";
-        } else {
-            $table_name = "female_names";
-        }
-        $nameCount = $this->getRowCount($testdb, $table_name);
-        $nameId = rand(1, $nameCount); # Pick random male, female
-        $query = "SELECT name_first FROM $table_name WHERE name_id = $nameId";
-        $stmt = $testdb->prepare($query);
-#    dbg(__METHOD__.":player.testData stmt:"; $stmt->debugDumpParams(); echo "");
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-//    dbg(__METHOD__.":player.testData rows:$row_count.");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->name_first = $row['name_first'];
-//      echo "player.testData name_first=$this->name_first.<br>";
-        } else {
-            echo "testData __construct name_first error: Too many rows:$row_count.<br>";
-            throw new Exception('testData name_first SELECT error: Too many rows', -1);
-        }
-
-#  echo "Next this:{$this->get_member_id()}.<br>";
-        # nickname
-        $this->set_nickname("M");
-
-        dbg("-".__METHOD__."");
-
-    }
-
-
-/**
- * get the number of rows in a table from the test database                         
- */
-    private function getRowCount($testdb, $table_name)
-    {
-        # Get number of rows to choose from in table
-        $nameCount = 0;
-        $sql = "SELECT COUNT(*) FROM $table_name";
-        if ($res = $testdb->query($sql)) {
-            /* Check the number of rows that match the SELECT statement */
-            $nameCount = $res->fetchColumn();
-        }
-        #echo "testdata $table_name count=$nameCount.<br>";
-        return ($nameCount);
+        dbg("-".__METHOD__.";$this->member_id;$rows_deleted;$this->score;$this->stamp");
     }
 
 //******************************************************************************
 } // end class Player
 //******************************************************************************
-
 
 class playerException extends Exception
 {

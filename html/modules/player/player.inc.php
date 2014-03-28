@@ -25,11 +25,11 @@ $butt_att_updt = "";
 $butt_att_list = "";
 $butt_att_delt = "";
 $butt_att_burp = "";
-
+echo "{$_POST['from_page_id']}<br>";
 // Determine which page to display:
 switch ($page_id) {
     case 'play-prev':
-        if ($_SESSION['from_page_id'] == 'play-list') {
+        if ($_POST['from_page_id'] == 'play-list') {
             # find first game
             $_POST['player_id'] = 0;
             playerFind("next");
@@ -38,7 +38,7 @@ switch ($page_id) {
         }
         break;
     case 'play-find':
-        if ($_SESSION['from_page_id'] == 'play-list') {
+        if ($_POST['from_page_id'] == 'play-list') {
             # find first game
             $_POST['player_id'] = 9999;
             playerFind("prev");
@@ -47,7 +47,7 @@ switch ($page_id) {
         }
         break;
     case 'play-next':
-        if ($_SESSION['from_page_id'] == 'play-list') {
+        if ($_POST['from_page_id'] == 'play-list') {
             # find first game
             $_POST['player_id'] = 9999;
             playerFind("prev");
@@ -61,7 +61,7 @@ switch ($page_id) {
         playerList();
         break;
     case 'play-updt':
-        if ($_SESSION['from_page_id'] == 'play-list') {
+        if ($_POST['from_page_id'] == 'play-list') {
             playerNew();
         } else {
             playerUpdate();
@@ -69,7 +69,7 @@ switch ($page_id) {
         break;
     case 'play-delt':
         $butt_att_updt .= " disabled";
-        if ($_SESSION['from_page_id'] == 'play-list') {
+        if ($_POST['from_page_id'] == 'play-list') {
             playerNew();
         } else {
             playerDelete();
@@ -77,7 +77,7 @@ switch ($page_id) {
         break;
     case 'play-burp':
 //        $butt_att_updt .= " disabled";
-//        if ($_SESSION['from_page_id'] == 'play-list') {
+//        if ($_POST['from_page_id'] == 'play-list') {
             playerTest();
 //        } else {
 //            playerDelete();
@@ -133,7 +133,6 @@ require(BASE_URI . "modules/player/player.form.php");
  */
 function playerDelete() {
     # declare globals
-    global $debug;
 
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
@@ -162,10 +161,11 @@ require(BASE_URI . "modules/player/player.form.init.php");
     if ($error_msgs['count'] == 0) {
         $error_msgs['errorDiv'] = "Player deleted.";
     }
-    dbg("-".__FUNCTION__."={$plyr->get_member_id()}");
 
 # Show the player form
 require(BASE_URI . "modules/player/player.form.php");
+
+    dbg("-".__FUNCTION__."={$plyr->get_member_id()};{$plyr->get_score()};{$plyr->get_stamp()};");
 
 }
 
@@ -236,7 +236,7 @@ function playerTest() {
 require(BASE_URI . "modules/player/player.form.init.php");
 
     # create a test player
-    $plyr->testData();
+    $plyr->testMember();
     $error_msgs['errorDiv'] = "Test player created.  Press \"Add/Update\" to add the player.";
 
 # Show the player form

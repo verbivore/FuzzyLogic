@@ -4,6 +4,7 @@
  *  File name: Member.php
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***
+ * 14-03-23 Added status, email, phone.  DHD
  * 14-03-23 Added dbg().  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-18 Renamed from member.class.php to Member.php.  Moved attributes to top. DHD
@@ -21,11 +22,15 @@ class Member
     protected $nickname;
     protected $name_last;
     protected $name_first;
+    protected $status;
+    protected $email;
+    protected $phone;
     protected $stamp;
 
 // List of names of SQL columns for the members table
-    private static $MEMBER_TABLE_COLUMNS = array("member_id", "nickname", "name_last", 
-                                                              "name_first", "stamp");
+    private static $MEMBER_TABLE_COLUMNS = array("member_id", "nickname", 
+                   "name_last", "name_first", "status", "email", "phone", 
+                   "stamp");
 
 /*
  * Constructor
@@ -37,6 +42,9 @@ class Member
         $this->nickname = null;
         $this->name_last = null;
         $this->name_first = null;
+        $this->status = null;
+        $this->email = null;
+        $this->phone = null;
         $this->stamp = null;
     }
 
@@ -47,6 +55,9 @@ class Member
     public function get_nickname() { return $this->nickname; }
     public function get_name_last() { return ($this->name_last); }
     public function get_name_first() { return $this->name_first; }
+    public function get_status() { return $this->status; }
+    public function get_email() { return $this->email; }
+    public function get_phone() { return $this->phone; }
     public function get_stamp() { return $this->stamp; }
     public function get_full_name() { return $this->name_first . " '" .  $this->nickname . "' " . $this->name_last; }
    
@@ -58,6 +69,9 @@ class Member
     public function set_nickname($P) { $this->nickname = $P; }
     public function set_name_last($P) { $this->name_last = $P; }
     public function set_name_first($P) { $this->name_first = $P; }
+    public function set_status($P) { $this->status = $P; }
+    public function set_email($P) { $this->email = $P; }
+    public function set_phone($P) { $this->phone = $P; }
     public function set_stamp($P) { $this->stamp = $P; }
 
 /**
@@ -90,7 +104,27 @@ class Member
         # alphabetic/spaces, starts with capital?, 
         $e = array(0,"");
         return($e);
+    }
 
+    public function validate_status() {
+        # string
+        # alphabetic/spaces, starts with capital?, 
+        $e = array(0,"");
+        return($e);
+    }
+
+    public function validate_email() {
+        # string
+        # alphabetic/spaces, starts with capital?, 
+        $e = array(0,"");
+        return($e);
+    }
+
+    public function validate_phone() {
+        # string
+        # alphabetic/spaces, starts with capital?, 
+        $e = array(0,"");
+        return($e);
     }
 
 /**
@@ -176,7 +210,10 @@ class Member
     $this->set_nickname($_POST['nickname']);
     $this->set_name_last($_POST['name_last']);
     $this->set_name_first($_POST['name_first']);
-//  $this->set_stamp($_POST['stamp']);
+    $this->set_status($_POST['status']);
+    $this->set_email($_POST['email']);
+    $this->set_phone($_POST['phone']);
+    $this->set_stamp($_POST['stamp']);
     }
 
 /**
@@ -227,6 +264,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->nickname = $row['nickname'];
         $this->name_last = $row['name_last'];
         $this->name_first = $row['name_first'];
+        $this->status = $row['status'];
+        $this->email = $row['email'];
+        $this->phone = $row['phone'];
         $this->stamp = $row['stamp'];
     }
 
@@ -274,6 +314,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
         echo "nickname=$this->nickname$d";
         echo "name_last=$this->name_last$d";
         echo "name_first=$this->name_first$d";
+        echo "status=$this->status$d";
+        echo "email=$this->email$d";
+        echo "phone=$this->phone$d";
         echo "stamp=$this->stamp$d";
     }
 
@@ -390,85 +433,23 @@ require(BASE_URI . "includes/pok.open.inc.php");
 /**
  * create a fictitious member for test purposes                         
  */
-    function testData()
+    public function testMember()
     {
         dbg("=".__METHOD__);
+        $act = array("A", "X");
         # id
         $this->get_next_id();
         $testy = new testPerson();
+        $this->nickname = $testy->get_nickname();
         $this->name_last = $testy->get_name_last();
         $this->name_first = $testy->get_name_first();
-        $this->nickname = $testy->get_nickname();
-/*
-        # name_last
-require("../inc/testdb_open.php"); #
-        $nameCount = $this->getRowCount($testdb, "family_names");
-        $nameId = rand(1, $nameCount);
-        $query="SELECT * FROM family_names WHERE name_id = $nameId";
-//    echo "testData family_names query=$query.<br>";
-        $stmt = $testdb->prepare($query);
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-        dbg("=".__METHOD__.";Member.testData rows:$row_count");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->name_last = $row['name_last'];
-#      echo "Member.testData name_last=$this->name_last.<br>";
-        } else {
-            echo "testData __construct name_last error: Too many rows:$row_count.<br>";
-            throw new Exception('testData name_last SELECT error: Too many rows', -1);
-        }
-        # name_first
-        $gender = rand(0, 1); 
-        if ($gender) {
-            $table_name = "male_names";
-        } else {
-            $table_name = "female_names";
-        }
-        $nameCount = $this->getRowCount($testdb, $table_name);
-        $nameId = rand(1, $nameCount); # Pick random male, female
-        $query = "SELECT name_first FROM $table_name WHERE name_id = $nameId";
-        $stmt = $testdb->prepare($query);
-#        dbg("=".__METHOD__.";Member.testData stmt:"; $stmt->debugDumpParams(); echo "");
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-//        dbg("=".__METHOD__.";Member.testData rows:$row_count");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->name_first = $row['name_first'];
-//          echo "Member.testData name_first=$this->name_first.<br>";
-        } else {
-            echo "testData __construct name_first error: Too many rows:$row_count.<br>";
-            throw new Exception('testData name_first SELECT error: Too many rows', -1);
-        }
-
-#        echo "Next this:{$this->get_member_id()}.<br>";
-        $this->set_nickname("M");
-*/
-
+        $this->status = $act[rand(0,count($act)-1)];
+        $this->email = $testy->get_email();
+        $this->phone = $testy->get_phone();
     }
 
-
-/**
- * get the number of rows in a table from the test database                         
- */
-/*
-    private function getRowCount($testdb, $table_name)
-    {
-        # Get number of rows to choose from in table
-        $nameCount = 0;
-        $sql = "SELECT COUNT(*) FROM $table_name";
-        if ($res = $testdb->query($sql)) {
-            # Check the number of rows that match the SELECT statement
-            $nameCount = $res->fetchColumn();
-        }
-        #echo "testdata $table_name count=$nameCount.<br>";
-        return ($nameCount);
-    }
-*/
-} 
 //******************************************************************************
-// end class Member
+} // end class Member
 //******************************************************************************
 dbg("-".basename(__FILE__)."");
 ?>

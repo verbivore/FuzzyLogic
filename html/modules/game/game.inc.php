@@ -4,6 +4,7 @@
  * File name: game.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-27 Added $_POST['from_page_id'].  DHD
  * 14-03-23 Added dbg().  DHD
  * 14-03-20 Cloned from Game.  DHD
  */
@@ -22,7 +23,7 @@ $butt_att_burp = "";
 // Determine which page to display:
 switch ($page_id) {
     case 'game-prev':
-        if ($_SESSION['from_page_id'] == 'game-list') {
+        if ($_POST['from_page_id'] == 'game-list') {
             # find first game
             $_POST['game_id'] = 0;
             gameFind("next");
@@ -31,7 +32,7 @@ switch ($page_id) {
         }
         break;
     case 'game-find':
-        if ($_SESSION['from_page_id'] == 'game-list') {
+        if ($_POST['from_page_id'] == 'game-list') {
             # find last game
             $_POST['game_id'] = 9999;
             gameFind("prev");
@@ -40,7 +41,7 @@ switch ($page_id) {
         }
         break;
     case 'game-next':
-        if ($_SESSION['from_page_id'] == 'game-list') {
+        if ($_POST['from_page_id'] == 'game-list') {
             # find last game
             $_POST['game_id'] = 9999;
             gameFind("prev");
@@ -54,7 +55,7 @@ switch ($page_id) {
         gameList();
         break;
     case 'game-updt':
-        if ($_SESSION['from_page_id'] == 'game-list') {
+        if ($_POST['from_page_id'] == 'game-list') {
             gameNew();
         } else {
             gameUpdate();
@@ -62,14 +63,14 @@ switch ($page_id) {
         break;
     case 'game-delt':
         $butt_att_updt .= " disabled";
-        if ($_SESSION['from_page_id'] == 'game-list') {
+        $butt_att_delt .= " disabled";
+        if ($_POST['from_page_id'] == 'game-list') {
             gameNew();
         } else {
             gameDelete();
         }
         break;
     case 'game-burp':
-//        if ($_SESSION['from_page_id'] == 'game-list') {
         gameTest();
         break;
   
@@ -110,10 +111,12 @@ require(BASE_URI . "modules/game/game.form.init.php");
     $gamz->getNew();
     $error_msgs['errorDiv'] = "Add new game:";
 
-    dbg("=".__FUNCTION__.";gameNew:end={$gamz->get_game_id()}");
+    dbg("=".__FUNCTION__."={$gamz->get_game_id()}");
 
 # Show the game form
 require(BASE_URI . "modules/game/game.form.php");
+# Show the game add form
+#require(BASE_URI . "modules/game/game.form.add.php");
 
     dbg("-".__FUNCTION__.";gameNew");
 }
@@ -124,7 +127,6 @@ require(BASE_URI . "modules/game/game.form.php");
  */
 function gameDelete() {
     # declare globals
-    global $debug;
 
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
@@ -195,6 +197,7 @@ require(BASE_URI . "modules/game/game.form.init.php");
         $error_msgs['errorDiv'] = "Game found.";
         gameGetNames();
     }
+    dbg("=".__FUNCTION__.";={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}:{$member_names['caller']}");
 
 
 # Show the game form
@@ -204,82 +207,47 @@ require(BASE_URI . "modules/game/game.form.php");
 }
 
 /**
- * Get player names for member_ids
+ * Get a member names for all the bonus fields
  */
 function gameGetNames() {
     # declare globals
-    global $debug, $gamz, $member_names, $error_msgs;
-    dbg("=".__FUNCTION__.";gameGetNames={$_POST['game_id']}");
+    global $gamz, $member_names, $error_msgs;
+    gameGetName("snack");
+    gameGetName("host");
+    gameGetName("gear");
+    gameGetName("caller");
+}
 
+/**
+ * Get a member name for one of the bonus fields
+ */
+function gameGetName($field) {
+    # declare globals
+    global $gamz, $member_names, $error_msgs;
+    dbg("+".__FUNCTION__.";{$_POST['game_id']}=$field");
     $mmbr = new Member();
-    $mmbr->set_member_id($gamz->get_member_snack());
-    dbg("=".__FUNCTION__.";gameGetNames snack:member={$mmbr->get_member_id()}");
-    try {
-        $mmbr->get("");
-        $member_names['snack'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['snack'] = null;
-            break;
-        default:
-            echo "gameFind snack name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-    $mmbr->set_member_id($gamz->get_member_host());
-    try {
-        $mmbr->get("");
-        $member_names['host'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['host'] = null;
-            break;
-        default:
-            echo "gameFind host name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-    $mmbr->set_member_id($gamz->get_member_gear());
-    try {
-        $mmbr->get("");
-        $member_names['gear'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['gear'] = null;
-            break;
-        default:
-            echo "gameFind gear name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-    $mmbr->set_member_id($gamz->get_member_caller());
-    try {
-        $mmbr->get("");
-        $member_names['caller'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['caller'] = null;
-            break;
-        default:
-            echo "gameFind caller name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
 
-    dbg("=".__FUNCTION__.";game:" . __FUNCTION__ . ":end={$gamz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}:{$member_names['caller']}");
-
+    $func = "get_member_$field";
+    $mmbr->set_member_id($gamz->$func());
+    dbg("=".__FUNCTION__.";$field={$mmbr->get_member_id()}");
+    try {
+        $mmbr->get("");
+        $member_names["$field"] = $mmbr->get_full_name();
+    } catch (Exception $d) {
+        switch ($d->getCode()) {
+        case 32210:  # no member rows
+            $member_names["$field"] = null;
+            break;
+        default:
+            echo __FUNCTION__.":Find $field name failed:{$mmbr->get_member_id()}:" . 
+                $d->getMessage() . ":" . $d->getCode() . ".<br>";
+            $p = new Exception($d->getPrevious());
+            echo "previous message:" . $p->getMessage() . ".<br>";
+            dbg("-".__FUNCTION__.";{$_POST['game_id']}=$field=");
+            throw new Exception($p);
+        }
+    }
+    dbg("-".__FUNCTION__.";{$_POST['game_id']}=$field=".$member_names["$field"]);
 }
 
 /**

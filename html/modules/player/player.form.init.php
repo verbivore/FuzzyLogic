@@ -14,7 +14,9 @@ dbg("+".basename(__FILE__));
 $plyr = new Player;
 # list of form fields to process
 //$player_form_fields = array("member_id", "name_last", "name_first", "nickname", "stamp", "invite_cnt", "yes_cnt", "maybe_cnt", "no_cnt", "flake_cnt", "score");
-$player_form_fields = array("member_id", "name_last", "name_first", "nickname", "invite_cnt", "yes_cnt", "maybe_cnt", "no_cnt", "flake_cnt", "score", "stamp");
+$player_form_fields = array("member_id", "name_last", "name_first", "nickname",
+    "status", "email", "phone", "score", "invite_cnt", "yes_cnt", "maybe_cnt", 
+    "no_cnt", "flake_cnt", "stamp");
 
 # Initialize error message fields
 # Create an associative array of form fields to hold error messages, initialized to ""

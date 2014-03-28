@@ -18,8 +18,6 @@ tail -f /var/log/apache2/*.log
 // Require the configuration file before any PHP code:
 require('./includes/config.inc.php');
 
-//This statement should be in the config file but it doesn't seem to work there.
-//$_SESSION['dbug'] = false;
 
 // Determine which page to show:
 if (isset($_POST['main'])) {
@@ -219,6 +217,19 @@ if (!file_exists(BASE_URI . 'modules/' . $page_file)) {
 // Include the header file:
 require('./includes/header.inc.php');
 dbg("+".basename(__FILE__).";(in progress, header set)");
+
+define('FROM_PAGE_NEW', 'NEW');
+
+# Reset SESSION variables
+if (isset($_SESSION['player_cnt'])) {
+    $game_update_player_cnt = $_SESSION['player_cnt'];
+    unset($_SESSION['player_cnt']);
+}
+# Get standard POST variables
+if (!isset($_POST['from_page_id'])) {
+    echo "not set<br>";
+    $_POST['from_page_id'] = FROM_PAGE_NEW;
+}
 
 // Include the module files:
 dbg("=".basename(__FILE__).";loading Member");

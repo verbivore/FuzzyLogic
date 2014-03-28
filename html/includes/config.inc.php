@@ -77,9 +77,9 @@ if (!isset($_SESSION['dbug'])) {
 
 # initializing php code for the first page
 
-if (!isset($_SESSION['from_page_id'])) {
-    $_SESSION['from_page_id'] = "new";
-}
+//if (!isset($_SESSION['from_page_id'])) {
+//    $_SESSION['from_page_id'] = "new";
+//}
 if (!isset($_SESSION['startTime'])) {
     $_SESSION['startTime'] = date("M/d/y g:i:sa");
 }

@@ -31,10 +31,12 @@ SHOW GRANTS FOR 'juik'@'localhost';
 SELECT '       * Creating members table' AS 'STATUS:***********************';
 CREATE TABLE members (
   member_id 	SMALLINT(2) 	UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
-#  eff_date 	DATE 	NOT NULL 	COMMENT 'Start of effective period.', 
   nickname 	VARCHAR(20) 	NOT NULL UNIQUE, 
   name_last 	VARCHAR(20) 	NOT NULL, 
   name_first 	VARCHAR(20) 	NOT NULL,
+  status 	ENUM('A','X') 	COMMENT 'Active, X=inactive',
+  email 	VARCHAR(50) 	NOT NULL UNIQUE, 
+  phone 	VARCHAR(20) 	NOT NULL UNIQUE, 
   stamp 	TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) COMMENT 'member data (by effective date).'
 ;
@@ -45,6 +47,7 @@ SELECT '       * Loading members table' AS 'STATUS:***********************';
 LOAD DATA LOCAL INFILE 'data/members.txt' 
   INTO TABLE members
 #  FIELDS TERMINATED BY ','
+  SET stamp = CURRENT_TIMESTAMP
   ;
 SHOW WARNINGS;
 SELECT COUNT(*) AS "Rows Loaded"
@@ -68,6 +71,7 @@ DESCRIBE games;
 SELECT '       * Loading games table' AS 'STATUS:***********************';
 LOAD DATA LOCAL INFILE 'data/games.txt' 
   INTO TABLE games
+  SET stamp = CURRENT_TIMESTAMP
   ;
 SHOW WARNINGS;
 SELECT COUNT(*) AS "Rows Loaded"
@@ -90,6 +94,7 @@ DESCRIBE seats;
 SELECT '       * Loading seats table' AS 'STATUS:***********************';
 LOAD DATA LOCAL INFILE 'data/seats.txt' 
   INTO TABLE seats
+  SET stamp = CURRENT_TIMESTAMP
   ;
 SHOW WARNINGS;
 SELECT COUNT(*) AS "Rows Loaded"

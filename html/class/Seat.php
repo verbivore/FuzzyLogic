@@ -234,8 +234,9 @@ class Seat
 /**
  * get a seat row by game_id.                   
  */
-    public function get($getType)
+    public function get($getType="")
     {
+        dbg("+".__METHOD__."={$this->game_id};{$this->member_id};$getType");
         $query = $this->assembleGetQuery($getType);
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
@@ -251,6 +252,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } elseif ($row_count < 1) {
 #                dbg("=".__METHOD__.":Seat:get=seat not found");
                 #error_log($e->getTraceAsString());
+                dbg("-".__METHOD__."={$this->game_id};not found");
                 throw new PokerException('Not found', self::ERR_GET_ZERO, NULL, array($this->game_id, $this->member_id));
 /*
                 if ($getType == 'prev') {
@@ -302,6 +304,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         
         switch ($getType) {
         case 'preg': 
+/*
             $QUOLD = "SELECT * FROM seats " .
                      # previous game
                      "WHERE game_id = (" . 
@@ -315,11 +318,13 @@ require(BASE_URI . "includes/pok.open.inc.php");
                              "SELECT MAX(game_id) FROM seats " . 
                              "WHERE game_id < \"$this->game_id\")) ";
             dbg("=".__METHOD__.";$QUOLD!");
+*/
             $query .= "WHERE $prev_game " .
                       "AND $last_player "
                       .   "WHERE $prev_game) ";
                 break;
         case 'prep': 
+/*
             $QUOLD = "SELECT * FROM seats " .
                              # this game
                              "WHERE game_id = \"$this->game_id\" " .
@@ -330,11 +335,13 @@ require(BASE_URI . "includes/pok.open.inc.php");
                                  # this game
                                  "AND game_id = \"$this->game_id\")";
             dbg("=".__METHOD__.";$QUOLD!");
+*/
             $query .= "WHERE $this_game " .
                       "AND $prev_player "
                       .   "AND $this_game) ";
             break;
         case 'nexg':  
+/*
             $QUOLD = "SELECT * FROM seats " .
                          # next game
                          "WHERE game_id = (" . 
@@ -348,11 +355,13 @@ require(BASE_URI . "includes/pok.open.inc.php");
                                  "SELECT MIN(game_id) FROM seats " . 
                                      "WHERE game_id > \"$this->game_id\")) ";
             dbg("=".__METHOD__.";$QUOLD!");
+*/
             $query .= "WHERE $next_game " . 
                       "AND $first_player "
                       .   "WHERE $next_game) ";
             break;
         case 'nexp':
+/*
             $QUOLD = "SELECT * FROM seats " .
                          # this game
                          "WHERE game_id = \"$this->game_id\" " .
@@ -363,15 +372,18 @@ require(BASE_URI . "includes/pok.open.inc.php");
                              # this game
                              "AND game_id = \"$this->game_id\") ";
             dbg("=".__METHOD__.";$QUOLD!");
+*/
             $query .= "WHERE $this_game " . 
                       "AND $next_player "
                       .   "AND $this_game) ";
             break;
         default:
+/*
             $QUOLD = "SELECT * FROM seats " .
                      "WHERE game_id = \"$this->game_id\" " . 
                      "AND member_id = \"$this->member_id\" ";
             dbg("=".__METHOD__.";$QUOLD!");
+*/
             $query .= "WHERE $this_game " . 
                       "AND $this_player) ";
             break;
@@ -437,11 +449,11 @@ require(BASE_URI . "includes/pok.open.inc.php");
 
     private function listIt($d)
     {
-        echo "Seat_id=$this->game_id$d";
+        echo "game_id=$this->game_id$d";
         echo "member_id=$this->member_id$d";
-        echo "note_member=$this->note_member$d";
         echo "response=$this->response$d";
         echo "note_master=$this->note_master$d";
+        echo "note_member=$this->note_member$d";
         echo "stamp=$this->stamp$d";
     }
 
@@ -501,6 +513,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {
+                # case [23000]: Integrity constraint violation ... Duplicate entry
                 echo "Seat.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
                 throw new PokerException('Unknown error', -32110, $e);
             } catch (Exception $e) {
@@ -510,10 +523,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         } else {
             throw new PokerException("Data validation errors", 2104, null, $val_errors);
         }
-//    dbg("=".__METHOD__.":Seat added");
-//    $inserted_game_id = $pokdb->lastInsertId(); 
-//    dbg("=".__METHOD__.":Seat number:$inserted_game_id");
-        dbg("-".__METHOD__.";$this->game_id:".sizeof($val_errors)."");
+        dbg("-".__METHOD__.";$this->game_id;$this->member_id;errs=".sizeof($val_errors)."");
     }
 
 /**
@@ -531,7 +541,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
 require(BASE_URI . "includes/pok.open.inc.php");
                 # update seat
                 $update = "UPDATE seats SET {$this->sql_column_name_value_pairs()} " . 
-                      " WHERE game_id = \"{$this->game_id}\" ";
+                          "WHERE game_id = \"{$this->game_id}\" " .
+                          "AND member_id = \"{$this->member_id}\" ";
                 dbg("=".__METHOD__.";stmt_str=$update");
                 $stmt = $pokdb->prepare($update);
                 $stmt->execute();

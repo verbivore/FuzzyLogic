@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="style/poker.css">
   </head>
   <body>
-<?php dbg("+include:".basename(__FILE__).""); ?> 
+<?php dbg("+include:".basename(__FILE__)."(in progress)"); ?> 
 <?php dbg("=".basename(__FILE__).":host=$host; local=$local; debug=$debug; counter={$_SESSION['counter']}; start={$_SESSION['startTime']}; HTTP_HOST={$_SERVER['HTTP_HOST']}"); ?> 
 
     <form id="pokerMain" method="POST" action="<?php $self ?>">
@@ -27,6 +27,8 @@
       <input type="submit" id="play" name="play" value="Players" >
       <input type="submit" id="game" name="game" value="Games" >
       <input type="submit" id="seat" name="seat" value="Join" >
+<?php echo "(from {$_POST['from_page_id']})"; ?>
+
     <br>
 <?php dbg("-include:".basename(__FILE__).""); ?>
 

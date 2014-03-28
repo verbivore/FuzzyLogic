@@ -4,6 +4,7 @@
  * File name: game.list.form.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-27 Added $_POST['from_page_id'].  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-19 Original.  DHD
  * Future
@@ -62,6 +63,7 @@ dbg("=".basename(__FILE__)."*** Dump games *** ({$games->gameCount} games)");
 ?>
   </div>
 <?php
+echo "<input type='hidden' name='from_page_id' value='game_list'>";
 dbg("-".basename(__FILE__).";");
 # ***** Show the form ***** #
 # ************************* #

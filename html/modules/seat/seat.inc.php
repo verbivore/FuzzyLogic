@@ -4,8 +4,9 @@
  * File name: seat.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-03-27 Removed seatGetNames().  DHD
  * 14-03-23 Added dbg().  DHD
- * 14-03-20 Cloned from Seat.  DHD
+ * 14-03-20 Cloned from Game.  DHD
  */
 dbg("+".basename(__FILE__).";$page_id");
 //post_dump();
@@ -24,7 +25,7 @@ $butt_att_burp = "";
 // Determine which page to display:
 switch ($page_id) {
     case 'seat-preg':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             # find first game first player
             $_POST['game_id'] = 0;
             seatFind("nexg");
@@ -33,7 +34,7 @@ switch ($page_id) {
         }
         break;
     case 'seat-prep':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             # find first game first player
             $_POST['game_id'] = 0;
             seatFind("nexg");
@@ -42,7 +43,7 @@ switch ($page_id) {
         }
         break;
     case 'seat-find':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             # find last game last player
             $_POST['game_id'] = 9999;
             seatFind("prep");
@@ -51,7 +52,7 @@ switch ($page_id) {
         }
         break;
     case 'seat-nexg':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             # find last game last player
             $_POST['game_id'] = 9999;
             seatFind("prep");
@@ -60,7 +61,7 @@ switch ($page_id) {
         }
         break;
     case 'seat-nexp':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             # find last game last player
             $_POST['game_id'] = 9999;
             seatFind("prep");
@@ -74,7 +75,7 @@ switch ($page_id) {
         seatList();
         break;
     case 'seat-updt':
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             seatNew();
         } else {
             seatUpdate();
@@ -82,14 +83,14 @@ switch ($page_id) {
         break;
     case 'seat-delt':
         $butt_att_updt .= " disabled";
-        if ($_SESSION['from_page_id'] == 'seat-list') {
+        if ($_POST['from_page_id'] == 'seat-list') {
             seatNew();
         } else {
             seatDelete();
         }
         break;
     case 'seat-burp':
-//        if ($_SESSION['from_page_id'] == 'seat-list') {
+//        if ($_POST['from_page_id'] == 'seat-list') {
         seatTest();
         break;
   
@@ -209,10 +210,6 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
             throw new Exception($p);
         }
     }
-    if ($error_msgs['count'] == 0 && !$newSeat) {
-        $error_msgs['errorDiv'] = "Seat found.";
-        seatGetNames();
-    }
 
     dbg("-".__FUNCTION__."={$seaz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}");
 
@@ -221,68 +218,6 @@ require(BASE_URI . "modules/seat/seat.form.php");
 
 }
 
-/**
- * Get player names for member_ids
- */
-function seatGetNames() {
-    # declare globals
-    global $debug, $seaz, $member_names, $error_msgs;
-    dbg("+".__METHOD__."={$_POST['game_id']}");
-
-    $mmbr = new Member();
-    $mmbr->set_member_id($seaz->get_response());
-    dbg("=".__METHOD__.";snack={$mmbr->get_member_id()}");
-    try {
-        $mmbr->get("");
-        $member_names['snack'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['snack'] = null;
-            break;
-        default:
-            echo "seatFind snack name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-    $mmbr->set_member_id($seaz->get_note_member());
-    try {
-        $mmbr->get("");
-        $member_names['host'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['host'] = null;
-            break;
-        default:
-            echo "seatFind host name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-    $mmbr->set_member_id($seaz->get_note_master());
-    try {
-        $mmbr->get("");
-        $member_names['gear'] = $mmbr->get_full_name();
-    } catch (Exception $d) {
-        switch ($d->getCode()) {
-        case 32210:  # no member rows
-            $member_names['gear'] = null;
-            break;
-        default:
-            echo "seatFind gear name failed:{$mmbr->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
-            echo "previous message:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
-        }
-    }
-
-    dbg("-".__METHOD__.";end={$seaz->get_game_id()}:{$error_msgs['count']}:{$error_msgs['errorDiv']}:{$member_names['snack']}:{$member_names['host']}:{$member_names['gear']}");
-
-}
 
 /**
  * Show some test data for add functions
@@ -297,7 +232,6 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
 
     # create a test seat
     $seaz->testSeat();
-    seatGetNames();
     $error_msgs['errorDiv'] = "Test seat created.  Press \"Add/Update\" to add the seat.";
 
 # Show the seat form

@@ -136,7 +136,7 @@ class Game
         # validate fields
         foreach ($this->GAME_TABLE_COLUMNS as $column) {
             $func = "validate_$column";
-//      dbg("=".__METHOD__.":Game.validate column={$func}");
+//            dbg("=".__METHOD__.":Game.validate column={$func}");
             $foo = $this->$func();
 //      dbg("=".__METHOD__.":Game.validate col:$column="; var_dump($foo); echo "");
             if ($foo[0]) {
@@ -226,26 +226,25 @@ class Game
     {
         
         dbg("+".__METHOD__ . "={$this->game_id}");
+            $query = "SELECT * FROM games WHERE game_id = ("; 
+            switch ($getType) {
+            case 'prev':
+                $query .= "SELECT MAX(game_id) FROM games " . 
+                             "WHERE game_id < ";
+                break;
+            case 'next':
+                $query .= "SELECT MIN(game_id) FROM games " . 
+                             "WHERE game_id > ";
+                break;
+            default:
+                $query .= " ";
+                break;
+            }
+            $query .= " \"$this->game_id\") ";
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
-            switch ($getType) {
-                case 'prev':
-                    $query = "SELECT * FROM games WHERE game_id = " . 
-                             "(SELECT MAX(game_id) FROM games " . 
-                             "WHERE game_id < \"$this->game_id\") ";
-                    break;
-                case 'next':
-                    $query = "SELECT * FROM games WHERE game_id = " . 
-                             "(SELECT MIN(game_id) FROM games " . 
-                             "WHERE game_id > \"$this->game_id\") ";
-                    break;
-                default:
-                    $query = "SELECT * FROM games " . 
-                             "WHERE game_id = \"$this->game_id\" ";
-                    break;
-            }
             # get games row
-            dbg("=".__METHOD__.":Game:games:get:query=$query");
+            dbg("=".__METHOD__.";query=$query");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
@@ -302,7 +301,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             # get game
-            $stmt = $pokdb->prepare("SELECT game_id, game_date FROM games WHERE game_id =  (SELECT MAX(game_id) FROM games) ");
+            $query = "SELECT game_id, game_date FROM games " .
+                     "WHERE game_id =  (SELECT MAX(game_id) FROM games) ";
+            $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $foo = array($stmt->fetch());
 #var_dump($foo); echo "<br>";
@@ -311,27 +312,57 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $prev_game_id = $foo[0][0];
             $this->game_id = $prev_game_id + 1;
             $prev_game_date = $foo[0][1];
-            $phpdate = strtotime( $prev_game_date );
-            $dayOfMonth = date( 'd', $phpdate );
-#            echo "Game date:$this->game_date:$phpdate:dayOfMonth:$dayOfMonth.<br>";
+            $this->setNewDate($prev_game_date);
+        } catch (PDOException $e) {
+            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+        } catch (Exception $e) {
+            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+        }
+        dbg("-".__METHOD__.";{$this->game_id}:{$this->game_date}");
+    }
+
+
+/**
+ * Calculate the date of the next game
+ */
+    private function setNewDate($prev_game_date) {
+
+        $time_int = strtotime( $prev_game_date );
+        dbg("+".__METHOD__."=$prev_game_date=$time_int");
+        if (date('d', $time_int) < 15 ) { # 2nd wk is 8th-14th
+            $calc_str = "fourth friday of this month";
+        } else { # 4th wk is 22nd-28th
+            $calc_str = "second wednesday of next month";
+        }
+        $this->game_date = date("Y-m-d", strtotime($calc_str, $time_int));
+/*
+
+
+        $dayOfMonth = date( 'd', $time_int );
             if ($dayOfMonth < 15 ) { # it's the 1st game of the month (Wed) so calc 4th Friday
-                $baseDate = date("Y-m-", $phpdate) . "01";
-                $nextDate = date("Y-m-d", strtotime("4 weeks friday", strtotime($baseDate)));
-#                echo "nextDate:$nextDate:$baseDate.<br>";
+                $baseDate = date("Y-m-", $time_int) . "01";
+                $nextDate = date("Y-m-d", strtotime("fourth friday of this month", strtotime($baseDate)));
+                $nextDate = date("Y-m-d", strtotime("fourth friday of this month", $time_int));
+                
+        dbg("=".__METHOD__."-$baseDate:$nextDate");
             } else { # it's a Friday so...) calc 2nd Wed.
-                $nextDate = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
-#                echo "nextDate:$nextDate.<br>";
+                $nextDate = date("Y-m-d", strtotime("second wednesday of next month", $time_int));
+        dbg("=".__METHOD__."+$nextDate");
+                $xx = strtotime("second wednesday of next month", $time_int);
+                $xxx = date("Y-m-d", $xx);
+                $yy = date("Y-m-d", strtotime("second wednesday ", $xx));
+        dbg("=".__METHOD__."+$prev_game_date====$xxx====$yy");
             }
             $this->game_date = $nextDate;
             #$wed = date("Y-m-d", strtotime("2 weeks wednesday",mktime(0,0,0,11,1,2014)));
-            #$wed = date("Y-m-d", strtotime("2 weeks wednesday", $phpdate));
+            #$wed = date("Y-m-d", strtotime("2 weeks wednesday", $time_int));
             #echo "2nd Wed:$wed=" . date('l', strtotime($wed)) . ".<br>";
-
+*/
 
 //$month = date("M", $this->game_date);
 //echo "Month:$month.<br>";
 
-            #$tomorrow  = date('F jS, Y = l', mktime(0, 0, 0, date("m", $phpdate)  , date("d", $phpdate)+1, date("Y", $phpdate)));
+            #$tomorrow  = date('F jS, Y = l', mktime(0, 0, 0, date("m", $time_int)  , date("d", $time_int)+1, date("Y", $time_int)));
             #echo "Tomorrow:$tomorrow.<br>";
 
             #echo $this->game_date . ":" . date('l', strtotime( $this->game_date)) . "<br>";
@@ -341,15 +372,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
             #echo $tempDate . "<br>";
 
 
-#      dbg("=".__METHOD__.":$this->game_id");
-        } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-        } catch (Exception $e) {
-            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-        }
-        dbg("-".__METHOD__.";{$this->game_id}:{$this->game_date}");
+        dbg("-".__METHOD__.":$this->game_date");
     }
-
 
 /**
  * List a game

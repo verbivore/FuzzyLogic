@@ -7,6 +7,7 @@
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-09 Original.  DHD
  * Future:
+ *  timestamp =now, !=0
  */
 dbg("+".basename(__FILE__).";$page_id");
 function playerUpdate() {
@@ -124,6 +125,9 @@ function plup_validate_member_id() { return TRUE; }
 function plup_validate_name_last() { return TRUE; }
 function plup_validate_name_first() { return TRUE; }
 function plup_validate_nickname() { return TRUE; }
+function plup_validate_status() { return TRUE; }
+function plup_validate_email() { return TRUE; }
+function plup_validate_phone() { return TRUE; }
 function plup_validate_invite_cnt() { return TRUE; }
 function plup_validate_yes_cnt() { return TRUE; }
 function plup_validate_maybe_cnt() { return TRUE; }

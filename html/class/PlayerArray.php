@@ -147,7 +147,7 @@ public static function sortNick()
             echo "<td>" . $row->get_maybe_cnt() . "</td>";
             echo "<td>" . $row->get_no_cnt() . "</td>";
             echo "<td>" . $row->get_flake_cnt() . "</td>";
-            echo "<td>" . $row->get_score() . "</td>";
+            echo "<td>" . number_format($row->get_score(),2) . "</td>";
             echo "<td>" . $row->get_stamp() . "</td>";
             echo "</tr>";
         }
