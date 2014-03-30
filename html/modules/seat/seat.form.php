@@ -12,25 +12,32 @@ dbg("+".basename(__FILE__).";");
 $message_banner = "{$error_msgs['errorDiv']}";
 dbg("=".basename(__FILE__).";errors count={$error_msgs['count']}:" . sizeof($error_msgs) . "");
 
-/*
+
 if ("{$error_msgs['count']}" == "0") {
     $message_class = "infoClass";
+    $message_banner .= ".";
+    if ("{$error_msgs['game_id']}" == "" ) {
+        $gm =  new Game;
+        $gm->set_game_id($seaz->get_game_id());
+        try {
+            $gm->get("");
+            $game_info = $gm->get_game_date() . " " . $gm->get_game_day();
+            $error_msgs['game_id'] = $game_info;
+        } catch (PokerException $e) {
+            # ignore any exceptions
+        }
+        unset($gm);
+    }
     if ("{$error_msgs['member_id']}" == "" ) {
         $error_msgs['member_id'] = $seaz->get_member_name();
     }
     if ("{$error_msgs['response']}" == "" ) {
-        $error_msgs['response'] = $member_names['snack'];
+        $error_msgs['response'] = $seaz->get_response_name();
     }
-    if ("{$error_msgs['note_member']}" == "" ) {
-        $error_msgs['note_member'] = $member_names['host'];
-    }
-    if ("{$error_msgs['note_master']}" == "" ) {
-        $error_msgs['note_master'] = $member_names['gear'];
-    }
-} else { */
+} else { 
     $message_class = "errorClass";
     $message_banner .= " ({$error_msgs['count']}).";
-//}
+}
 
 dbg("=".basename(__FILE__).";{$seaz->get_game_id()};{$seaz->get_member_id()};{$message_banner}");
 
@@ -44,27 +51,27 @@ dbg("=".basename(__FILE__).";{$seaz->get_game_id()};{$seaz->get_member_id()};{$m
       <p>
       <div id="errorDiv" <?php echo "class={$message_class} >{$message_banner}"; ?> </div> 
       <fieldlabel for="game_id">Game: </fieldlabel>
-        <input type="number" id="game_id" name="game_id" size="2" maxsize="4" 
+        <input type="number" id="game_id" name="game_id" size="1" maxsize="2" 
                value="<?php echo "{$seaz->get_game_id()}"; ?>" >
         <span class="errorFeedback errorSpan" id="game_idError" > <?php echo $error_msgs['game_id']?> </span>
       <br />
       <fieldlabel for="member_id">Player: </fieldlabel>
-        <input type="number" id="member_id" name="member_id" size="10" maxsize="10" 
+        <input type="number" id="member_id" name="member_id" size="1" maxsize="2" 
                value="<?php echo "{$seaz->get_member_id()}"; ?>" >
         <span class="errorFeedback errorSpan" id="member_idError" > <?php echo $error_msgs['member_id']?> </span>
       <br />
       <fieldlabel for="response">Response: </fieldlabel>
-        <input type="text" id="response" name="response" size="2" maxsize="4" 
+        <input type="text" id="response" name="response" size="1" maxsize="1" 
                value="<?php echo "{$seaz->get_response()}"; ?>" >
         <span class="errorFeedback errorSpan" id="responseError" > <?php echo $error_msgs['response']?> </span>
       <br />
       <fieldlabel for="note_member">Player Note: </fieldlabel>
-        <input type="text" id="note_member" name="note_member" size="2" maxsize="4" 
+        <input type="text" id="note_member" name="note_member" size="50" maxsize="100" 
                value="<?php echo "{$seaz->get_note_member()}"; ?>" >
         <span class="errorFeedback errorSpan" id="note_memberError" > <?php echo $error_msgs['note_member']?> </span>
       <br />
       <fieldlabel for="note_master">Notes: </fieldlabel>
-        <input type="number" id="note_master" name="note_master" size="2" maxsize="4" 
+        <input type="number" id="note_master" name="note_master" size="50" maxsize="100" 
                value="<?php echo "{$seaz->get_note_master()}"; ?>" >
         <span class="errorFeedback errorSpan" id="note_masterError" > <?php echo $error_msgs['note_master']?> </span>
       <br />
@@ -76,7 +83,9 @@ dbg("=".basename(__FILE__).";{$seaz->get_game_id()};{$seaz->get_member_id()};{$m
     </fieldset>
   </div>
 <?php
-$_POST['stamp'] = $seaz->get_stamp();
+#$_POST['stamp'] = $seaz->get_stamp();
+# Save the form name so that the next page knows what to expect in $_POST
+echo "<input type='hidden' name='from_page_id' value='seat-form'>";
 dbg("-".basename(__FILE__).";");
 # ***** Show the form ***** #
 # ************************* #

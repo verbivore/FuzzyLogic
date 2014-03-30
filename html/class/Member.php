@@ -4,6 +4,7 @@
  *  File name: Member.php
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***
+ * 14-03-29 Added const error codes.  DHD
  * 14-03-23 Added status, email, phone.  DHD
  * 14-03-23 Added dbg().  DHD
  * 14-03-20 Updated for phpDoc.  DHD
@@ -31,6 +32,39 @@ class Member
     private static $MEMBER_TABLE_COLUMNS = array("member_id", "nickname", 
                    "name_last", "name_first", "status", "email", "phone", 
                    "stamp");
+
+// Error message constants
+// 1st digit: 0=Info, 1=Warning, 3&4=Validation, 6=Navigation, 8=DB, 9=PDO
+// 2nd digit: Module: 3=Members, 4=Players, 5=Games, 6=Seats
+// 3rd digit: Method: 1=Validate, 2=Find, 3=Get, 4=Insert, 5=Update, 6=Delete
+// 4&5 digit: Id
+    const FIND_ERR_ZERO    = 83210; # No row found
+    const FIND_ERR_ONE     = 83211; # One row found
+    const FIND_ERR_MULTI   = 83212; # Multiple rows found
+    const FIND_ERR_PDO     = 93200; # PDO error
+
+    const GET_INFO_ADD_NEW = 03301; # Ready to add a new entry
+    const GET_WARN_NO_PREV = 63363; # No previous entry found
+    const GET_WARN_NO_NEXT = 63364; # No next entry found
+    const GET_ERR_ZERO     = 83310; # No row found
+    const GET_ERR_ONE      = 83311; # One row found
+    const GET_ERR_MULTI    = 83312; # Multiple rows found
+    const GET_ERR_NEW_PDO  = 93317; # PDO error on getNew
+    const GET_ERR_PDO      = 93300; # PDO error
+
+    const INS_ERR_VALIDTN  = 33400; # Insert failed: data validation error(s)
+    const INS_ERR_DUP      = 83402; # Insert failed: duplicate key
+    const INS_ERR_PDO      = 93400; # PDO error
+
+    const UPD_ERR_VALIDTN  = 33500; # Insert failed: data validation error(s)
+    const UPD_ERR_ZERO     = 83510;
+    const UPD_ERR_DUP      = 83511;
+    const UPD_ERR_MULTI    = 83512;
+    const UPD_ERR_PDO      = 93500;
+
+    const DEL_ERR_ZERO     = 83610;
+    const DEL_ERR_MULTI    = 83612;
+    const DEL_ERR_PDO      = 93618;
 
 /*
  * Constructor
@@ -220,7 +254,7 @@ class Member
  * get a member row by member_id.                   
  */
 //    public function get()
-    public function get($getType)
+    public function get($getType="")
     {
         dbg("+".__METHOD__.";$getType={$this->member_id}");
         try {
@@ -239,16 +273,16 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } elseif ($row_count < 1) {
                 dbg("-".__METHOD__.";=member not found");
                 #error_log($e->getTraceAsString());
-                throw new Exception('No records for this member were found', 32210);
+                throw new PokerException('No records for this member were found', Member::GET_ERR_ZERO);
             } else {
                 dbg("-".__METHOD__.";=multiple member records found");
                 #error_log($e->getTraceAsString());
-                throw new Exception("Multiple {$row_count} records for this member were found", 32211);
+                throw new PokerException("Multiple {$row_count} records for this member were found", 32211);
             }
         } catch (PDOException $e) {
             dbg("-".__METHOD__.";=PDO Exception");
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new Exception('PDO Exception: ', 32212);
+            throw new PokerException('PDO Exception: ', 32212);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
@@ -284,8 +318,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $this->member_id = $stmt->fetchColumn() + 1;
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-        } catch (Exception $e) {
-            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+        } catch (PokerException $e) {
+            echo "PokerException: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
         }
         dbg("-".__METHOD__."=$this->member_id");
     }
@@ -332,7 +366,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function find()
     {
-        dbg("+".__METHOD__.";Member:find={$this->member_id}:{$this->eff_date}");
+        dbg("+".__METHOD__.";Member:find={$this->member_id}");
         $row_count = -1;
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
@@ -346,11 +380,12 @@ require(BASE_URI . "includes/pok.open.inc.php");
             dbg("=".__METHOD__.";$this->member_id:rows=$row_count");
         } catch (PDOException $e) {
             echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new memberException('PDO Exception', -2010, $e);
+            throw new PokerException('PDO Exception', -2010, $e);
 //    } catch (Exception $e) {
 //      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
 //      rethrow??? 
         }
+        dbg("-".__METHOD__.";Member:find={$row_count}");
         return($row_count);
     }
 
@@ -376,17 +411,17 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new memberException('Duplicate entry', 2110, $e);
+                    throw new PokerException('Duplicate entry', 2110, $e);
                 } else {
                     echo "Member.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new memberException('Unknown error', -2110, $e);
+                    throw new PokerException('Unknown error', -2110, $e);
                 }
             } catch (Exception $e) {
                 echo "Member.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new memberException($e);
+                throw new PokerException($e);
             }
         } else {
-            throw new memberException("Data validation errors", 2104, null, $val_errors);
+            throw new PokerException("Data validation errors", 2104, null, $val_errors);
         }
 //    dbg("=".__METHOD__.";added");
 //    $inserted_member_id = $pokdb->lastInsertId(); 
@@ -415,17 +450,17 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new memberException('Duplicate entry', 2110, $e);
+                    throw new PokerException('Duplicate entry', 2110, $e);
                 } else {
                     echo "Member.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new memberException('Unknown error', -2110, $e);
+                    throw new PokerException('Unknown error', -2110, $e);
                 }
             } catch (Exception $e) {
                 echo "Member.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new memberException($e);
+                throw new PokerException($e);
             }
         } else {
-            throw new memberException("Data validation errors", 2104, null, $val_errors);
+            throw new PokerException("Data validation errors", 2104, null, $val_errors);
         }
         dbg("-".__METHOD__.";Member.update:end:$this->member_id:$this->eff_date");
     }
@@ -441,7 +476,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->get_next_id();
         $testy = new testPerson();
         $this->nickname = $testy->get_nickname();
-        $this->name_last = $testy->get_name_last();
+        $this->name_last = $testy->get_surname();
         $this->name_first = $testy->get_name_first();
         $this->status = $act[rand(0,count($act)-1)];
         $this->email = $testy->get_email();

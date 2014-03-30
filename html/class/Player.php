@@ -206,7 +206,7 @@ class Player extends Member
 /**
  * get a player row by member_id.                   
  */
-    public function get($getType)
+    public function get($getType="")
     {
         global $debug;
         dbg("+".__METHOD__.";$getType:{$this->member_id}.");

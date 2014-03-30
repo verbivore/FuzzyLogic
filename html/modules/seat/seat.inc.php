@@ -179,28 +179,40 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
     # Look for seat by id 
     $seaz->set_game_id($_POST['game_id']);
     $seaz->set_member_id($_POST['member_id']);
-    dbg("=".__FUNCTION__.";$findType;{$seaz->get_game_id()};".Seat::ERR_GET_ZERO);
+    dbg("=".__FUNCTION__.";$findType;{$seaz->get_game_id()};".Seat::GET_ERR_ZERO);
     try {
         $seaz->get($findType);
     } catch (PokerException $d) {
         #echo "seaz get failed:{$seaz->get_game_id()}.<br>";
         switch ($d->getCode()) {
-        case Seat::ERR_GET_ZERO:  # no rows retrieved
-//            switch ($findType) {
- //           case 
-            $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
+        case Seat::GET_ERR_ZERO:  # no rows retrieved
             $error_msgs['errorDiv'] = "See error(s) below";
             $error_msgs['count'] += 1;
+            switch ($findType) {
+            case 'preg': 
+                $error_msgs['game_id'] = "Previous game not found.";
+                break;
+            case 'prep': 
+                $error_msgs['member_id'] = "Previous player for game {$seaz->get_game_id()} not found.";
+                break;
+            case 'nexg':  
+                $error_msgs['game_id'] = "Next game not found.";
+                break;
+            case 'nexp':  
+                $error_msgs['member_id'] = "Next player for game {$seaz->get_game_id()} not found.";
+                break;
+            default:  
+                $error_msgs['game_id'] = "Seat not found for this game and player.";
+                break;
+            }
             break;
         case Seat::ERR_GET_MULTI:  # multiple seats rows
             $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See errors below";
             $error_msgs['count'] += 1;
             break;
-        case 32213:  # new seat option
-#            $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
+        case Seat::GET_INFO_ADD_NEW:  # new seat option
             $error_msgs['errorDiv'] = "{$d->getMessage()} ({$d->getCode()})";
-#            $error_msgs['count'] += 1;
             $newSeat = TRUE;
             break;
         default:

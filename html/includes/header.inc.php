@@ -27,8 +27,6 @@
       <input type="submit" id="play" name="play" value="Players" >
       <input type="submit" id="game" name="game" value="Games" >
       <input type="submit" id="seat" name="seat" value="Join" >
-<?php echo "(from {$_POST['from_page_id']})"; ?>
-
     <br>
 <?php dbg("-include:".basename(__FILE__).""); ?>
 

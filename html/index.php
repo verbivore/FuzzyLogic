@@ -230,6 +230,7 @@ if (!isset($_POST['from_page_id'])) {
     echo "not set<br>";
     $_POST['from_page_id'] = FROM_PAGE_NEW;
 }
+echo "(from {$_POST['from_page_id']})";
 
 // Include the module files:
 dbg("=".basename(__FILE__).";loading Member");

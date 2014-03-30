@@ -1,11 +1,15 @@
 <?php
 /**
  *  Class definition for a game
- *  File name: Game.php
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***
+ * 14-03-29 Added const error codes.  DHD
+ * 14-03-28 Removed GameException for PokerException().  DHD
  * 14-03-23 Added dbg().  DHD
  * 14-03-21 Cloned from Member.  DHD
+ * Future:
+ *  Finish field validation stubs.
+ *  Add seats to burp.
  */
 
 class Game
@@ -26,6 +30,32 @@ class Game
     private $GAME_TABLE_COLUMNS = array("game_id", "game_date", "member_snack", 
                                         "member_host", "member_gear", 
                                         "member_caller", "stamp");
+
+// Error message constants
+    const FIND_ERR_ZERO    = 32210;
+    const FIND_ERR_ONE     = 32211;
+    const FIND_ERR_MULTI   = 32212;
+    const FIND_ERR_PDO     = 32218;
+
+    const GET_ERR_ZERO     = 32310;
+    const GET_ERR_ONE      = 32311;
+    const GET_ERR_MULTI    = 32312;
+    const GET_ERR_NEW_PDO  = 32317;
+    const GET_ERR_PDO      = 32318;
+    const GET_WARN_NO_PREV = 32323;
+    const GET_WARN_NO_NEXT = 32324;
+    const GET_INFO_ADD_NEW = 32331;
+
+    const INS_ERR_PDO      = 32418;
+    const INS_WARN_VALIDTN = 32421;
+
+    const UPD_ERR_ZERO     = 32510;
+    const UPD_ERR_MULTI    = 32512;
+    const UPD_ERR_PDO      = 32518;
+
+    const DEL_ERR_ZERO     = 32610;
+    const DEL_ERR_MULTI    = 32612;
+    const DEL_ERR_PDO      = 32618;
 
 /*
  * Constructor
@@ -65,6 +95,37 @@ class Game
     public function set_member_gear($P) { $this->member_gear = $P; }
     public function set_member_caller($P) { $this->member_caller = $P; }
     public function set_stamp($P) { $this->stamp = $P; }
+
+/**
+ * Validate games table columns
+ */
+    public function validate()
+    {
+        
+        dbg("+".__METHOD__."={$this->game_id}");
+        $errors = array();
+        $foo = array();
+#    global $GAME_TABLE_COLUMNS;
+        # validate fields
+        foreach ($this->GAME_TABLE_COLUMNS as $column) {
+            $func = "validate_$column";
+//            dbg("=".__METHOD__.":Game.validate column={$func}");
+            $foo = $this->$func();
+//      dbg("=".__METHOD__.":Game.validate col:$column="; var_dump($foo); echo "");
+            if ($foo[0]) {
+                $errors["$column"][0] = $foo[0];
+                $errors["$column"][1] = $foo[1];
+//        dbg("=".__METHOD__.":Game.validate col:$column:$foo[0]:$foo[1]");
+            }
+        }
+//        if ($debug) {
+//        foreach ($errors as $col => $val) {
+//      echo "Game.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
+//            echo "Game.validate errors=$col:$val[0]:$val[1]");
+//        }
+        dbg("-".__METHOD__.":error arraysize=".sizeof($errors));
+        return($errors);
+    }
 
 /**
  * Validation for individual column values.
@@ -121,37 +182,6 @@ class Game
         $e = array(0,"");
         return($e);
 
-    }
-
-/**
- * Validate games fields
- */
-    public function validate()
-    {
-        
-        dbg("+".__METHOD__."={$this->game_id}");
-        $errors = array();
-        $foo = array();
-#    global $GAME_TABLE_COLUMNS;
-        # validate fields
-        foreach ($this->GAME_TABLE_COLUMNS as $column) {
-            $func = "validate_$column";
-//            dbg("=".__METHOD__.":Game.validate column={$func}");
-            $foo = $this->$func();
-//      dbg("=".__METHOD__.":Game.validate col:$column="; var_dump($foo); echo "");
-            if ($foo[0]) {
-                $errors["$column"][0] = $foo[0];
-                $errors["$column"][1] = $foo[1];
-//        dbg("=".__METHOD__.":Game.validate col:$column:$foo[0]:$foo[1]");
-            }
-        }
-//        if ($debug) {
-//        foreach ($errors as $col => $val) {
-//      echo "Game.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
-//            echo "Game.validate errors=$col:$val[0]:$val[1]");
-//        }
-        dbg("-".__METHOD__.":error arraysize=".sizeof($errors));
-        return($errors);
     }
 
 /**
@@ -220,27 +250,56 @@ class Game
     }
 
 /**
+ * find a games row by game_id.
+ */
+    public function find()
+    {
+        $row_count = -1;
+        dbg("+".__METHOD__ . "={$this->game_id}");
+        try {
+require(BASE_URI . "includes/pok.open.inc.php");
+            # find game rows
+            $query = "SELECT * FROM games " . 
+                          "WHERE game_id = \"$this->game_id\"  ";
+            dbg("=".__METHOD__ . ":query=$query");
+            $stmt = $pokdb->prepare($query);
+            $stmt->execute();
+            $row_count = $stmt->rowCount();
+            dbg("=".__METHOD__ . ":$this->game_id:rows=$row_count");
+//            $foo = $stmt->fetchAll();
+//            echo '<pre>'; var_dump($foo); print ".<br/>"; echo '</pre>';
+
+        } catch (PDOException $e) {
+            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            dbg("-".__METHOD__ . "={$this->game_id};PDO Exception");
+            throw new PokerException('PDO Exception:', self::FIND_ERR_PDO, $e);
+        }
+        dbg("-".__METHOD__ . "={$this->game_id}=$row_count");
+        return($row_count);
+    }
+
+/**
  * get a game row by game_id.                   
  */
     public function get($getType)
     {
         
         dbg("+".__METHOD__ . "={$this->game_id}");
-            $query = "SELECT * FROM games WHERE game_id = ("; 
-            switch ($getType) {
-            case 'prev':
-                $query .= "SELECT MAX(game_id) FROM games " . 
-                             "WHERE game_id < ";
-                break;
-            case 'next':
-                $query .= "SELECT MIN(game_id) FROM games " . 
-                             "WHERE game_id > ";
-                break;
-            default:
-                $query .= " ";
-                break;
-            }
-            $query .= " \"$this->game_id\") ";
+        $query = "SELECT * FROM games WHERE game_id = ("; 
+        switch ($getType) {
+        case 'prev':
+            $query .= "SELECT MAX(game_id) FROM games " . 
+                         "WHERE game_id < ";
+            break;
+        case 'next':
+            $query .= "SELECT MIN(game_id) FROM games " . 
+                         "WHERE game_id > ";
+            break;
+        default:
+            $query .= " ";
+            break;
+        }
+        $query .= " \"$this->game_id\") ";
         try {
 require(BASE_URI . "includes/pok.open.inc.php");
             # get games row
@@ -248,32 +307,34 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $stmt = $pokdb->prepare($query);
             $stmt->execute();
             $row_count = $stmt->rowCount();
-#            dbg("=".__METHOD__.":Game:get:$this->game_id:rows=$row_count");
+#            dbg("=".__METHOD__.";$this->game_id:rows=$row_count");
             if ($row_count == 1) {
                 $row = $stmt->fetch();
                 $this->setThisToGameRow($row);
                 #echo "row:"; var_dump($row); echo ".<br>";
             } elseif ($row_count < 1) {
-#                dbg("=".__METHOD__.":Game:get=game not found");
-                #error_log($e->getTraceAsString());
                 if ($getType == 'prev') {
-                    throw new gameException('No previous game for ID ' . $this->game_id . ' found', 32210);
+                    throw new PokerException('No previous game for ID ' . $this->game_id . ' found',
+                                             self::GET_WARN_NO_PREV);
                 } elseif ($getType == 'next') {
                     $this->getNew();
-                    throw new gameException('Add new game (' . $this->game_id . ')', 32213);
+                    throw new PokerException('Add new game (' . $this->game_id . ')',
+                                             self::GET_INFO_ADD_NEW);
                 } else {
-                    throw new gameException('No game found with this ID (' . $this->game_id . ')', 32212);
+                    throw new PokerException('No game found with this ID (' . $this->game_id . ')',
+                                             self::GET_ERR_ZERO);
                 }
             } else {
 #                dbg("=".__METHOD__.":Game:get=multiple game records found");
                 #error_log($e->getTraceAsString());
-                throw new gameException('Multiple records for this game were found', 32211);
+                throw new PokerException('Multiple records for this game were found',
+                                         self::GET_ERR_MULTI);
             }
         } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-//    } catch (Exception $e) {
-//      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
-//      rethrow??? 
+//            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new PokerException('PDO Exception:' . $e->getCode(),
+                                     self::GET_ERR_PDO,
+                                     $e);
         }
         dbg("-".__METHOD__ . "={$this->game_id}");
     }
@@ -314,9 +375,10 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $prev_game_date = $foo[0][1];
             $this->setNewDate($prev_game_date);
         } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-        } catch (Exception $e) {
-            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+//            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new PokerException('PDO Exception:',
+                                     self::GET_ERR_NEW_PDO,
+                                     $e);
         }
         dbg("-".__METHOD__.";{$this->game_id}:{$this->game_date}");
     }
@@ -380,13 +442,13 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function listing()
     {
-        echo "Game." . __FUNCTION__ . ".<br>";
+        echo "Game." . __METHOD__ . ".<br>";
         $this->listIt(".<br>");
     }
 
     public function listRow()
     {
-        echo "Game." . __FUNCTION__ . ":";
+        echo "Game." . __METHOD__ . ":";
         $this->listIt("; ");
         echo ".<br>";
     }
@@ -410,39 +472,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
     }
 
 /**
- * find a games row by game_id.
- */
-    public function find()
-    {
-        
-        $row_count = -1;
-        dbg("+".__METHOD__ . "={$this->game_id}");
-        try {
-require(BASE_URI . "includes/pok.open.inc.php");
-            # find game rows
-            $query = "SELECT * FROM games " . 
-                          "WHERE game_id = \"$this->game_id\"  ";
-            dbg("=".__METHOD__ . ":query=$query");
-            $stmt = $pokdb->prepare($query);
-            $stmt->execute();
-            $row_count = $stmt->rowCount();
-            dbg("=".__METHOD__ . ":$this->game_id:rows=$row_count");
-            $foo = $stmt->fetchAll();
-//        echo '<pre>'; var_dump($foo); print ".<br/>"; echo '</pre>';
-
-        } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            dbg("-".__METHOD__ . "={$this->game_id};PDO Exception");
-            throw new gameException('PDO Exception', 32010, $e);
-//    } catch (Exception $e) {
-//      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
-//      rethrow??? 
-        }
-        dbg("-".__METHOD__ . "={$this->game_id}=$row_count");
-        return($row_count);
-    }
-
-/**
  * insert a games row from a game object
  */
     public function insert()
@@ -461,18 +490,17 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt = $pokdb->prepare($query);
                 $stmt->execute();
             } catch (PDOException $e) {
-                echo "Game.insert: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new gameException('Unknown error', -32110, $e);
-            } catch (Exception $e) {
-                echo "Game.insert: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
+//                echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+                throw new PokerException('PDO Exception:',
+                                         self::INS_ERR_PDO,
+                                         $e);
             }
         } else {
-            throw new gameException("Data validation errors", 2104, null, $val_errors);
+            throw new PokerException('Data validation errors',
+                                     self::INS_WARN_VALIDTN,
+                                     $e,
+                                     $val_errors);
         }
-//    dbg("=".__METHOD__.":Game added");
-//    $inserted_game_id = $pokdb->lastInsertId(); 
-//    dbg("=".__METHOD__.":Game number:$inserted_game_id");
         dbg("-".__METHOD__.";$this->game_id:".sizeof($val_errors)."");
     }
 
@@ -484,7 +512,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
         
         dbg("+".__METHOD__."=$this->game_id");
         $val_errors = $this->validate();
-//    dbg("=".__METHOD__.":Game.update error list size:"; echo sizeof($val_errors); echo "");
         if (sizeof($val_errors) == 0 ) {
             try {
 # open database
@@ -498,17 +525,20 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     #error_log($e->getTraceAsString());
-                    throw new gameException('Duplicate entry', 32110, $e);
+                    throw new PokerException('Duplicate entry for game:' . $this->game_id,
+                                             self::UPD_ERR_DUP,
+                                             $e);
                 } else {
-                    echo "Game.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new gameException('Unknown error', -32110, $e);
+                    throw new PokerException('PDO Exception:' . $e->getCode(),
+                                             self::UPD_ERR_PDO,
+                                             $e);
                 }
-            } catch (Exception $e) {
-                echo "Game.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
             }
         } else {
-            throw new gameException("Data validation errors", 32104, null, $val_errors);
+            throw new PokerException('Data validation errors',
+                                     self::UPD_WARN_VALIDTN,
+                                     $e,
+                                     $val_errors);
         }
         dbg("-".__METHOD__.";$this->game_id:".sizeof($val_errors)."");
     }
@@ -520,33 +550,26 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $deleted_seats = 0;
         $deleted_members = 0;
         dbg("+".__METHOD__.";$this->game_id");
-//        dbg("=".__METHOD__.":player.delete error list size:"; echo sizeof($val_errors); echo "");
-//        if (sizeof($val_errors) == 0 ) {
-            try {
+        try {
 require(BASE_URI . "includes/pok.open.inc.php");
-                # delete attendance
-                $delete = "DELETE FROM seats " . 
-                      " WHERE game_id = \"{$this->game_id}\" ";
-                dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":stmt_str=$delete");
-                $stmt = $pokdb->prepare($delete);
-                $stmt->execute();
-                $deleted_seats = $stmt->rowCount();
-                $delete = "DELETE FROM games " . 
-                      " WHERE game_id = \"{$this->game_id}\" ";
-                dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":stmt_str=$delete");
-                $stmt = $pokdb->prepare($delete);
-                $stmt->execute();
-                $deleted_games = $stmt->rowCount();
-            } catch (PDOException $e) {
-                echo "Game.delete: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new gameException('Unknown error', -32110, $e);
-            } catch (Exception $e) {
-                echo "Game.delete: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new gameException($e);
-            }
-//        } else {
-//            throw new playerException("Data validation errors", 2104, null, $val_errors);
-//        }
+            # delete attendance
+            $delete = "DELETE FROM seats " . 
+                      "WHERE game_id = \"{$this->game_id}\" ";
+            dbg("=".__METHOD__.";stmt_str=$delete");
+            $stmt = $pokdb->prepare($delete);
+            $stmt->execute();
+            $deleted_seats = $stmt->rowCount();
+            $delete = "DELETE FROM games " . 
+                      "WHERE game_id = \"{$this->game_id}\" ";
+            dbg("=".__METHOD__.";stmt_str=$delete");
+            $stmt = $pokdb->prepare($delete);
+            $stmt->execute();
+            $deleted_games = $stmt->rowCount();
+        } catch (PDOException $e) {
+            throw new PokerException('PDO Exception:' . $e->getCode(),
+                                     self::DEL_ERR_PDO,
+                                     $e);
+        }
         dbg("-".__METHOD__.";$this->game_id");
     }
 
@@ -568,108 +591,15 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->member_gear = rand(1,$high);
         $this->member_caller = rand(1,$high);
 //        $this->game_date = rand(1,$high);
-        dbg("=".__METHOD__.":Game::" . __FUNCTION__ . ":end:high=$high:{$this->game_id}:{$this->game_date}:{$this->member_snack}:{$this->member_host}:{$this->member_gear}:{$this->member_caller}");
+        dbg("=".__METHOD__.":high=$high:{$this->game_id}:{$this->game_date}:{$this->member_snack}:{$this->member_host}:{$this->member_gear}:{$this->member_caller}");
         unset($testy);
         dbg("-".__METHOD__."");
-/*
-        # member_snack
-require("../inc/testdb_open.php"); #
-        $nameCount = $this->getRowCount($testdb, "family_names");
-        $nameId = rand(1, $nameCount);
-        $query="SELECT * FROM family_names WHERE name_id = $nameId";
-//    echo "testGame family_names query=$query.<br>";
-        $stmt = $testdb->prepare($query);
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-        dbg("=".__METHOD__.":Game.testGame rows:$row_count");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->member_snack = $row['member_snack'];
-#      echo "Game.testGame member_snack=$this->member_snack.<br>";
-        } else {
-            echo "testGame __construct member_snack error: Too many rows:$row_count.<br>";
-            throw new Exception('testGame member_snack SELECT error: Too many rows', -1);
-        }
-        # member_host
-        $gender = rand(0, 1); 
-        if ($gender) {
-            $table_name = "male_names";
-        } else {
-            $table_name = "female_names";
-        }
-        $nameCount = $this->getRowCount($testdb, $table_name);
-        $nameId = rand(1, $nameCount); # Pick random male, female
-        $query = "SELECT member_host FROM $table_name WHERE name_id = $nameId";
-        $stmt = $testdb->prepare($query);
-#    dbg("=".__METHOD__.":Game.testGame stmt:"; $stmt->debugDumpParams(); echo "<br>"; }
-        $stmt->execute();
-        $row_count = $stmt->rowCount();
-//    dbg("=".__METHOD__.":Game.testGame rows:$row_count");
-        if ($row_count == 1) {
-            $row = $stmt->fetch();
-            $this->member_host = $row['member_host'];
-//      echo "Game.testGame member_host=$this->member_host.<br>";
-        } else {
-            echo "testGame __construct member_host error: Too many rows:$row_count.<br>";
-            throw new Exception('testGame member_host SELECT error: Too many rows', -1);
-        }
-
-#  echo "Next this:{$this->get_game_id()}.<br>";
-        $this->set_game_date("M");
-*/
-
     }
-
-
-/**
- * get the number of rows in a table from the test database                         
- */
-/*
-    private function getRowCount($testdb, $table_name)
-    {
-        # Get number of rows to choose from in table
-        $nameCount = 0;
-        $sql = "SELECT COUNT(*) FROM $table_name";
-        if ($res = $testdb->query($sql)) {
-            # Check the number of rows that match the SELECT statement
-            $nameCount = $res->fetchColumn();
-        }
-        #echo "testdata $table_name count=$nameCount.<br>";
-        return ($nameCount);
-    }
-*/
 } 
 
 //******************************************************************************
 // end class Game
 //******************************************************************************
-class GameException extends Exception
-{
-#    
-    private $_options = array();
-    // Redefine the exception so message isn't optional
-    public function __construct($message, 
-                                $code = 0, 
-                                Exception $previous = null,
-                                $options = array('params')) {
-#        dbg("=".__METHOD__.":GameException={$message}:$code");
-            // make sure everything is assigned properly
-            parent::__construct($message, $code, $previous);
-
-            $this->_options = $options;
-
-    }
-
-    // custom string representation of object
-    public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
-    }
-
-    public function GetOptions() { 
-#    dbg("=".__METHOD__.":GameException:GetOptions="; echo sizeof($this->_options); echo "");
-    return $this->_options; 
-    }
-}
 
 ?>
 

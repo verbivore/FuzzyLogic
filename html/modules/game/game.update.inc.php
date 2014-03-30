@@ -17,6 +17,7 @@ dbg("+".basename(__FILE__).";");
 function gameUpdate() {
 #post_dump();
     # declare globals
+    global $page_id;
     global $gamz, $game_form_fields, $error_msgs, $member_names;
     dbg("+".__FUNCTION__."={$_POST['game_id']}:{$_POST['player_count']}");
 # initialize the game form
@@ -169,7 +170,7 @@ function gameUpdateSeats() {
 #                }
             } catch (PokerException $e) {
                 switch ($e->getCode()) {
-                case Seat::ERR_GET_ZERO:
+                case Seat::UPD_ERR_ZERO:
                     break;    
                 }
             }

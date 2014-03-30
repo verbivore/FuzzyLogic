@@ -101,6 +101,7 @@ dbg("=".__FUNCTION__.";include:" . __FILE__ . ";^^^^^^^");
  */
 function gameNew() {
     # declare globals
+    global $page_id;
     dbg("+".__FUNCTION__.";gameNew");
 
 # initialize the game form
@@ -121,76 +122,52 @@ require(BASE_URI . "modules/game/game.form.php");
     dbg("-".__FUNCTION__.";gameNew");
 }
 
-
-/**
- * Delete a game
- */
-function gameDelete() {
-    # declare globals
-
-# initialize the game form
-require(BASE_URI . "modules/game/game.form.init.php");
-
-    dbg("=".__FUNCTION__.";gameDelete");
-    $gamz->set_to_POST();
-    # Get the next available game id number
-    $gamz->delete();
-//    $error_msgs['errorDiv'] = "Delete game not yet implemented.";
-
-    dbg("=".__FUNCTION__.";gameDelete:end={$gamz->get_game_id()}");
-
-    if ($error_msgs['count'] == 0) {
-        $error_msgs['errorDiv'] = "game deleted.";
-    }
-
-# Show the game form
-require(BASE_URI . "modules/game/game.form.php");
-
-}
-
-
 /**
  * Search for an existing game and display the results
  */
 function gameFind($findType) {
     # declare globals
+    global $page_id;
     global $gamz, $member_names, $error_msgs;
     dbg("+".__FUNCTION__.";={$_POST['game_id']}");
     #post_dump();
 
 # initialize the game form
 require(BASE_URI . "modules/game/game.form.init.php");
+
     $newGame = FALSE;
     # Look for game by id 
     $gamz->set_game_id($_POST['game_id']);
     dbg("=".__FUNCTION__.";={$gamz->get_game_id()}");
     try {
         $gamz->get($findType);
-    } catch (gameException $d) {
+    } catch (PokerException $d) {
         #echo "gamz get failed:{$gamz->get_game_id()}.<br>";
         switch ($d->getCode()) {
-        case 32210:  # no games rows
-        case 32212:  # no games rows
+        case Game::GET_ERR_ZERO:  # no games rows
             $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See error(s) below";
             $error_msgs['count'] += 1;
             break;
-        case 32211:  # multiple games rows
+        case Game::GET_ERR_MULTI:  # multiple games rows
             $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See errors below";
             $error_msgs['count'] += 1;
             break;
-        case 32213:  # new game option
-#            $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
+        case Game::GET_WARN_NO_PREV:  # no previous game found
+            $error_msgs['game_id'] = "{$d->getMessage()} ({$d->getCode()})";
+            $error_msgs['errorDiv'] = "See warning below";
+            $error_msgs['count'] += 1;
+            break;
+        case Game::GET_INFO_ADD_NEW:  # new game option
             $error_msgs['errorDiv'] = "{$d->getMessage()} ({$d->getCode()})";
-#            $error_msgs['count'] += 1;
             $newGame = TRUE;
             break;
         default:
             echo "game.inc:" . __FUNCTION__ . ":Exception:{$gamz->get_game_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
             $p = new Exception($d->getPrevious());
             echo "gameFind exception:{$gamz->get_game_id()}:" . $p->getMessage() . ".<br>";
-            throw new Exception($p);
+            throw new PokerException($p);
         }
     }
     if ($error_msgs['count'] == 0 && !$newGame) {
@@ -235,7 +212,7 @@ function gameGetName($field) {
         $member_names["$field"] = $mmbr->get_full_name();
     } catch (Exception $d) {
         switch ($d->getCode()) {
-        case 32210:  # no member rows
+        case Member::GET_ERR_ZERO:  # no member rows
             $member_names["$field"] = null;
             break;
         default:
@@ -250,10 +227,38 @@ function gameGetName($field) {
     dbg("-".__FUNCTION__.";{$_POST['game_id']}=$field=".$member_names["$field"]);
 }
 
+
+/**
+ * Delete a game
+ */
+function gameDelete() {
+    # declare globals
+    global $page_id;
+
+# initialize the game form
+require(BASE_URI . "modules/game/game.form.init.php");
+
+    dbg("=".__FUNCTION__.";gameDelete");
+    $gamz->set_to_POST();
+    # Get the next available game id number
+    $gamz->delete();
+
+    dbg("=".__FUNCTION__.";gameDelete:end={$gamz->get_game_id()}");
+
+    if ($error_msgs['count'] == 0) {
+        $error_msgs['errorDiv'] = "game deleted.";
+    }
+
+# Show the game form
+require(BASE_URI . "modules/game/game.form.php");
+
+}
 /**
  * Show some test data for add functions
  */
 function gameTest() {
+    # declare globals
+    global $page_id;
     global $debug, $gamz, $member_names, $error_msgs;
     dbg("=".__FUNCTION__.";gameTest");
     #post_dump();

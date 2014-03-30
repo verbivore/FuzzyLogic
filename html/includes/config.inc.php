@@ -34,7 +34,7 @@ if ($local) {
 
     // Always debug when running locally:
     $debug = TRUE;
-    $_SESSION['dbug'] = FALSE;
+    $_SESSION['dbug'] = TRUE;
     
     // Define the constants:
     define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');

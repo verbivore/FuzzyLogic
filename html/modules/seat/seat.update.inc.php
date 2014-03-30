@@ -37,18 +37,14 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
                 $e = new Exception("Multiple ($row_count) seat records for seat ({$seaz->get_game_id()}).", 20000);
                 throw new Exception($e);
             }
-        } catch (PokerException $d) {
-            switch ($d->getCode()) {
-            case 2110:
-                $error_msgs['nickname'] = "Game with this nickname ({$seaz->get_nickname()}) already exists. ({$d->getCode()})";
-                $error_msgs['errorDiv'] = "See errors below";
-                $error_msgs['count'] += 1;
-                break;
-            case 2104: # Column validation failed before insert/update
+        } catch (PokerException $e) {
+            switch ($e->getCode()) {
+            case Seat::INS_ERR_VALIDTN: # Column validation failed before insert/update
+            case Seat::UPD_ERR_VALIDTN:
                 $err_list = array();
                 $err_list[] = array();
-                $error_msgs['errorDiv'] = $d->getMessage() . " (2104)";
-                $err_list = $d->getOptions();
+                $error_msgs['errorDiv'] = $e->getMessage() . " (2104)";
+                $err_list = $e->getOptions();
                 dbg("=".__FUNCTION__.";arraysize=".sizeof($err_list)."");
                 foreach ($err_list as $col => $val) {
 //          echo "seaz.update errors=$col:$val[0]:$val[1].<br>";
@@ -63,13 +59,13 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
                 }
                 break;
             default:
-                echo "Game insert/update failed:{$seaz->get_game_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-                $p = new Exception($d->getPrevious());
+                echo "Game insert/update failed:{$seaz->get_game_id()}:" . $e->getMessage() . ":" . $e->getCode() . ".<br>";
+                $p = new Exception($e->getPrevious());
                 echo "Game Previous exception:{$seaz->get_game_id()}:" . $p->getMessage() . ".<br>";
                 throw new Exception($p);
             }
             
-#      if ($d->getCode() > 0) {  # Assume that message is user-friendly
+#      if ($e->getCode() > 0) {  # Assume that message is user-friendly
 #      } else {  # Undefined error
         } 
     } 
@@ -83,10 +79,10 @@ require(BASE_URI . "modules/seat/seat.form.init.php");
         # get the new row to verify and get stamp
         try {
             $seaz->get("");
-            seatGetNames();
-        } catch (PokerException $d) {
-            echo "Game insert/update failed:{$seaz->get_game_id()}:" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-            $p = new Exception($d->getPrevious());
+//            seatGetNames();
+        } catch (PokerException $e) {
+            echo "Game insert/update failed:{$seaz->get_game_id()}:" . $e->getMessage() . ":" . $e->getCode() . ".<br>";
+            $p = new Exception($e->getPrevious());
             echo "Game Previous exception:{$seaz->get_game_id()}:" . $p->getMessage() . ".<br>";
             throw new Exception($p);
         }
@@ -114,8 +110,8 @@ function seatValidate() {
 #kluge!!!  Should be picked up in seat.form.init.php!
 #$seat_form_fields = array("game_id", "name_last", "name_first", "nickname");
 
-        dbg("=".__FUNCTION__.";seat_form_fields=".print_r($seat_form_fields)."");
-
+        dbg("=".__FUNCTION__.";seat_form_fields=");
+//print_r($seat_form_fields).
         # validate fields
         foreach ($seat_form_fields as $field) {
             try {
