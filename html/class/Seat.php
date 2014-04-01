@@ -61,7 +61,8 @@ class Seat
     const UPD_ERR_ZERO     = 86510;
     const UPD_ERR_DUP      = 86511;
     const UPD_ERR_MULTI    = 86512;
-    const UPD_ERR_PDO      = 96500;
+    const UPD_ERR_PDO      = 96500; # mySQL error
+    const UPD_ERR_PDO_SYN  = 96501; # mySQL syntax error
 
     const DEL_ERR_ZERO     = 86610;
     const DEL_ERR_MULTI    = 86612;
@@ -314,7 +315,7 @@ class Seat
             if ($item == "stamp") { # stamp must be null for auto-update
                 $list = $list . "$item = NULL, ";
             } else {
-                $list = $list . "$item = \"{$this->$item}\", ";
+                $list = $list . "$item = :{$item}, ";
             }
         }
         $list = rtrim($list, ", ");
@@ -624,7 +625,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt->bindValue(':response', $this->response, PDO::PARAM_STR);
                 $stmt->bindValue(':note_member', $this->note_member, PDO::PARAM_STR);
                 $stmt->bindValue(':note_master', $this->note_master, PDO::PARAM_STR);
-//                $stmt->bindValue(':stamp', $this->stamp, PDO::PARAM_INT);
                 $stmt->execute();
             } catch (PDOException $e) {
                 # case [23000]: Integrity constraint violation ... Duplicate entry
@@ -664,18 +664,30 @@ require(BASE_URI . "includes/pok.open.inc.php");
                           "AND member_id = \"{$this->member_id}\" ";
                 dbg("=".__METHOD__.";stmt_str=$update");
                 $stmt = $pokdb->prepare($update);
+                $stmt->bindValue(':game_id', $this->game_id, PDO::PARAM_INT);
+                $stmt->bindValue(':member_id', $this->member_id, PDO::PARAM_INT);
+                $stmt->bindValue(':response', $this->response, PDO::PARAM_STR);
+                $stmt->bindValue(':note_member', $this->note_member, PDO::PARAM_STR);
+                $stmt->bindValue(':note_master', $this->note_master, PDO::PARAM_STR);
                 $stmt->execute();
             } catch (PDOException $e) {
-                if ($e->getCode() == 23000) {
+                switch ($e->getCode() == 23000) {
+                case 23000:
                     #error_log($e->getTraceAsString());
                     throw new PokerException('Duplicate entry', self::UPD_ERR_DUP, $e);
-                } else {
-                    echo "Seat.update: PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                    throw new PokerException('Unknown PDO error', self::UPD_ERR_PDO, $e);
+                    break;
+                case 42000:
+                    #error_log($e->getTraceAsString());
+                    throw new PokerException('Duplicate entry', self::UPD_ERR_PDO_SYN, $e);
+                    break;
+                default:
+//                    throw new PokerException('Unknown PDO error', self::UPD_ERR_PDO, $e);
+                    throw $e;
+                    break;
                 }
-            } catch (Exception $e) {
-                echo "Seat.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
-                throw new PokerException($e);
+//            } catch (Exception $e) {
+//                echo "Seat.update: Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+//                throw new PokerException($e);
             }
         } else {
             throw new PokerException("Data validation errors", 

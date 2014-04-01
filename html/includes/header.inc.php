@@ -16,11 +16,12 @@
     <meta content="utf-8" http-equiv="encoding">
     <title><?php echo "{$page_title}";?></title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="<?php echo "{$page_file_js}";?>"></script>
     <link rel="stylesheet" type="text/css" href="style/poker.css">
   </head>
   <body>
-<?php dbg("+include:".basename(__FILE__)."(in progress)"); ?> 
-<?php dbg("=".basename(__FILE__).":host=$host; local=$local; debug=$debug; counter={$_SESSION['counter']}; start={$_SESSION['startTime']}; HTTP_HOST={$_SERVER['HTTP_HOST']}"); ?> 
+<?php dbg("+".basename(__FILE__)."(in progress)"); ?> 
+<?php dbg("=".basename(__FILE__).":host=$host; local=$local; dbug={$_SESSION['dbug']}; counter={$_SESSION['counter']}; start={$_SESSION['startTime']}; HTTP_HOST={$_SERVER['HTTP_HOST']}"); ?> 
 
     <form id="pokerMain" method="POST" action="<?php $self ?>">
       <input type="submit" id="main" name="main" value="Main" >
@@ -28,5 +29,9 @@
       <input type="submit" id="game" name="game" value="Games" >
       <input type="submit" id="seat" name="seat" value="Join" >
     <br>
-<?php dbg("-include:".basename(__FILE__).""); ?>
+<?php 
+//post_dump();
+//session_dump();
+dbg("-".basename(__FILE__).""); 
+?>
 

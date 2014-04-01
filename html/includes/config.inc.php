@@ -32,10 +32,6 @@ session_start();
 // Allow for development on different servers.
 if ($local) {
 
-    // Always debug when running locally:
-    $debug = TRUE;
-    $_SESSION['dbug'] = TRUE;
-    
     // Define the constants:
     define('BASE_URI', '/home/dave/dev/FuzzyLogic/html/');
     define('BASE_URL', 'http://localhost/dev/FuzzyLogic/');
@@ -65,7 +61,7 @@ $debug = TRUE;
 
  *  before this next conditional.
  */
-
+/*
 // Assume debugging is off. 
 if (!isset($debug)) {
     $debug = FALSE;
@@ -75,11 +71,17 @@ if (!isset($_SESSION['dbug'])) {
     $_SESSION['dbug'] = FALSE;
 }
 
+    // Always debug when running locally:
+    $debug = TRUE;
+    $_SESSION['dbug'] = TRUE;
+    
+*/
+
 # initializing php code for the first page
 
-//if (!isset($_SESSION['from_page_id'])) {
-//    $_SESSION['from_page_id'] = "new";
-//}
+if (!isset($_SESSION['from_page_id'])) {
+    $_SESSION['from_page_id'] = "new";
+}
 if (!isset($_SESSION['startTime'])) {
     $_SESSION['startTime'] = date("M/d/y g:i:sa");
 }
@@ -87,6 +89,19 @@ if (!isset($_SESSION['counter'])) {
     $_SESSION['counter'] = 0;
 }
 $_SESSION['counter'] += 1;
+if (!isset($_POST['from_page_id'])) {
+    $_POST['from_page_id'] = "UNKNOWN";
+}
+if ($_POST['from_page_id'] == "main_form") {
+    if ($_POST['dbug'] == 'on') {
+        $_SESSION['dbug'] = TRUE;
+    } else {
+        $_SESSION['dbug'] = FALSE;
+    }
+}
+if (!isset($_SESSION['dbug'])) {
+    $_SESSION['dbug'] = FALSE;
+}
 
 # ***** SETTINGS ***** #
 # ******************** #
@@ -95,21 +110,17 @@ $_SESSION['counter'] += 1;
 function session_dump() 
 {
     # Dump _SESSION array
-    global $debug;
-    if ($debug) {
-#        echo '<pre>'; # formats list one per line
+    if ($_SESSION['dbug']  == TRUE) {
         print "_SESSION var dump: ";
         var_dump($_SESSION);
         print ".<br/>";
-#    echo '</pre>';
     }
 }
 
 function session_list() 
 {
   # List contents of the _SESSION array
-    global $debug;
-    if ($debug) {
+    if ($_SESSION['dbug']  == TRUE) {
         echo '<pre>'; # formats list one per line
         print "_SESSION var list: ";
         var_dump($_SESSION);
@@ -121,8 +132,7 @@ function session_list()
 function post_dump() 
 {
     # Dump _POST array
-    global $debug;
-    if ($debug) {
+    if ($_SESSION['dbug']  == TRUE) {
         print "_POST var dump: ";
         var_dump($_POST);
         print ".<br/>";
@@ -132,8 +142,7 @@ function post_dump()
 function post_list() 
 {
     # List contents of the _POST array
-    global $debug;
-    if ($debug) {
+    if ($_SESSION['dbug']  == TRUE) {
         echo '<pre>'; # formats list one per line
         print "_POST var list: ";
         var_dump($_POST);

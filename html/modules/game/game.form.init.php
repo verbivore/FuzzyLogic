@@ -20,14 +20,23 @@ $member_names = array("snack" => null, "host" => null, "gear" => null, "caller" 
 
 # Initialize error message fields
 # Create an associative array of form fields to hold error messages, initialized to ""
-$error_msgs = array();
-$error_msgs['count'] = 0;
-$error_msgs['errorDiv'] = "";
+$game_error_msgs = array();
+$game_error_msgs['count'] = 0;
+$game_error_msgs['errorDiv'] = "";
 foreach ($game_form_fields as $field) {
-    $error_msgs["$field"] = "";
+    $game_error_msgs["$field"] = "";
+}
+$player_error_msgs = array();
+$player_error_msgs['count'] = 0;
+$player_error_msgs['errorDiv'] = "";
+
+if (isset($_POST['player_count'])) {
+    for ($i = 0; $i < $_POST['player_count']; $i++) {
+        $player_error_msgs["$i"] = "";
+    }
 }
 
-dbg("=".basename(__FILE__).";fields=" . sizeof($game_form_fields) . ";msgs=" . sizeof($error_msgs) . "");
+dbg("=".basename(__FILE__).";fields=" . sizeof($game_form_fields) . ";msgs=" . sizeof($game_error_msgs) . "");
 dbg("-".basename(__FILE__).";");
 #if ($debug) { foreach ($error_msgs as $col => $val) { echo "gamz.error_field=$col:$val"); }
 //******************************************************************************

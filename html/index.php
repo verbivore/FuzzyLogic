@@ -86,6 +86,7 @@ if (isset($_POST['main'])) {
     $page_id = NULL;
 }
 
+$page_file_js = '';
 // Determine which page to display:
 switch ($page_id) {
     case 'play':
@@ -160,48 +161,59 @@ switch ($page_id) {
   
     case 'seat':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Seats';
         break;
     case 'seat-preg':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Previous Game | Seats | Poker';
         break;
     case 'seat-prep':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Previous Player | Seats | Poker';
         break;
     case 'seat-find':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Find | Seats | Poker';
         break;
     case 'seat-nexg':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Next Game | Seats | Poker';
         break;
     case 'seat-nexp':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Next Player | Seats | Poker';
         break;
     case 'seat-list':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'List | Seats | Poker';
         break;
     case 'seat-updt':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Update | Seats | Poker';
         break;
     case 'seat-delt':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Delete | Seats | Poker';
         break;
     case 'seat-burp':
         $page_file = 'seat/seat.inc.php';
+        $page_file_js = 'js/seat.js';
         $page_title = 'Burp | Seats | Poker';
         break;
   
     // Default is to include the main page.
     default:
         $page_file = 'main.inc.php';
+        $page_file_js = 'js/main.js';
         $page_title = 'Poker';
         break;
       
