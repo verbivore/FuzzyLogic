@@ -35,11 +35,11 @@ $(document).ready(function() {
     switch (mainAction) 
     {
       case "main":
-        errorList = validateUpdt();
+//        errorList = validateUpdt();
 //        alert("mainForm.submit:mainAction:unknown=" + mainAction);
         break;
       default: 
-        alert("mainForm.submit:mainAction:unknown=" + mainAction);
+//        alert("mainForm.submit:mainAction:unknown=" + mainAction);
         break;
     }
 

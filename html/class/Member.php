@@ -51,6 +51,7 @@ class Member
     const GET_ERR_MULTI    = 83312; # Multiple rows found
     const GET_ERR_NEW_PDO  = 93317; # PDO error on getNew
     const GET_ERR_PDO      = 93300; # PDO error
+    const GET_NEXT_ERR_PDO = 93301; # Next PDO error
 
     const INS_ERR_VALIDTN  = 33400; # Insert failed: data validation error(s)
     const INS_ERR_DUP      = 83402; # Insert failed: duplicate key
@@ -93,7 +94,8 @@ class Member
     public function get_email() { return $this->email; }
     public function get_phone() { return $this->phone; }
     public function get_stamp() { return $this->stamp; }
-    public function get_full_name() { return $this->name_first . " '" .  $this->nickname . "' " . $this->name_last; }
+    public function get_full_name() { 
+        return $this->name_first . " '" .  $this->nickname . "' " . $this->name_last; }
    
 
 /**
@@ -107,6 +109,36 @@ class Member
     public function set_email($P) { $this->email = $P; }
     public function set_phone($P) { $this->phone = $P; }
     public function set_stamp($P) { $this->stamp = $P; }
+
+/**
+ * Validate members fields
+ */
+    public function validate()
+    {
+        dbg("+".__METHOD__."={$this->member_id}");
+        $errors = array();
+        $foo = array();
+#    global $MEMBER_TABLE_COLUMNS;
+        # validate fields
+        foreach ($this->MEMBER_TABLE_COLUMNS as $column) {
+            $func = "validate_$column";
+//      dbg(.__METHOD__.":column={$func}");
+            $foo = $this->$func();
+//      dbg("=".__METHOD__." col:$column="; var_dump($foo); echo "");
+            if ($foo[0]) {
+                $errors["$column"][0] = $foo[0];
+                $errors["$column"][1] = $foo[1];
+//        dbg("=".__METHOD__." col:$column:$foo[0]:$foo[1]");
+            }
+        }
+//        if ($debug) {
+//        foreach ($errors as $col => $val) {
+//            echo "Member.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
+//            echo "Member.validate errors=$col:$val[0]:$val[1].<br>"; }
+//        }
+        dbg("-".__METHOD__." arraysize=".sizeof($errors));
+        return($errors);
+    }
 
 /**
  * Validation for individual column values.
@@ -159,36 +191,6 @@ class Member
         # alphabetic/spaces, starts with capital?, 
         $e = array(0,"");
         return($e);
-    }
-
-/**
- * Validate members fields
- */
-    public function validate()
-    {
-        dbg("+".__METHOD__."={$this->member_id}");
-        $errors = array();
-        $foo = array();
-#    global $MEMBER_TABLE_COLUMNS;
-        # validate fields
-        foreach ($this->MEMBER_TABLE_COLUMNS as $column) {
-            $func = "validate_$column";
-//      dbg(.__METHOD__.":column={$func}");
-            $foo = $this->$func();
-//      dbg("=".__METHOD__." col:$column="; var_dump($foo); echo "");
-            if ($foo[0]) {
-                $errors["$column"][0] = $foo[0];
-                $errors["$column"][1] = $foo[1];
-//        dbg("=".__METHOD__." col:$column:$foo[0]:$foo[1]");
-            }
-        }
-//        if ($debug) {
-//        foreach ($errors as $col => $val) {
-//            echo "Member.validate errors=$col:"; list($n,$s) = $val; echo "$n:$s");
-//            echo "Member.validate errors=$col:$val[0]:$val[1].<br>"; }
-//        }
-        dbg("-".__METHOD__." arraysize=".sizeof($errors));
-        return($errors);
     }
 
 /**
@@ -251,9 +253,35 @@ class Member
     }
 
 /**
+ * find a members row by member_id.
+ */
+    public function find()
+    {
+        dbg("+".__METHOD__."={$this->member_id}");
+        $row_count = -1;
+        try {
+require(BASE_URI . "includes/pok.open.inc.php");
+            # find member rows
+            $query = "SELECT * FROM members " . 
+                     "WHERE member_id = \"$this->member_id\"  ";
+            dbg("=".__METHOD__.";query=$query");
+            $stmt = $pokdb->prepare($query);
+            $stmt->execute();
+            $row_count = $stmt->rowCount();
+            dbg("=".__METHOD__.";$this->member_id:rows=$row_count");
+        } catch (PDOException $e) {
+//            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new PokerException('PDO Exception', 
+                                     self::FIND_ERR_PDO, 
+                                     $e);
+        }
+        dbg("-".__METHOD__.";Member:find={$row_count}");
+        return($row_count);
+    }
+
+/**
  * get a member row by member_id.                   
  */
-//    public function get()
     public function get($getType="")
     {
         dbg("+".__METHOD__.";$getType={$this->member_id}");
@@ -273,19 +301,22 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } elseif ($row_count < 1) {
                 dbg("-".__METHOD__.";=member not found");
                 #error_log($e->getTraceAsString());
-                throw new PokerException('No records for this member were found', Member::GET_ERR_ZERO);
+                throw new PokerException('No records for this member were found', 
+                                         Member::GET_ERR_ZERO,
+                                         NULL);
             } else {
                 dbg("-".__METHOD__.";=multiple member records found");
                 #error_log($e->getTraceAsString());
-                throw new PokerException("Multiple {$row_count} records for this member were found", 32211);
+                throw new PokerException("Multiple {$row_count} records for this member were found", 
+                                         self::GET_ERR_MULTI,
+                                         NULL);
             }
         } catch (PDOException $e) {
             dbg("-".__METHOD__.";=PDO Exception");
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new PokerException('PDO Exception: ', 32212);
-//    } catch (Exception $e) {
-//      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
-//      rethrow??? 
+//            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
+            throw new PokerException('PDO Exception: ', 
+                                     self::GET_ERR_PDO,
+                                     NULL);
         }
         dbg("-".__METHOD__.";$getType={$this->member_id}");
     }
@@ -317,9 +348,9 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $stmt->execute();
             $this->member_id = $stmt->fetchColumn() + 1;
         } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-        } catch (PokerException $e) {
-            echo "PokerException: " . $e->getCode() . ": " . $e->getMessage() . "<br>";  
+            throw new PokerException(__METHOD__.'PDO Exception: ', 
+                                     self::GET_NEXT_ERR_PDO,
+                                     NULL);
         }
         dbg("-".__METHOD__."=$this->member_id");
     }
@@ -330,20 +361,21 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function listing()
     {
-        dbg("=".__METHOD__);
+        // List a member, one attribute per line.
+        echo __METHOD__.".<br>";
         $this->listIt(".<br>");
     }
 
     public function listRow()
     {
-        dbg("=".__METHOD__);
+        // List a member on one line.
+        echo __METHOD__ . ":";
         $this->listIt("; ");
         echo ".<br>";
     }
 
     private function listIt($d)
     {
-        dbg("=".__METHOD__);
         echo "Member_id=$this->member_id$d";
         echo "nickname=$this->nickname$d";
         echo "name_last=$this->name_last$d";
@@ -359,34 +391,6 @@ require(BASE_URI . "includes/pok.open.inc.php");
         dbg("=".__METHOD__);
         var_dump($this);
         echo ".<br>\n";
-    }
-
-/**
- * find a members row by member_id.
- */
-    public function find()
-    {
-        dbg("+".__METHOD__.";Member:find={$this->member_id}");
-        $row_count = -1;
-        try {
-require(BASE_URI . "includes/pok.open.inc.php");
-            # find member rows
-            $query = "SELECT * FROM members " . 
-                                  "WHERE member_id = \"$this->member_id\"  ";
-            dbg("=".__METHOD__.";query=$query");
-            $stmt = $pokdb->prepare($query);
-            $stmt->execute();
-            $row_count = $stmt->rowCount();
-            dbg("=".__METHOD__.";$this->member_id:rows=$row_count");
-        } catch (PDOException $e) {
-            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-            throw new PokerException('PDO Exception', -2010, $e);
-//    } catch (Exception $e) {
-//      echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>"; 
-//      rethrow??? 
-        }
-        dbg("-".__METHOD__.";Member:find={$row_count}");
-        return($row_count);
     }
 
 /**

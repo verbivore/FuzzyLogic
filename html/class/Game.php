@@ -442,13 +442,15 @@ require(BASE_URI . "includes/pok.open.inc.php");
  */
     public function listing()
     {
-        echo "Game." . __METHOD__ . ".<br>";
+        // List a game, one attribute per line.
+        echo __METHOD__.".<br>";
         $this->listIt(".<br>");
     }
 
     public function listRow()
     {
-        echo "Game." . __METHOD__ . ":";
+        // List a game on one line.
+        echo __METHOD__ . ":";
         $this->listIt("; ");
         echo ".<br>";
     }

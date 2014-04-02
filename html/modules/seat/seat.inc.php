@@ -243,8 +243,15 @@ function seatTest() {
 require(BASE_URI . "modules/seat/seat.form.init.php");
 
     # create a test seat
-    $seaz->testSeat();
-    $error_msgs['errorDiv'] = "Test seat created.  Press \"Add/Update\" to add the seat.";
+    try {
+        $seaz->testSeat();
+        $error_msgs['errorDiv'] = "Test seat created.  Press \"Add/Update\" to add the seat.";
+    } catch (PokerException $e) {
+        $error_msgs['errorDiv'] = "Test seat creation failed";
+        $error_msgs['count'] += 1;
+    }
+
+
 
 # Show the seat form
 require(BASE_URI . "modules/seat/seat.form.php");
