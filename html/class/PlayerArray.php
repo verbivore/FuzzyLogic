@@ -53,7 +53,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                         $this->playerList[$i]->get("");
                     } catch (playerException $d) {
                         switch ($d->getCode()) {
-                        case 22210:  # no seats rows
+                        case Player::GET_WARN_NO_SEAT:  # no seats rows
                             dbg("=".__METHOD__.";exc 22110: No seats rows for={$this->playerList[$i]->get_member_id()}");
                             break;
                         default:

@@ -4,9 +4,12 @@
  * File name: player.form.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-04-02 Added $_POST['from_page_id'].  DHD
  * 14-03-23 Added dbg().  DHD
  * 14-03-18 Changed stats fields to readonly.  DHD
  * 14-03-08 Original.  DHD
+ * Future:
+ *  Format score, right-justify stats
  */
 dbg("+".basename(__FILE__));
 # set banner message and style
@@ -132,7 +135,8 @@ dbg("=".basename(__FILE__).";ID={$plyr->get_member_id()}:{$message_banner}");
   </div>
 <?php
 //$_POST['stamp'] = $plyr->get_stamp();
-//if ($debug) { echo "include:" . __FILE__ . ";^^^^^^^.<br>"; }
+# Save the form name so that the next page knows what to expect in $_POST
+echo "<input type='hidden' name='from_page_id' value='play-form'>";
 dbg("-".basename(__FILE__));
 # ***** Show the form ***** #
 # ************************* #

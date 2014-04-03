@@ -4,6 +4,7 @@
  * File name: player.inc.php
  * @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-04-02 Updated with Player::constants.  DHD
  * 14-03-23 Added prev/next buttons.  Added dbg().  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-19 Added button attributes.  DHD
@@ -25,13 +26,13 @@ $butt_att_updt = "";
 $butt_att_list = "";
 $butt_att_delt = "";
 $butt_att_burp = "";
-echo "{$_POST['from_page_id']}<br>";
+//echo "{$_POST['from_page_id']}:$page_id<br>";
 // Determine which page to display:
 switch ($page_id) {
     case 'play-prev':
         if ($_POST['from_page_id'] == 'play-list') {
             # find first game
-            $_POST['player_id'] = 0;
+            $_POST['member_id'] = 0;
             playerFind("next");
         } else {
             playerFind("prev");
@@ -40,7 +41,7 @@ switch ($page_id) {
     case 'play-find':
         if ($_POST['from_page_id'] == 'play-list') {
             # find first game
-            $_POST['player_id'] = 9999;
+            $_POST['member_id'] = 9999;
             playerFind("prev");
         } else {
             playerFind("");
@@ -49,7 +50,7 @@ switch ($page_id) {
     case 'play-next':
         if ($_POST['from_page_id'] == 'play-list') {
             # find first game
-            $_POST['player_id'] = 9999;
+            $_POST['member_id'] = 9999;
             playerFind("prev");
         } else {
             playerFind("next");
@@ -143,9 +144,9 @@ require(BASE_URI . "modules/player/player.form.init.php");
     try {
         $plyr->delete();
     }
-    catch (playerException $d) {
+    catch (PokerException $d) {
         switch ($d->getCode()) {
-        case 22262:  # player not found
+        case Player::DEL_ERR_ZERO:  # player not found
             $error_msgs['member_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See note below";
             $error_msgs['count'] += 1;
@@ -175,7 +176,6 @@ require(BASE_URI . "modules/player/player.form.php");
  */
 function playerFind($getType) {
     # declare globals
-    global $debug;
     dbg("+".__FUNCTION__.":$getType:{$_POST['member_id']}");
     #post_dump();
 
@@ -188,21 +188,21 @@ require(BASE_URI . "modules/player/player.form.init.php");
     try {
         $plyr->get("$getType");
     }
-    catch (playerException $d) {
+    catch (PokerException $d) {
         #echo "plyr get failed:{$plyr->get_member_id()}.<br>";
         switch ($d->getCode()) {
-        case 22210:  # no seats rows
+        case Player::GET_WARN_NO_SEAT:  # no seats rows
             $error_msgs['invite_cnt'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See note below";
 //            $error_msgs['count'] += 1;
             break;
-        case 22211:  # no members rows
-        case 22212:  # multiple member rows
+        case Player::GET_ERR_ZERO:  # no members rows
+        case Player::GET_ERR_MULTI:  # multiple member rows
             $error_msgs['member_id'] = "{$d->getMessage()} ({$d->getCode()})";
             $error_msgs['errorDiv'] = "See error(s) below";
             $error_msgs['count'] += 1;
             break;
-        case 22213:  # No next ID found, add it.
+        case Player::GET_INFO_ADD_NEW:  # No next ID found, add it.
             $error_msgs['errorDiv'] = "{$d->getMessage()} ({$d->getCode()})";
             $new_player = TRUE;
             break;

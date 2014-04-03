@@ -72,7 +72,7 @@ dbg("=".basename(__FILE__)."*** Dump players *** ({$players->playerCount} player
   </div>
 <?php
 # save the form name
-echo "<input type='hidden' name='from_page_id' value='play_list'>";
+echo "<input type='hidden' name='from_page_id' value='play-list'>";
 dbg("-".basename(__FILE__)."");
 # ***** Show the form ***** #
 # ************************* #

@@ -609,7 +609,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $stmt->bindValue(':note_master', $this->note_master, PDO::PARAM_STR);
                 $stmt->execute();
             } catch (PDOException $e) {
-                switch ($e->getCode() == 23000) {
+                switch ($e->getCode()) {
                 case 23000:
                     #error_log($e->getTraceAsString());
                     throw new PokerException('Duplicate entry', 

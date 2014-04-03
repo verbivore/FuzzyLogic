@@ -4,6 +4,7 @@
  *  File name: player.update.inc.php
  *  @author David Demaree <dave.demaree@yahoo.com>
   *** History ***  
+ * 14-04-02 Updated with Player::constants.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
  * 14-03-09 Original.  DHD
  * Future:
@@ -34,46 +35,43 @@ require(BASE_URI . "modules/player/player.form.init.php");
                 dbg("=".__FUNCTION__.":updating:{$plyr->get_member_id()}");
                 $plyr->update();
             } else {
-                $e = new Exception("Multiple ($row_count) player ({$plyr->get_member_id()}) records for effective date ({$plyr->get_eff_date()}).", 20000);
-                throw new Exception($e);
-            }
-        }
-        catch (playerException $d) {
-            switch ($d->getCode()) {
-            case 22241:
-                $error_msgs['nickname'] = "Player with this nickname ({$plyr->get_nickname()}) already exists. ({$d->getCode()})";
+                # Future:  Log the error somehow
+                $error_msgs['member_id'] = "Multiple rows found for player ({$plyr->get_member_id()})";
                 $error_msgs['errorDiv'] = "See errors below";
                 $error_msgs['count'] += 1;
-                break;
-            case 2104: # Column validation failed before insert/update
+            }
+        }
+        catch (PokerException $d) {
+            switch ($d->getCode()) {
+            case Player::INS_ERR_VALIDTN: # Column validation failed before insert
+            case Player::UPD_ERR_VALIDTN: # Column validation failed before update
                 $err_list = array();
                 $err_list[] = array();
                 $error_msgs['errorDiv'] = $d->getMessage() . " (2104)";
                 $err_list = $d->getOptions();
                 dbg("=".__FUNCTION__.":arraysize=" . sizeof($err_list));
                 foreach ($err_list as $col => $val) {
-//          echo "plyr.update errors=$col:$val[0]:$val[1].<br>";
                     $error_msgs["$col"] = $val[1];
                     $error_msgs['count'] += 1;
                     dbg("=".__FUNCTION__.":err col=$col:{$error_msgs["$col"]}");
-/*
-                    $errMsgField="$col" . "ErrorMsg";
-                    ${$errMsgField} = $val[1];
-                    dbg("=".__FUNCTION__.":errMsgField=$errMsgField:${$errMsgField}");
-*/
                 }
                 break;
+            case Player::INS_ERR_DUP:
+            case Player::UPD_ERR_DUP:
+                $error_msgs['nickname'] = "Player with this nickname ({$plyr->get_nickname()}) already exists. ({$d->getCode()})";
+                $error_msgs['errorDiv'] = "See errors below";
+                $error_msgs['count'] += 1;
+                break;
             default:
-                echo "plyr insert/update failed:plyr->get_member_id():" . $d->getMessage() . ":" . $d->getCode() . ".<br>";
-                $p = new Exception($d->getPrevious());
-                echo "plyr Previous exception:plyr->get_member_id():" . $p->getMessage() . ".<br>";
-                throw new Exception($p);
+                # Future:  Make a user-friendly error
+                dbg("-".__FUNCTION__."={$plyr->get_member_id()}:exception");
+                throw new PokerException('Insert/update failed for player:' . $plyr->get_member_id(), 
+                                         self::UPD_ERR, 
+                                         $e);
             }
-#      if ($d->getCode() > 0) {  # Assume that message is user-friendly
-#      } else {  # Undefined error
         } 
     } 
-    $_POST["ID"] = $plyr->get_member_id();
+//    $_POST["ID"] = $plyr->get_member_id();
     if ($error_msgs['count'] == 0) {
         if($row_count == 0) {  
             $error_msgs['errorDiv'] = "player record added.";
@@ -109,8 +107,8 @@ function plyrValidate() {
 //        dbg("=".__FUNCTION__.":plyr:plyrUpdate:validate fields={$func}");
                 $func();
             }
-            catch (playerException $e) {
-                dbg("=".__FUNCTION__.":error={$e->getMessage()}");
+            catch (PokerException $e) {
+                dbg("=".__FUNCTION__.":validation error={$e->getMessage()}");
                 $error_msgs["$field"] = $e->getMessage();
                 $error_msgs['count'] += 1;
 //                $error_msgs['errorDiv'] = "See errors below";
@@ -121,6 +119,7 @@ function plyrValidate() {
     dbg("-".__FUNCTION__."={$plyr->get_member_id()}:{$error_msgs['count']}");
 }
 
+# Future: Flesh out these validation functions
 function plup_validate_member_id() { return TRUE; }
 function plup_validate_name_last() { return TRUE; }
 function plup_validate_name_first() { return TRUE; }
