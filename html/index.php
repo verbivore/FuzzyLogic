@@ -1,9 +1,11 @@
 <?php # index.php
 /**
  *  Set up and show the page.
+ *  @author David Demaree (from Larry Ulman) <dave.demaree@yahoo.com>
  *  File name: index.php
- *  @author David Demaree <dave.demaree@yahoo.com> (from Larry Ulman) <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-04-05 Added play-new as a page_id.  DHD
+ * 14-04-03 Added main.js, play.js and seat.js.  DHD
  * 14-03-23 Added dbg() function.  DHD
  * 14-03-18 Recovered member class include. Renamed classes to title case.  
             Added play-delt & from_page_id.  DHD
@@ -23,7 +25,7 @@ require('./includes/config.inc.php');
 if (isset($_POST['main'])) {
     $page_id = 'main';
 } elseif (isset($_POST['play'])) {
-    $page_id = 'play';
+    $page_id = 'play-new';
 } elseif (isset($_POST['p-prev'])) {
     $page_id = 'play-prev';
 } elseif (isset($_POST['p-find'])) {
@@ -89,36 +91,44 @@ if (isset($_POST['main'])) {
 $page_file_js = '';
 // Determine which page to display:
 switch ($page_id) {
-    case 'play':
+    case 'play-new':
         $page_file = 'player/player.inc.php';
-        $page_title = 'Players | Poker';
+        $page_file_js = 'js/play.js';
+        $page_title = 'New | Player | Poker';
         break;
     case 'play-prev':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Previous | Player | Poker';
         break;
     case 'play-find':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Find | Player | Poker';
         break;
     case 'play-next':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Next | Player | Poker';
         break;
     case 'play-list':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'List | Players | Poker';
         break;
     case 'play-updt':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Update | Player | Poker';
         break;
     case 'play-delt':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Delete | Player | Poker';
         break;
     case 'play-burp':
         $page_file = 'player/player.inc.php';
+        $page_file_js = 'js/play.js';
         $page_title = 'Burp | Player | Poker';
         break;
 

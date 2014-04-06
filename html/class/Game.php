@@ -594,7 +594,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->member_caller = rand(1,$high);
 //        $this->game_date = rand(1,$high);
         dbg("=".__METHOD__.":high=$high:{$this->game_id}:{$this->game_date}:{$this->member_snack}:{$this->member_host}:{$this->member_gear}:{$this->member_caller}");
-        unset($testy);
+        unset($testPlay);
         dbg("-".__METHOD__."");
     }
 } 

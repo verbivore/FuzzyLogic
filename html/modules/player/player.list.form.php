@@ -22,7 +22,7 @@ if ("{$error_msgs['count']}" != "0") {
 }
 */
 $message_class = "infoClass";
-$message_banner = "message banner";
+$message_banner = ".";
 //dbg("=".basename(__FILE__)."plyr ID={$plyr->get_player_id()}:{$message_banner}");
 
 # ************************* #

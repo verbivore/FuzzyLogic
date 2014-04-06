@@ -8,6 +8,7 @@
  *    Get the "ON UPDATE CURRENT_TIMESTAMP" working.
  *    Prevent overwriting player on update if member_id is changed.
  * ** History ***  
+ * 14-04-05 Adding rank.  DHD
  * 14-04-02 Updated with Player::constants.  DHD
  * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated for phpDoc.  DHD
@@ -31,6 +32,7 @@ class Player extends Member
     protected $no_cnt;
     protected $flake_cnt;
     protected $score;
+    protected $rank;
 
 /**
  * List of names of SQL columns for the members table
@@ -55,9 +57,12 @@ class Player extends Member
     const GET_ERR_ZERO     = 84310; # No row found
     const GET_ERR_ONE      = 84311; # One row found
     const GET_ERR_MULTI    = 84312; # Multiple rows found
-    const GET_ERR_NEW_PDO  = 94317; # PDO error on getNew
+    const GET_ERR_ARR_1ST  = 84371; # 1st Get failed for Array
+    const GET_ERR_ARR      = 84370; # Get failed for Array
     const GET_ERR_PDO      = 94300; # PDO error
-    const GET_NEXT_ERR_PDO = 94301; # Next PDO error
+    const GET_ERR_NEXT_PDO = 94301; # Next PDO error
+    const GET_ERR_NEW_PDO  = 94317; # PDO error on getNew
+    const GET_ERR_ARR_PDO  = 94370; # 1st Get PDO failure for Array
 
     const INS_ERR_VALIDTN  = 34400; # Insert failed: data validation error(s)
     const INS_ERR_DUP      = 84402; # Insert failed: duplicate key
@@ -87,6 +92,7 @@ class Player extends Member
         $this->no_cnt = null;
         $this->flake_cnt = null;
         $this->score = null;
+        $this->rank = null;
     }
 
 /**
@@ -98,6 +104,7 @@ class Player extends Member
     public function get_no_cnt() { return $this->no_cnt; }
     public function get_flake_cnt() { return $this->flake_cnt; }
     public function get_score() { return $this->score; }
+    public function get_rank() { return $this->rank; }
 
 /**
  * Setters
@@ -108,6 +115,7 @@ class Player extends Member
     public function set_no_cnt($P) { $this->no_cnt = $P; }
     public function set_flake_cnt($P) { $this->flake_cnt = $P; }
     public function set_score($P) { $this->score = $P; }
+    public function set_rank($P) { $this->rank = $P; }
 
 /**
  * Validate members fields
@@ -236,6 +244,7 @@ class Player extends Member
     $this->set_no_cnt($_POST['no_cnt']);
     $this->set_flake_cnt($_POST['flake_cnt']);
     $this->set_score($_POST['score']);
+    $this->set_rank($_POST['rank']);
 
     }
 
@@ -289,6 +298,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 } else {
 #                  dbg("=".__METHOD__.";seats:get=player not found.");
                     #error_log($e->getTraceAsString());
+                    #Future: suppress this message for Game::burp.
                     dbg("-".__METHOD__."={$this->member_id};no invites yet.");
                     throw new PokerException('Player ' . $this->member_id . ' has not been invited to any games yet', 
                                              self::GET_WARN_NO_SEAT,
@@ -378,6 +388,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $this->no_cnt = $nos;
         $this->flake_cnt = $flakes;
         $this->score = ($yess + $maybes + $nos - $flakes) / $invites;
+        $this->rank = 0;
     }
 
 /**
@@ -409,6 +420,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         echo "nos=$this->no_cnt$d";
         echo "flakes=$this->flake_cnt$d";
         echo "score=$this->score$d";
+        echo "rank=$this->rank$d";
     }
 
     public function dump()

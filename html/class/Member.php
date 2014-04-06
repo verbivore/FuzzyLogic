@@ -51,7 +51,7 @@ class Member
     const GET_ERR_MULTI    = 83312; # Multiple rows found
     const GET_ERR_NEW_PDO  = 93317; # PDO error on getNew
     const GET_ERR_PDO      = 93300; # PDO error
-    const GET_NEXT_ERR_PDO = 93301; # Next PDO error
+    const GET_ERR_NEXT_PDO = 93301; # Next PDO error
 
     const INS_ERR_VALIDTN  = 33400; # Insert failed: data validation error(s)
     const INS_ERR_DUP      = 83402; # Insert failed: duplicate key
@@ -349,7 +349,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
             $this->member_id = $stmt->fetchColumn() + 1;
         } catch (PDOException $e) {
             throw new PokerException(__METHOD__.'PDO Exception: ', 
-                                     self::GET_NEXT_ERR_PDO,
+                                     self::GET_ERR_NEXT_PDO,
                                      NULL);
         }
         dbg("-".__METHOD__."=$this->member_id");

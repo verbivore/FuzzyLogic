@@ -64,13 +64,13 @@ if ("{$player_error_msgs['count']}" == "0") {
             $invited = TRUE;
         } catch (pokerException $e) {
             if ($e->getCode() == Seat::GET_ERR_ZERO) {
-                if ($page_id == 'game-burp') {
+                if ($page_id == 'game-burp') { # || $page_id == 'game') {
 //echo "get test seat<br>";
                     $seater->testSeat();
                 }
             } else {
 //                echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
-                throw new PokerException('Seat get failed game'.$seater->get_game_id().' player'.$seater->get_member_id().' error:' . $e->getCode(),
+                throw new PokerException('Seat get failed game:'.$seater->get_game_id().' player'.$seater->get_member_id().' error:' . $e->getCode(),
                                          GAME_PLAYER_ERR_PDO,
                                          $e);
             }

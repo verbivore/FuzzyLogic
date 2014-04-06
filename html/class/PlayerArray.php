@@ -3,6 +3,7 @@
  *  Class definition for an array of player
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
+ * 14-04-05 Adding player ranks.  DHD
  * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated __construct to ignore 2210.  DHD
  * 14-03-18 Changed name to title case.  DHD
@@ -14,12 +15,14 @@ dbg("+".basename(__FILE__)."");
 
 class PlayerArray extends player
 {
+
     public $playerList = array();
     public $playerCount;
 
     function __construct()
     {
         dbg("=".__METHOD__."");
+        $player_rank = array();
         $this->playerCount = 0;
         try {
 # Open poker database
@@ -45,43 +48,59 @@ require(BASE_URI . "includes/pok.open.inc.php");
                 $next_member_id = $row['first'];
                 $loaded = 0;
                 for ($i=0; $i < $this->playerCount; $i++) {
-#                for ($i=0; $i < 3; $i++) {
                     $this->playerList[$i] = new Player;
                     $this->playerList[$i]->set_member_id($next_member_id);
                     # Save row
                     try {
                         $this->playerList[$i]->get("");
-                    } catch (playerException $d) {
+//                        array_push($player_rank, $next_member_id => $this->playerList[$i]->get_score(),0);
+                        $player_rank[$next_member_id] = $this->playerList[$i]->get_score();
+                    } catch (PokerException $d) {
                         switch ($d->getCode()) {
                         case Player::GET_WARN_NO_SEAT:  # no seats rows
-                            dbg("=".__METHOD__.";exc 22110: No seats rows for={$this->playerList[$i]->get_member_id()}");
+                            dbg("=".__METHOD__.":".Player::GET_WARN_NO_SEAT.";No seats rows for={$this->playerList[$i]->get_member_id()}");
                             break;
                         default:
-                            dbg("=".__METHOD__.";plyr find failed:{$this->playerList[$i]->get_member_id()}:" . $d->getMessage() . ":" . $d->getCode() . "");
-                            $p = new Exception($d->getPrevious());
-                            dbg("=".__METHOD__.";plyr Previous exception:{$this->playerList[$i]->get_member_id()}:" . $p->getMessage() . "");
-                            throw new Exception($p);
+                            throw new PokerException("PlayerArray get failed:{$this->playerList[$i]->get_member_id()}",
+                                                     GET_ERR_ARR,
+                                                     $d);
                         }
                     }
-                        # Bug: 
-                        $loaded++;
-                        # set up next iteration
-                        $query = "SELECT MIN(member_id) AS next FROM members " . 
-                                 "WHERE member_id > {$next_member_id} ";
-#                        dbg("=".__METHOD__."get:query=$query");
-                        $stmt = $pokdb->prepare($query);
-                        $stmt->execute();
-                        $row = $stmt->fetch();
-                        $next_member_id = $row['next'];
+                    # Bug: 
+                    $loaded++;
+                    # set up next iteration
+                    $query = "SELECT MIN(member_id) AS next FROM members " . 
+                             "WHERE member_id > {$next_member_id} ";
+#                    dbg("=".__METHOD__."get:query=$query");
+                    $stmt = $pokdb->prepare($query);
+                    $stmt->execute();
+                    $row = $stmt->fetch();
+                    $next_member_id = $row['next'];
                 } 
             } else {
                 dbg("=".__METHOD__.";rows=$row_count");
             }
+        } catch (PokerException $d) {
+            switch ($d->getCode()) {
+            case Player::GET_WARN_NO_SEAT:  # no seats rows
+                dbg("=".__METHOD__.":".Player::GET_WARN_NO_SEAT.";No seats rows for={$this->playerList[$i]->get_member_id()}");
+                break;
+            default:
+                throw new PokerException("PlayerArray get failed:{$this->playerList[$i]->get_member_id()}",
+                                         GET_ERR_ARR_1ST,
+                                         $d);
+            }
         } catch (PDOException $e) {
-            echo "PDO Exception: " . __FILE__ . " line: " . __LINE__ . "<br/>";
-            echo $e->getCode() . ": " . $e->getMessage() . "<br/>";  
-        } catch (Exception $e) {
-            echo "Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br/>";  
+            throw new PokerException("PlayerArray get failed:{$this->playerList[$i]->get_member_id()}",
+                                     GET_ERR_ARR_PDO,
+                                     $e);
+        }
+        # sort the array of scores to get rank
+        # Add ranks to PlayerArray
+//        for ($i = 0; $i < $this->playerCount; $i++) {
+finish this out...
+        foreach ($player_rank as $rank_row) {
+            echo "Rank:$rank_row[0]=$rank_row[1]<br>";
         }
 # if loaded <> playerCount???
     }
@@ -127,6 +146,7 @@ public static function sortNick()
         echo "<th>No</th>";
         echo "<th>Flake</th>";
         echo "<th>Score</th>";
+        echo "<th>Rank</th>";
         echo "<th>Stamp</th>";
         echo "</tr>";
     
@@ -148,6 +168,7 @@ public static function sortNick()
             echo "<td>" . $row->get_no_cnt() . "</td>";
             echo "<td>" . $row->get_flake_cnt() . "</td>";
             echo "<td>" . number_format($row->get_score(),2) . "</td>";
+            echo "<td>" . $row->get_rank() . "</td>";
             echo "<td>" . $row->get_stamp() . "</td>";
             echo "</tr>";
         }

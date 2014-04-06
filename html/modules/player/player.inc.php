@@ -11,13 +11,16 @@
  * 14-03-18 Removed playerListDeprecated.  Stubbed playerDelete().  DHD
  * 14-03-09 Original.  DHD
  * Future:
- * Add playerDelete
- * After list, Find & Delete buttons show blank form, Update button goes to playerNew.
+ *  Add playerDelete
+ *  After list, Find & Delete buttons show blank form, Update button goes to playerNew.
+ *  New: timestamp =now, !=0
  */
 
 dbg("+".basename(__FILE__) . ":$page_id");
 //post_dump();
 //session_dump();
+
+define("PLAYER_MAX", "9999", TRUE);
 require(BASE_URI . "modules/player/player.update.inc.php");
 $butt_att_prev = "";
 $butt_att_find = "";
@@ -41,7 +44,7 @@ switch ($page_id) {
     case 'play-find':
         if ($_POST['from_page_id'] == 'play-list') {
             # find first game
-            $_POST['member_id'] = 9999;
+            $_POST['member_id'] = PLAYER_MAX;
             playerFind("prev");
         } else {
             playerFind("");
@@ -50,7 +53,7 @@ switch ($page_id) {
     case 'play-next':
         if ($_POST['from_page_id'] == 'play-list') {
             # find first game
-            $_POST['member_id'] = 9999;
+            $_POST['member_id'] = PLAYER_MAX;
             playerFind("prev");
         } else {
             playerFind("next");
@@ -86,6 +89,7 @@ switch ($page_id) {
         break;
   
     // Default is a blank player form.
+    case 'play-new':
     default:
         playerNew();
         break;
@@ -110,7 +114,7 @@ switch ($page_id) {
  */
 function playerNew() {
     # declare globals
-    global $debug;
+    global $page_id;
 
 # initialize the player form
 require(BASE_URI . "modules/player/player.form.init.php");
@@ -228,7 +232,7 @@ require(BASE_URI . "modules/player/player.form.php");
  * Show some test data for add functions
  */
 function playerTest() {
-    global $debug, $plyr, $error_msgs;
+    global $page_id, $plyr, $error_msgs;
     dbg("+".__FUNCTION__."");
     #post_dump();
 
@@ -259,7 +263,7 @@ function playerList() {
 #  $players->sortNick();
 //    usort($players->playerList, array('PlayerArray','sortNick')); 
 
-    $players->listing();
+//    $players->listing();
     usort($players->playerList, array('PlayerArray','sortScore')); 
 
 require(BASE_URI . "modules/player/player.list.form.php");

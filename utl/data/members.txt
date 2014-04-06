@@ -1,17 +1,17 @@
-0	Arqinsaw	Arquette	Anne	A	ahimsa.anne@gmail.com	541-1	2014-03-07 11:36:28
-0	Twennyfive	Bassett	Loyal	A	loyal.bassett@gmail.com	541-2	2014-03-07 11:36:28
-0	Smums	Bassett	Susie	A	purpletigermama@gmail.com	541-3	2014-03-07 11:36:28
-0	Denny	Clark	Dennis	A	DennisClark43@gmail.com	541-4	2014-03-07 11:36:28
-0	Snake Eyes	Demaree	David	A	ddemarya@yahoo.com	541-5	2014-03-07 11:36:28
-0	Boat Lady	Franz	Amaris	X	amacoho@yahoo.com	541-6	2014-03-07 11:36:28
-0	Councillor	Hervey	Richard	A	r.e.hervey@gmail.com	541-7	2014-03-07 11:36:28
-0	Valium	Hervey	Valerie	A	valerie.hervey@gmail.com	541-8	2014-03-07 11:36:28
-0	Bronze	Karpf	Ron	A	rsk@the4dgroup.com	541-9	2014-03-07 11:36:28
-0	Cabbage	Martinsen	Jared	A	jaredmartinsen@comcast.net	541-10	2014-03-07 11:36:28
-0	Jay Bird	Noller	Jay	A	soilportraits@gmail.com	541-11	2014-03-07 11:36:28
-0	Uh-Oh	Oh	Joe	A	drjoe2001@gmail.com	541-12	2014-03-07 11:36:28
-0	Sumpin'	Olstad	Andy	A	andy.olstad@gmail.com	541-13	2014-03-07 11:36:28
-0	Spacye	Olstad	Stacey	A	stacey.olstad@gmail.com	541-14	2014-03-07 11:36:28
-0	Stress	Strauss	Steven	A	Steve.Strauss@oregonstate.edu	541-15	2014-03-07 11:36:28
+0	Arqinsaw	Arquette	Anne	A	ahimsa.anne@gmail.com	541-974-1739	2014-03-07 11:36:28
+0	Twennyfive	Bassett	Loyal	A	loyal.bassett@gmail.com	541-224-2788	2014-03-07 11:36:28
+0	Smums	Bassett	Susie	A	purpletigermama@gmail.com	541-602-0781	2014-03-07 11:36:28
+0	Denny	Clark	Dennis	A	DennisClark43@gmail.com	541-908-3325	2014-03-07 11:36:28
+0	Snake Eyes	Demaree	David	A	ddemarya@yahoo.com	541-231-5374	2014-03-07 11:36:28
+0	Boat Lady	Franz	Amaris	X	amacoho@yahoo.com	541-231-9331	2014-03-07 11:36:28
+0	Councillor	Hervey	Richard	A	r.e.hervey@gmail.com	541-250-1070	2014-03-07 11:36:28
+0	Valium	Hervey	Valerie	A	valerie.hervey@gmail.com	541-829-1789	2014-03-07 11:36:28
+0	Bronze	Karpf	Ron	A	rsk@the4dgroup.com	541-207-1389	2014-03-07 11:36:28
+0	Cabbage	Martinsen	Jared	A	jaredmartinsen@comcast.net	541-740-3604	2014-03-07 11:36:28
+0	Jay Bird	Noller	Jay	A	soilportraits@gmail.com	541-231-6092	2014-03-07 11:36:28
+0	Uh-Oh	Oh	Joe	A	drjoe2001@gmail.com	541-992-4555	2014-03-07 11:36:28
+0	Sumpin'	Olstad	Andy	A	andy.olstad@gmail.com	541-231-0239	2014-03-07 11:36:28
+0	Spacye	Olstad	Stacey	A	stacey.olstad@gmail.com	541-231-0241	2014-03-07 11:36:28
+0	Stress	Strauss	Steven	A	Steve.Strauss@oregonstate.edu	541-	2014-03-07 11:36:28
 0	Painter	Sullivan	Russell	A	russell.m.sullivan@gmail.com	541-16	2014-03-07 11:36:28
-0	Rasta	Ross	John	A	johnr414@gmail.com	541-17	2014-03-07 11:36:28
+0	Rasta	Ross	John	A	johnr414@gmail.com	541-760-4444	2014-03-07 11:36:28
