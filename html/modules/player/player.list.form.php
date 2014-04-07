@@ -46,6 +46,7 @@ dbg("=".basename(__FILE__)."*** Dump players *** ({$players->playerCount} player
         <th>No</th>
         <th>Flake</th>
         <th>Score</th>
+        <th>Rank</th>
         <th>Stamp</th>
         </tr>
 
@@ -64,6 +65,7 @@ dbg("=".basename(__FILE__)."*** Dump players *** ({$players->playerCount} player
         echo "<td align='right'>" . $row->get_no_cnt() . "</td>";
         echo "<td align='right'>" . $row->get_flake_cnt() . "</td>";
         echo "<td align='right'>" . number_format($row->get_score(),2) . "</td>";
+        echo "<td align='right'>" . $row->get_rank() . "</td>";
         echo "<td>" . $row->get_stamp() . "</td>";
         echo "</tr>";
     }

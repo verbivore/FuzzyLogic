@@ -24,6 +24,7 @@ require('./includes/config.inc.php');
 // Determine which page to show:
 if (isset($_POST['main'])) {
     $page_id = 'main';
+
 } elseif (isset($_POST['play'])) {
     $page_id = 'play-new';
 } elseif (isset($_POST['p-prev'])) {
@@ -80,6 +81,10 @@ if (isset($_POST['main'])) {
 } elseif (isset($_POST['s-burp'])) {
     $page_id = 'seat-burp';
 
+} elseif (isset($_POST['invt'])) {
+    $page_id = 'invt';
+} elseif (isset($_POST['i-prev'])) {
+    $page_id = 'invt-prev';
 
 
 } elseif (isset($_GET['p'])) {
@@ -136,34 +141,42 @@ switch ($page_id) {
 
     case 'game':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Games';
         break;
     case 'game-prev':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Previous | Games | Poker';
         break;
     case 'game-find':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Find | Games | Poker';
         break;
     case 'game-next':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Next | Games | Poker';
         break;
     case 'game-list':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'List | Games | Poker';
         break;
     case 'game-updt':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Update | Games | Poker';
         break;
     case 'game-delt':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Delete | Games | Poker';
         break;
     case 'game-burp':
         $page_file = 'game/game.inc.php';
+        $page_file_js = 'js/game.js';
         $page_title = 'Burp | Games | Poker';
         break;
 
@@ -219,6 +232,14 @@ switch ($page_id) {
         $page_file_js = 'js/seat.js';
         $page_title = 'Burp | Seats | Poker';
         break;
+
+  
+    case 'invt':
+        $page_file = 'invt/invt.inc.php';
+        $page_file_js = 'js/invt.js';
+        $page_title = 'Invite';
+        break;
+
   
     // Default is to include the main page.
     default:

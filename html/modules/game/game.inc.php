@@ -84,13 +84,20 @@ switch ($page_id) {
 ?> 
 
 <!--  Game tab buttons  -->
-    <input type="submit" id="prev" name="g-prev" value="Previous" <?php echo "$butt_att_prev"; ?> >
-    <input type="submit" id="find" name="g-find" value="Find"     <?php echo "$butt_att_find"; ?> >
-    <input type="submit" id="next" name="g-next" value="Next"     <?php echo "$butt_att_next"; ?> >
-    <input type="submit" id="updt" name="g-updt" value="Update"   <?php echo "$butt_att_updt"; ?> >
-    <input type="submit" id="list" name="g-list" value="List"     <?php echo "$butt_att_list"; ?> >
-    <input type="submit" id="delt" name="g-delt" value="Delete"   <?php echo "$butt_att_delt"; ?> >
-    <input type="submit" id="burp" name="g-burp" value="burp"     <?php echo "$butt_att_burp"; ?> >
+    <input type="submit" id="prev" name="g-prev" value="Previous" 
+        <?php echo "$butt_att_prev"; ?> >
+    <input type="submit" id="find" name="g-find" value="Find" 
+        <?php echo "$butt_att_find"; ?> >
+    <input type="submit" id="next" name="g-next" value="Next"
+        <?php echo "$butt_att_next"; ?> >
+    <input type="submit" id="updt" name="g-updt" value="Update"
+        <?php echo "$butt_att_updt"; ?> >
+    <input type="submit" id="list" name="g-list" value="List"
+        <?php echo "$butt_att_list"; ?> >
+    <input type="submit" id="delt" name="g-delt" value="Delete"
+        <?php echo "$butt_att_delt"; ?> >
+    <input type="submit" id="burp" name="g-burp" value="burp"
+        <?php echo "$butt_att_burp"; ?> >
   <br>
 <?php
 

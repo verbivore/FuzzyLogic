@@ -103,6 +103,19 @@ if (!isset($_SESSION['dbug'])) {
     $_SESSION['dbug'] = FALSE;
 }
 
+# global constants
+
+define("GREEN_BRIGHT", '#01DF00');
+define("GREEN_PALE", '#E0F8E0');
+define("BLUE_BRIGHT", '#5858FA');
+define("BLUE_PALE", '#A9A9F5');
+define("GRAY", '#A4A4A4');
+define("RED", '#FA5858');
+define("PINK", '#F5A9F2');
+
+define("MIN_PLAYERS", 6);
+define("MAX_PLAYERS", 8);
+
 # ***** SETTINGS ***** #
 # ******************** #
 
@@ -148,6 +161,17 @@ function post_list()
         var_dump($_POST);
         print ".<br/>";
         echo '</pre>';
+    }
+}
+
+
+function err_msgs_dump($err_msgs) 
+{
+    # Dump _POST array
+    if ($_SESSION['dbug']  == TRUE) {
+        print "err msgs var dump: ";
+        var_dump($err_msgs);
+        print ".<br/>";
     }
 }
 

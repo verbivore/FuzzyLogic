@@ -144,9 +144,24 @@ function gameUpdateSeats() {
             $invitee->set_note_master($_POST["$note_mst_idx"]);
             $note_mbr_idx = "note_mbr_$i";
             $invitee->set_note_member($_POST["$note_mbr_idx"]);
-#            $invitee->set_stamp;
 #           $invitee->listRow();
-            $invitee->insert();
+            try {
+                $invitee->insert();
+            } catch (PokerException $e) {
+                switch ($e->getCode()) {
+                case Seat::INS_ERR_VALIDTN:
+/* echo "<br>seat val errs:"; var_dump($e->getOptions()); echo "<br>";
+                    $foo = $e->getOptions();
+                    foreach ($foo as $field => $code) {
+                        echo "<br>seat val err:$field=$code[0];$code[1]<br>";
+                      
+                    }
+*/
+                    $player_error_msgs["{$i}"] = $e->getOptions(); 
+//echo "<br>game seat err msg:"; var_dump($player_error_msgs);
+                    break;    
+                }
+            }
         } else {
             # is this member invited? # find seat
             try {

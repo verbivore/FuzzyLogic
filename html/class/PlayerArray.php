@@ -3,7 +3,7 @@
  *  Class definition for an array of player
  *  @author David Demaree <dave.demaree@yahoo.com>
  *** History ***  
- * 14-04-05 Adding player ranks.  DHD
+ * 14-04-06 Added player ranks.  DHD
  * 14-03-23 Added dbg() function.  DHD
  * 14-03-20 Updated __construct to ignore 2210.  DHD
  * 14-03-18 Changed name to title case.  DHD
@@ -53,8 +53,8 @@ require(BASE_URI . "includes/pok.open.inc.php");
                     # Save row
                     try {
                         $this->playerList[$i]->get("");
-//                        array_push($player_rank, $next_member_id => $this->playerList[$i]->get_score(),0);
-                        $player_rank[$next_member_id] = $this->playerList[$i]->get_score();
+                        dbg("=".__METHOD__.";Adding:$next_member_id={$this->playerList[$i]->get_score()}");
+                        $player_rank[$next_member_id] = "{$this->playerList[$i]->get_score()}";
                     } catch (PokerException $d) {
                         switch ($d->getCode()) {
                         case Player::GET_WARN_NO_SEAT:  # no seats rows
@@ -95,12 +95,32 @@ require(BASE_URI . "includes/pok.open.inc.php");
                                      GET_ERR_ARR_PDO,
                                      $e);
         }
-        # sort the array of scores to get rank
-        # Add ranks to PlayerArray
-//        for ($i = 0; $i < $this->playerCount; $i++) {
-finish this out...
-        foreach ($player_rank as $rank_row) {
-            echo "Rank:$rank_row[0]=$rank_row[1]<br>";
+        # sort the array of scores descending to get rank
+        arsort($player_rank,SORT_NUMERIC);
+//print_r($player_rank); echo "<br>";
+        $ranking = 0;
+        $prev_score = 9999;
+        $prev_rank = 0;
+        foreach ($player_rank as $id => $rank) {
+            $ranking++;
+//            echo "Rank:{$id}={$rank}<br>";
+            # Get playerList entry for this player
+            for ($i=0; $i < $this->playerCount; $i++) {
+                # Set player rank
+                if ($this->playerList[$i]->get_member_id() == $id) {
+                    # Give identical ranks to identical scores
+                    if ($this->playerList[$i]->get_score() == $prev_score) {
+                       $this_rank = $prev_rank;
+                    } else {
+                       $this_rank = $ranking;
+                    }                  
+                    $this->playerList[$i]->set_rank($this_rank);
+//                    echo "id:{$this->playerList[$i]->get_member_id()}=$this_rank=$rank.<br>";
+                    $prev_rank = $this_rank;
+                    $prev_score = $this->playerList[$i]->get_score();
+                    $i = $this->playerCount; # exit for loop
+                }
+            }
         }
 # if loaded <> playerCount???
     }

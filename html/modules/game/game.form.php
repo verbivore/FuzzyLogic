@@ -98,7 +98,11 @@ dbg("=".basename(__FILE__).";ID={$gamz->get_game_id()}:{$message_banner}");
 if ("{$game_error_msgs['count']}" == "0") {
 # Show the game players
 require(BASE_URI . "modules/game/game.players.form.php");
+# Show email form
+//require(BASE_URI . "modules/game/game.invite.form.php");
 }
+
+
 
 # Save the form name so that the next page knows what to expect in $_POST
 echo "<input type='hidden' name='from_page_id' value='game-form'>";

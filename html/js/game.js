@@ -1,6 +1,14 @@
+/**
+ * Client side processing for the player form.
+ * @author David Demaree <dave.demaree@yahoo.com>
+ * File name: play.js
+ *** History ***  
+ * 14-04-03 Cloned from seat.js.  DHD
+ * Future:
+ */
 $(document).ready(function() {
 
-  var seatAction = "";
+  var gameAction = "";
 
   // Triggered when an input.submit button is clicked.
   $("form input[type=submit]").click(function() {
@@ -8,23 +16,62 @@ $(document).ready(function() {
     $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
     // add 'clicked' attribute to this button
     $(this).attr("clicked", "true");
-    seatAction = $("input[type=submit][clicked=true]").attr('id'); // get the button id
+    gameAction = $("input[type=submit][clicked=true]").attr('id'); // get the button id
   });
 
+//get a reference to the element
+var inviteBtn = document.getElementById('inviteBtn');
+
+//add event listener
+inviteBtn.addEventListener('click', function(event) {
+    var playerCount = document.getElementById('player-count');
+//    alert("gameForm.invite.onclick;button value:" + this.value + ":" + playerCount.value);
+    var label = "Invite";
+    var checked = false;
+    if (this.value == "Invite" ) {
+        checked = true;
+        label = "Uninvite";
+    }
+    var inv_cnt = 0;
+    var inv_field_name = "invite_" + inv_cnt;
+//    alert("gameForm.invite.onclick=" + inv_field_name + ":");
+    for (inv_cnt = 0; inv_cnt < playerCount.value; ++inv_cnt) {
+//    while (inv_field_name in pokerMain) {
+      inv_field_name = "invite_" + inv_cnt;
+      $('#'+inv_field_name).attr('checked', checked)
+//      inv_cnt++;
+//      inv_field_name = "invite_" + inv_cnt;
+    }
+    // Reset the button label
+    this.value = label;
+//    alert("gameForm.invite.onclick count=" + inv_cnt);
+/*
+var inputs, index;
+var foo = "";
+
+
+inputs = document.getElementsByTagName('input');
+for (index = 0; index < inputs.length; ++index) {
+    foo += inputs[index] + index;
+}
+      alert("gameForm.invite.onclick=" + ":" + foo);
+*/
+
+});
 
   $("#pokerMain").submit(function(e) {
 
-    //alert("seatForm.submit:seatAction=" + seatAction);
+    //alert("gameForm.submit:gameAction=" + gameAction);
     removeFeedback();
     var errorList = new Array();
-    switch (seatAction) 
+    switch (gameAction) 
     {
       case "updt":
         errorList = validateUpdt();
-//        alert("seatForm.submit:seatAction:unknown=" + seatAction);
+//        alert("gameForm.submit:gameAction:unknown=" + gameAction);
         break;
       default: 
-//        alert("seatForm.submit:seatAction:unknown=" + seatAction);
+//        alert("gameForm.submit:gameAction:unknown=" + gameAction);
         break;
     }
 
@@ -91,7 +138,7 @@ $(document).ready(function() {
   } //end function removeFeedback
 
 
-// End of seat.js file
+// End of game.js file
 });
 
 

@@ -12,7 +12,6 @@ dbg("+".basename(__FILE__).";");
 $gamz = new Game;
 
 # list of form fields to process
-//$game_form_fields = array("game_id", "member_snack", "member_host", "game_date", "stamp", "member_gear", "member_caller", "maybe_cnt", "no_cnt", "flake_cnt", "score");
 $game_form_fields = array("game_id", "game_date", "member_snack", "member_host", "member_gear", "member_caller", "stamp");
 
 # list of member names associated with bonus fields
@@ -32,8 +31,17 @@ $player_error_msgs['errorDiv'] = "";
 
 if (isset($_POST['player_count'])) {
     for ($i = 0; $i < $_POST['player_count']; $i++) {
-        $player_error_msgs["$i"] = "";
+        $player_error_msgs["$i"] = ""; # array("","");
     }
+}
+
+# list of email form fields to process
+$em_form_fields = array("em_to", "em_subject", "em_message", "em_from", "em_headers");
+$em_error_msgs = array();
+$em_error_msgs['count'] = 0;
+$em_error_msgs['errorDiv'] = "";
+foreach ($em_form_fields as $field) {
+    $em_error_msgs["$field"] = "";
 }
 
 dbg("=".basename(__FILE__).";fields=" . sizeof($game_form_fields) . ";msgs=" . sizeof($game_error_msgs) . "");

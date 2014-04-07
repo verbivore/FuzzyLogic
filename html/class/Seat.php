@@ -401,7 +401,11 @@ require(BASE_URI . "includes/pok.open.inc.php");
             } else {
 #                dbg("=".__METHOD__.":Seat:get=multiple seat records found");
                 #error_log($e->getTraceAsString());
-                throw new PokerException('Multiple records for this seat were found', self::GET_ERR_MULTI);
+                throw new PokerException('Multiple records for this seat were found',
+                                         self::GET_ERR_MULTI,
+                                         NULL, 
+                                         array($this->game_id, $this->member_id, $row_count)
+                                         );
             }
         } catch (PDOException $e) {
 //            echo "PDO Exception: " . $e->getCode() . ": " . $e->getMessage() . "<br>";
@@ -553,6 +557,7 @@ require(BASE_URI . "includes/pok.open.inc.php");
         $val_errors = array ();
         dbg("+".__METHOD__.";$this->game_id:{$this->sql_column_name_value_pairs()}");
         $val_errors = ($this->validate());
+//        if ("{$game_error_msgs['count']}" == "0") {
         if (sizeof($val_errors) == 0 ) {
             try {
 require(BASE_URI . "includes/pok.open.inc.php");

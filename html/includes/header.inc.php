@@ -28,6 +28,7 @@
       <input type="submit" id="play" name="play" value="Players" >
       <input type="submit" id="game" name="game" value="Games" >
       <input type="submit" id="seat" name="seat" value="Join" >
+      <input type="submit" id="invt" name="invt" value="Invite" >
     <br>
 <?php 
 //post_dump();
